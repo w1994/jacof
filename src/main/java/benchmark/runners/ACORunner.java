@@ -68,7 +68,8 @@ public class ACORunner {
 
     public static void main(String[] args) throws IOException {
 
-        String instance = "src/main/resources/problems/tsp/bays29.tsp";
+//        String instance = "src/main/resources/problems/tsp/bays29.tsp";
+        String instance = "src/main/resources/problems/tsp/example6.tsp";
 //        String instance = "src/main/resources/problems/tsp/oliver30.tsp";
 
 //        String instance = "src/main/resources/problems/tsp/a280.tsp";
@@ -87,7 +88,7 @@ public class ACORunner {
                 .withInstance(instance)
                 .withDistanceFunction(new MulticriteriaDistanceFunction())
                 .withIteration(100)
-                .withVisualization(new Visualization(false))
+                .withVisualization(new Visualization(true))
                 .withOutput(new CSV("test.csv"))
                 .start();
 

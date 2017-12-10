@@ -48,9 +48,12 @@ public class EdgeMultiWeightMatrix extends DistanceTable {
 
     @Override
     public double getDistanceBetween(int id1, int id2) {
-
+//
+//        int[] - ant.getWeight()
+//                matrixNumber;
+//
         return edgeWeightMatrices.stream()
-                .map(edgeWeightMatrix -> edgeWeightMatrix.getDistanceBetween(id1, id2))
+                .map(edgeWeightMatrix -> edgeWeightMatrix.getDistanceBetween(id1, id2) * edgeWeightMatrix.getWeight())
                 .mapToDouble(Double::doubleValue)
                 .sum();
     }
@@ -58,7 +61,9 @@ public class EdgeMultiWeightMatrix extends DistanceTable {
     @Override
     public void load(BufferedReader reader) throws IOException {
         for (int i = 0; i < numberOfMatrixes; i++) {
+            String weight = reader.readLine();
             EdgeWeightMatrix edgeWeightMatrix = new EdgeWeightMatrix(matrixDimension, EdgeWeightFormat.FULL_MATRIX);
+            edgeWeightMatrix.setWeight(Double.valueOf(weight));
             edgeWeightMatrix.load(reader);
             edgeWeightMatrices.add(edgeWeightMatrix);
             reader.readLine();

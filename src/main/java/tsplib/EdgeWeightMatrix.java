@@ -48,7 +48,8 @@ public class EdgeWeightMatrix extends DistanceTable {
 	 * matrix, regardless of the input edge weight format.
 	 */
 	private final double[][] matrix;
-	
+
+	private double weight;
 	/**
 	 * Constructs a new, empty edge weight matrix.
 	 * 
@@ -283,4 +284,11 @@ public class EdgeWeightMatrix extends DistanceTable {
 		return matrix[id1-1][id2-1];
 	}
 
+	public void setWeight(double weight) {
+		this.weight = weight;
+	}
+
+	public double getWeight() {
+		return weight;
+	}
 }
