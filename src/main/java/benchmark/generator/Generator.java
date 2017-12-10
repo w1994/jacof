@@ -1,5 +1,8 @@
 package benchmark.generator;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -16,7 +19,13 @@ public class Generator {
     private static final String NEW_LINE = "\n";
     private static final String SPACE = " ";
 
-    private Random random = new Random(System.currentTimeMillis());
+    private Random random;
+    private final String id;
+
+    public Generator() {
+        this.random = new Random(System.currentTimeMillis());
+        this.id = "example"+random.nextInt(1000)+".tsp";
+    }
 
     public void generate(int matrixNumber, int nodesNumber) {
 
@@ -25,12 +34,16 @@ public class Generator {
         stringBuilder.append(buildMatrixes(matrixNumber, nodesNumber));
         stringBuilder.append(generateDataSection(nodesNumber));
 
-        System.out.println(stringBuilder.toString());
+        try {
+            Files.write(Paths.get("src\\main\\resources\\problems\\tsp\\"+id), stringBuilder.toString().getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private String buildHeader(int matrixNumber, int nodesNumber) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("NAME: example" + random.nextInt(1000) + "\n");
+        stringBuilder.append("NAME: example" + id + "\n");
         stringBuilder.append("TYPE: TSP\n");
         stringBuilder.append("COMMENT: example with " + nodesNumber + " nodes\n");
         stringBuilder.append("DIMENSION : " + nodesNumber + "\n");
@@ -118,7 +131,5 @@ public class Generator {
         Generator generator = new Generator();
         generator.generate(3, 6);
     }
-
-
 
 }
