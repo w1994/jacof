@@ -43,7 +43,7 @@ public class Generator {
 
     private String buildHeader(int matrixNumber, int nodesNumber) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("NAME: example" + id + "\n");
+        stringBuilder.append("NAME: " +id + "\n");
         stringBuilder.append("TYPE: TSP\n");
         stringBuilder.append("COMMENT: example with " + nodesNumber + " nodes\n");
         stringBuilder.append("DIMENSION : " + nodesNumber + "\n");
@@ -129,7 +129,7 @@ public class Generator {
 
     public static void main(String[] args) {
         Generator generator = new Generator();
-        generator.generate(3, 6);
+        generator.generate(100, 10);
     }
 
 }

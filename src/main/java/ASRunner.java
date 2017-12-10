@@ -23,7 +23,7 @@ public class ASRunner {
 
 		AntSystem aco = new AntSystem(problem);
 
-		new ACORunner().withACO(aco).withInstance(instance).withIteration(1000).withVisualization(new Visualization(true)).withOutput(new CSV("testASRunner.csv"));
+		new ACORunner().withACO(aco).withInstance(instance).withIteration(1000).withVisualization(true).withOutput(new CSV("testASRunner.csv"));
 
 		aco.setNumberOfAnts(30);
 		aco.setNumberOfIterations(1000);

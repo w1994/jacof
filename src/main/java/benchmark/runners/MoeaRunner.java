@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 
-public class MoeaRunner {
+public class MoeaRunner implements Runner{
 
     private Visualization visualization;
 
@@ -59,6 +59,7 @@ public class MoeaRunner {
 
     private TSPInstance instance;
 
+    @Override
     public void start() throws IOException {
 
         this.instance = new TSPInstance(new File(filename), distanceFunction);
@@ -81,6 +82,7 @@ public class MoeaRunner {
 
     }
 
+    @Override
     public MoeaRunner withVisualization(boolean enabled) {
         this.visualization = new Visualization(enabled);
         return this;
@@ -91,7 +93,8 @@ public class MoeaRunner {
         return this;
     }
 
-    public MoeaRunner withTSPInstance(String filename) throws IOException {
+    @Override
+    public MoeaRunner withInstance(String filename) {
         this.filename = filename;
         return this;
     }
@@ -102,16 +105,19 @@ public class MoeaRunner {
         return this;
     }
 
+    @Override
     public MoeaRunner withOutput(Output output) {
         this.output = output;
         return this;
     }
 
-    private MoeaRunner withIterationNumber(int iterationNumber) {
+    @Override
+    public MoeaRunner withIteration(int iterationNumber) {
         this.iterationNumber = iterationNumber;
         return this;
     }
 
+    @Override
     public MoeaRunner withDistanceFunction(DistanceFunction distanceFunction) {
         this.distanceFunction = distanceFunction;
         return this;
@@ -123,7 +129,7 @@ public class MoeaRunner {
         properties.setProperty("swap.rate", "0.7");
         properties.setProperty("insertion.rate", "0.3");
         properties.setProperty("pmx.rate", "0.2");
-        properties.setProperty("populationSize", "25");
+        properties.setProperty("populationSize", "250");
 //        properties.setProperty("withReplacement", "false");
 //        properties.setProperty("divisionsOuter", "false");
 //        properties.setProperty("divisionsInner", "false");
@@ -138,11 +144,11 @@ public class MoeaRunner {
         new MoeaRunner()
 //                .withTSPInstance("src/main/resources/problems/tsp/bays29.tsp")
 //                .withTSPInstance("src/main/resources/problems/tsp/oliver30.tsp")
-                .withTSPInstance("src/main/resources/problems/tsp/a280.tsp")
+                .withInstance("src/main/resources/problems/tsp/example428.tsp")
                 .withAlgorithmName(AlgorithmName.NSGAII)
                 .withDistanceFunction(new MulticriteriaDistanceFunction())
                 .withProperties(properties)
-                .withIterationNumber(100)
+                .withIteration(1000)
                 .withVisualization(true)
                 .withOutput(new CSV("test.csv"))
                 .start();

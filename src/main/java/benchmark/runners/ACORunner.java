@@ -15,7 +15,7 @@ import tsplib.MulticriteriaDistanceFunction;
 import java.io.IOException;
 
 
-public class ACORunner {
+public class ACORunner implements Runner{
 
     private ACO aco;
     private String instance;
@@ -29,31 +29,37 @@ public class ACORunner {
         return this;
     }
 
-    public ACORunner withVisualization(Visualization visualization) {
-        this.visualization = visualization;
+    @Override
+    public ACORunner withVisualization(boolean enabled) {
+        this.visualization = new Visualization(enabled);
         return this;
     }
 
+    @Override
     public ACORunner withOutput(Output output) {
         this.output = output;
         return this;
     }
 
+    @Override
     public ACORunner withIteration(int iterationNumber) {
         this.iterationNumber = iterationNumber;
         return this;
     }
 
+    @Override
     public ACORunner withInstance(String instance) {
         this.instance = instance;
         return this;
     }
 
+    @Override
     public ACORunner withDistanceFunction(DistanceFunction distanceFunction){
         this.distanceFunction = distanceFunction;
         return this;
     }
 
+    @Override
     public void start() throws IOException {
         Problem problem = new AcoTSP(instance).withDistanceFunction(distanceFunction)
                                               .withVisualization(this.visualization)
@@ -69,7 +75,7 @@ public class ACORunner {
     public static void main(String[] args) throws IOException {
 
 //        String instance = "src/main/resources/problems/tsp/bays29.tsp";
-        String instance = "src/main/resources/problems/tsp/example6.tsp";
+        String instance = "src/main/resources/problems/tsp/example428.tsp";
 //        String instance = "src/main/resources/problems/tsp/oliver30.tsp";
 
 //        String instance = "src/main/resources/problems/tsp/a280.tsp";
@@ -78,7 +84,6 @@ public class ACORunner {
 
         AntSystem aco = new AntSystem();
         aco.setNumberOfAnts(100);
-        aco.setNumberOfIterations(1000);
         aco.setAlpha(2.0);
         aco.setBeta(3.0);
         aco.setRho(0.01);
@@ -87,8 +92,8 @@ public class ACORunner {
                 .withACO(aco)
                 .withInstance(instance)
                 .withDistanceFunction(new MulticriteriaDistanceFunction())
-                .withIteration(100)
-                .withVisualization(new Visualization(true))
+                .withIteration(1000)
+                .withVisualization(true)
                 .withOutput(new CSV("test.csv"))
                 .start();
 
