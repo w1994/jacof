@@ -3,9 +3,7 @@ package benchmark.runners;
 import benchmark.output.CSV;
 import benchmark.output.Output;
 import benchmark.visualization.Visualization;
-import thiagodnf.jacof.aco.ACO;
-import thiagodnf.jacof.aco.AntColonySystem;
-import thiagodnf.jacof.aco.AntSystem;
+import thiagodnf.jacof.aco.*;
 import thiagodnf.jacof.problem.Problem;
 import benchmark.problem.AcoTSP;
 import thiagodnf.jacof.util.ExecutionStats;
@@ -75,24 +73,31 @@ public class ACORunner implements Runner{
     public static void main(String[] args) throws IOException {
 
 //        String instance = "src/main/resources/problems/tsp/bays29.tsp";
-        String instance = "src/main/resources/problems/tsp/example428.tsp";
+//        String instance = "src/main/resources/problems/tsp/bays29.tsp";
+//        String instance = "src/main/resources/problems/tsp/example428.tsp";
 //        String instance = "src/main/resources/problems/tsp/oliver30.tsp";
 
 //        String instance = "src/main/resources/problems/tsp/a280.tsp";
-//        String instance = "src/main/resources/problems/tsp/berlin52.tsp";
+        String instance = "src/main/resources/problems/tsp/berlin52.tsp";
 //        String instance = "src/main/resources/problems/tsp/rat195.tsp";
 
-        AntSystem aco = new AntSystem();
+//        MaxMinAntSystem aco = new MaxMinAntSystem();
+        ElitistAntSystem aco = new ElitistAntSystem();
         aco.setNumberOfAnts(100);
         aco.setAlpha(2.0);
         aco.setBeta(3.0);
-        aco.setRho(0.01);
+        aco.setRho(0.1);
+//        aco.setOmega(0.1);
+//        aco.setQ0(0.9);
+        aco.setWeight(30);
+//        aco.setWeight(6);
+//        aco.setStagnation(1000);
 
         new ACORunner()
                 .withACO(aco)
                 .withInstance(instance)
                 .withDistanceFunction(new MulticriteriaDistanceFunction())
-                .withIteration(1000)
+                .withIteration(100)
                 .withVisualization(true)
                 .withOutput(new CSV("test.csv"))
                 .start();

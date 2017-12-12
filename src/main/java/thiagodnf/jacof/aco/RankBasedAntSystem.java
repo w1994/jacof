@@ -11,6 +11,9 @@ import thiagodnf.jacof.problem.Problem;
 
 public class RankBasedAntSystem extends ElitistAntSystem {
 
+	public RankBasedAntSystem() {
+	}
+
 	public RankBasedAntSystem(Problem problem) {
 		super(problem);
 	}
