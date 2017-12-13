@@ -81,17 +81,17 @@ public class ACORunner implements Runner{
         String instance = "src/main/resources/problems/tsp/berlin52.tsp";
 //        String instance = "src/main/resources/problems/tsp/rat195.tsp";
 
-//        MaxMinAntSystem aco = new MaxMinAntSystem();
-        ElitistAntSystem aco = new ElitistAntSystem();
+        MaxMinAntSystem aco = new MaxMinAntSystem();
+//        RankBasedAntSystem aco = new RankBasedAntSystem();
         aco.setNumberOfAnts(100);
         aco.setAlpha(2.0);
         aco.setBeta(3.0);
-        aco.setRho(0.1);
+        aco.setRho(0.01);
 //        aco.setOmega(0.1);
 //        aco.setQ0(0.9);
-        aco.setWeight(30);
+//        aco.setWeight(30);
 //        aco.setWeight(6);
-//        aco.setStagnation(1000);
+        aco.setStagnation(1000);
 
         new ACORunner()
                 .withACO(aco)

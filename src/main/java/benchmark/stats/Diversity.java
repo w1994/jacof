@@ -1,7 +1,11 @@
 package benchmark.stats;
 
+import benchmark.visualization.chart.BarChart;
 import benchmark.visualization.chart.LineChart;
 import thiagodnf.jacof.aco.ACO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Diversity {
 
@@ -31,6 +35,7 @@ public class Diversity {
         double[][] edges = aco.getGraph().getTau();
 //        double initalPheromoneValue = aco.getGraphInitialization().getT0();
         double initalPheromoneValue = getAverageThresold();
+
         int x;
         int y;
         double[] currentRow;
@@ -45,6 +50,17 @@ public class Diversity {
 
         pheromoneRatio = ((double)countEdgesWithPheromone/countAllEdges)*100;
         lineChart.update(pheromoneRatio);
+
+        if(iteration == 0 || iteration == 1 || iteration == 5 || iteration == 20) {
+            List<Double> pheromoneValues = new ArrayList<>();
+            for(x = 0; x < edges.length; x++) {
+                currentRow = edges[x];
+                for(y = x + 1; y < currentRow.length; y++) {
+                    pheromoneValues.add(currentRow[y]);
+                }
+            }
+            new BarChart(String.format("T0 = %f, Iteration %d", aco.getGraphInitialization().getT0(), iteration), pheromoneValues.stream().mapToDouble(i -> i).toArray()).display();
+        }
     }
 
     private double getAverageThresold() {
