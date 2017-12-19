@@ -13,17 +13,21 @@ public class Diversity {
     private ACO aco;
     private LineChart lineChartPR;
     private LineChart lineChartAD;
+    private LineChart lineChartAR;
     private boolean showPheromoneRatioChart;
     private boolean showAttractivenessDispersionChart;
+    private boolean showAttractivenessRatioChart;
     private long iteration;
 
     private double pheromoneRatio;
+    private double attractivenessRatio;
 
-    public Diversity(ACO aco, boolean showPheromoneRatioChart, boolean showAttractivenessDispersionChart) {
+    public Diversity(ACO aco, boolean showPheromoneRatioChart, boolean showAttractivenessDispersionChart, boolean showAttractivenessRatioChart) {
         this.aco = aco;
         this.iteration = 0;
         this.showPheromoneRatioChart = showPheromoneRatioChart;
         this.showAttractivenessDispersionChart = showAttractivenessDispersionChart;
+        this.showAttractivenessRatioChart = showAttractivenessRatioChart;
     }
 
     public void prepareVisualization(AcoTSP acoTSP) {
@@ -39,6 +43,10 @@ public class Diversity {
             this.lineChartAD = new LineChart(acoTSP.getProblemName(), getADChartName(), "Attractiveness Dispersion");
             lineChartAD.display();
         }
+        if(showAttractivenessRatioChart) {
+            this.lineChartAR = new LineChart(acoTSP.getProblemName(), getARChartName(), "Attractiveness Ratio");
+            lineChartAR.display();
+        }
     }
 
     private String getPRChartName() {
@@ -48,12 +56,15 @@ public class Diversity {
     private String getADChartName() {
         return String.format("Attractiveness Dispersion by Iterations\n%s", aco.getClass().getSimpleName());
     }
+    private String getARChartName() {
+        return String.format("Attractiveness Ratio by Iterations\n%s", aco.getClass().getSimpleName());
+    }
 
     public void update() {
         iteration++;
         updatePheremoneRatio();
         updateAttractivenessDispersion();
-        updateAttracivnessRatio();
+        updateAttractivenessRatio();
     }
 
     private void updatePheremoneRatio() {
@@ -112,16 +123,16 @@ public class Diversity {
 
 
     private void updateAttractivenessDispersion() {
-        double[][] attractivness = new double[aco.getGraph().getTau()[0].length][aco.getGraph().getTau().length];
+        double[][] attractiveness = new double[aco.getGraph().getTau()[0].length][aco.getGraph().getTau().length];
         int x;
         int y;
         double[] currentRow;
         List<Double> pheromoneValues = new ArrayList<>();
 
-        for(x = 0; x < attractivness.length; x++) {
-            currentRow = attractivness[x];
+        for(x = 0; x < attractiveness.length; x++) {
+            currentRow = attractiveness[x];
             for(y = x + 1; y < currentRow.length; y++) {
-                pheromoneValues.add(aco.getAntExploration().getNodeAttractiveness(x, y));
+                pheromoneValues.add(getNodeAttractiveness(x, y));
             }
         }
 
@@ -133,7 +144,38 @@ public class Diversity {
     }
 
 
-    private void updateAttracivnessRatio() {
+    private void updateAttractivenessRatio() {
+        int[][] bestAntPath = aco.getGlobalBest().path;
+        int x;
+        int y;
+        int[] currentRow;
+
+        List<Double> bestSolutionValues = new ArrayList<>();
+        List<Double> otherSolutionValues = new ArrayList<>();
+
+        for(x = 0; x < bestAntPath.length; x++) {
+            currentRow = bestAntPath[x];
+            for(y = x + 1; y < currentRow.length; y++) {
+                if(currentRow[y] == 1) {
+                    bestSolutionValues.add(getNodeAttractiveness(x, y));
+                }
+                else {
+                    otherSolutionValues.add(getNodeAttractiveness(x, y));
+                }
+            }
+        }
+
+        double bestSolutionAttractivenessSum = bestSolutionValues.stream().mapToDouble(i -> i).sum();
+        double otherSolutionsAttractivenessSum = otherSolutionValues.stream().mapToDouble(i -> i).sum();
+        attractivenessRatio = 100 * (bestSolutionAttractivenessSum / otherSolutionsAttractivenessSum);
+
+        if(lineChartAR != null) {
+            lineChartAR.update(attractivenessRatio);
+        }
+    }
+
+    private double getNodeAttractiveness(int x, int y) {
+        return aco.getAntExploration().getNodeAttractiveness(x, y);
     }
 
     public double getPheromoneRatio() {
@@ -142,5 +184,13 @@ public class Diversity {
 
     public void setPheromoneRatio(double pheromoneRatio) {
         this.pheromoneRatio = pheromoneRatio;
+    }
+
+    public double getAttractivenessRatio() {
+        return attractivenessRatio;
+    }
+
+    public void setAttractivenessRatio(double attractivenessRatio) {
+        this.attractivenessRatio = attractivenessRatio;
     }
 }

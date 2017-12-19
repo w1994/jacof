@@ -59,8 +59,8 @@ public class ACORunner implements Runner{
         return this;
     }
 
-    public ACORunner withDiversity(boolean showPheromoneRatioChart, boolean showAttractivenessRationChart) {
-        this.diversity = new Diversity(aco, showPheromoneRatioChart, showAttractivenessRationChart);
+    public ACORunner withDiversity(boolean showPheromoneRatioChart, boolean showAttractivenessRationChart, boolean showAttractivenessRatioChart) {
+        this.diversity = new Diversity(aco, showPheromoneRatioChart, showAttractivenessRationChart, showAttractivenessRatioChart);
         return this;
     }
 
@@ -89,11 +89,11 @@ public class ACORunner implements Runner{
         String instance = "src/main/resources/problems/tsp/berlin52.tsp";
 //        String instance = "src/main/resources/problems/tsp/rat195.tsp";
 
-        AntSystem aco = new AntSystem();
+//        AntSystem aco = new AntSystem();
 //        AntColonySystem aco = new AntColonySystem();
 //        ElitistAntSystem aco = new ElitistAntSystem();
 //        RankBasedAntSystem aco = new RankBasedAntSystem();
-//        MaxMinAntSystem aco = new MaxMinAntSystem();
+        MaxMinAntSystem aco = new MaxMinAntSystem();
 
         aco.setNumberOfAnts(100);
         aco.setAlpha(2.0);
@@ -103,15 +103,15 @@ public class ACORunner implements Runner{
 //        aco.setQ0(0.9);
 //        aco.setWeight(30);
 //        aco.setWeight(6);
-//        aco.setStagnation(1000);
+        aco.setStagnation(1000);
 
         new ACORunner()
                 .withACO(aco)
                 .withInstance(instance)
                 .withDistanceFunction(new MulticriteriaDistanceFunction())
                 .withIteration(100)
-                .withVisualization(false)
-                .withDiversity(false, true)
+                .withVisualization(true)
+                .withDiversity(false, false, true)
                 .withOutput(new CSV("test.csv"))
                 .start();
 
