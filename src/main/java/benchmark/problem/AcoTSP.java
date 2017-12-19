@@ -1,5 +1,6 @@
 package benchmark.problem;
 
+import benchmark.stats.Diversity;
 import benchmark.visualization.Visualization;
 import thiagodnf.jacof.aco.ant.Ant;
 import thiagodnf.jacof.problem.Problem;
@@ -45,6 +46,7 @@ public class AcoTSP extends Problem {
     private Visualization visualization;
     private DistanceFunction distanceFunction;
     private TSPInstance tspInstance;
+    private Diversity diversity;
 
     public AcoTSP(String filename) throws IOException {
         this.filename = filename;
@@ -134,6 +136,18 @@ public class AcoTSP extends Problem {
         this.visualization = visualization;
     }
 
+    public Diversity getDiversity() {
+        return diversity;
+    }
+
+    public void setDiversity(Diversity diversity) {
+        this.diversity = diversity;
+    }
+
+    public String getProblemName() {
+        return tspInstance.getName();
+    }
+
     @Override
     public String toString() {
         return AcoTSP.class.getSimpleName();
@@ -176,12 +190,18 @@ public class AcoTSP extends Problem {
         return this;
     }
 
+    public AcoTSP withDiversity(Diversity diversity) {
+        this.diversity = diversity;
+        return this;
+    }
+
     public AcoTSP build() throws IOException {
         this.tspInstance = new TSPInstance(new File(filename), distanceFunction);
         numberOfCities = tspInstance.getDimension();
         distance = calculateDistanceMatrix(tspInstance.getDistanceTable());
 
         visualization.prepareVisualization(tspInstance);
+        diversity.prepareVisualization(this);
 
         NearestNeighbour nn = new NearestNeighbour();
 

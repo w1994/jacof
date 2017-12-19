@@ -2,6 +2,7 @@ package benchmark.runners;
 
 import benchmark.output.CSV;
 import benchmark.output.Output;
+import benchmark.stats.Diversity;
 import benchmark.visualization.Visualization;
 import thiagodnf.jacof.aco.*;
 import thiagodnf.jacof.problem.Problem;
@@ -21,6 +22,7 @@ public class ACORunner implements Runner{
     private Visualization visualization;
     private Output output;
     private DistanceFunction distanceFunction;
+    private Diversity diversity;
 
     public ACORunner withACO(ACO aco) {
         this.aco = aco;
@@ -57,10 +59,16 @@ public class ACORunner implements Runner{
         return this;
     }
 
+    public ACORunner withDiversity(boolean showPheromoneRatioChart, boolean showAttractivenessRationChart) {
+        this.diversity = new Diversity(aco, showPheromoneRatioChart, showAttractivenessRationChart);
+        return this;
+    }
+
     @Override
     public void start() throws IOException {
         Problem problem = new AcoTSP(instance).withDistanceFunction(distanceFunction)
                                               .withVisualization(this.visualization)
+                                              .withDiversity(this.diversity)
                                               .build();
 
         aco.setProblem(problem);
@@ -81,8 +89,12 @@ public class ACORunner implements Runner{
         String instance = "src/main/resources/problems/tsp/berlin52.tsp";
 //        String instance = "src/main/resources/problems/tsp/rat195.tsp";
 
-        MaxMinAntSystem aco = new MaxMinAntSystem();
+        AntSystem aco = new AntSystem();
+//        AntColonySystem aco = new AntColonySystem();
+//        ElitistAntSystem aco = new ElitistAntSystem();
 //        RankBasedAntSystem aco = new RankBasedAntSystem();
+//        MaxMinAntSystem aco = new MaxMinAntSystem();
+
         aco.setNumberOfAnts(100);
         aco.setAlpha(2.0);
         aco.setBeta(3.0);
@@ -91,14 +103,15 @@ public class ACORunner implements Runner{
 //        aco.setQ0(0.9);
 //        aco.setWeight(30);
 //        aco.setWeight(6);
-        aco.setStagnation(1000);
+//        aco.setStagnation(1000);
 
         new ACORunner()
                 .withACO(aco)
                 .withInstance(instance)
                 .withDistanceFunction(new MulticriteriaDistanceFunction())
                 .withIteration(100)
-                .withVisualization(true)
+                .withVisualization(false)
+                .withDiversity(false, true)
                 .withOutput(new CSV("test.csv"))
                 .start();
 

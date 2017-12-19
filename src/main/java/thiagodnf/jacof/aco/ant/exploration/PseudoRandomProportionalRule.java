@@ -39,6 +39,13 @@ public class PseudoRandomProportionalRule extends AbstractAntExploration {
 		return doExploration(ant, i);	
 	}
 
+	@Override
+	public double getNodeAttractiveness(int i, int j) {
+		double tau = Math.pow(aco.getGraph().getTau(i, j), aco.getAlpha());
+		double n = Math.pow(aco.getProblem().getNij(i, j), aco.getBeta());
+		return tau * n;
+	}
+
 	public int doExploration(Ant ant, int i) {
 		
 		int nextNode = -1;

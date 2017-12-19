@@ -53,6 +53,13 @@ public class QSelection extends PseudoRandomProportionalRule {
 		}
 	}
 
+	@Override
+	public double getNodeAttractiveness(int i, int j) {
+		double tau = aco.getGraph().getTau(i, j);
+		double n = Math.pow(aco.getProblem().getNij(i, j), aco.getBeta());
+		return tau * n;
+	}
+
 	protected int doExploitation(Ant ant, int i) {
 		int nextNode = -1;
 		

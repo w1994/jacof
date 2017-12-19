@@ -92,8 +92,6 @@ public abstract class ACO implements Observer {
 	/** The evaporation rate */
 	protected double rho;
 
-	protected Diversity diversity;
-
 	public ACO() {
 	}
 
@@ -169,8 +167,6 @@ public abstract class ACO implements Observer {
 	protected void initializeOther() {
 
 		LOGGER.debug("Initializing other attributes");
-
-		diversity = new Diversity(this);
 	}
 	
 	/**
@@ -250,9 +246,8 @@ public abstract class ACO implements Observer {
 			daemonAction.doAction();
 		}
 
-		diversity.update();
-
 		if(problem instanceof AcoTSP) {
+			((AcoTSP) problem).getDiversity().update();
 			((AcoTSP) problem).getVisualization().updateVisualization(it, globalBest, ants);
 		}
 	}
@@ -429,14 +424,6 @@ public abstract class ACO implements Observer {
 
 	public void setRho(double rho) {
 		this.rho = rho;
-	}
-
-	public Diversity getDiversity() {
-		return diversity;
-	}
-
-	public void setDiversity(Diversity diversity) {
-		this.diversity = diversity;
 	}
 
 	/**
