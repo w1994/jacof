@@ -82,6 +82,8 @@ public class MoeaRunner implements Runner{
 
     }
 
+
+
     @Override
     public MoeaRunner withVisualization(boolean enabled) {
         this.visualization = new Visualization(enabled);
@@ -152,9 +154,5 @@ public class MoeaRunner implements Runner{
                 .withVisualization(true)
                 .withOutput(new CSV("test.csv"))
                 .start();
-
-
     }
-
-
 }

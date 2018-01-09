@@ -161,7 +161,7 @@ public class AcoTSP extends Problem {
         // Add all nodes (or cities) less the start node
         for (int i = 0; i < getNumberOfNodes(); i++) {
             if (i != startingNode) {
-                nodesToVisit.add(new Integer(i));
+                nodesToVisit.add(i);
             }
         }
 
@@ -201,7 +201,7 @@ public class AcoTSP extends Problem {
         distance = calculateDistanceMatrix(tspInstance.getDistanceTable());
 
         visualization.prepareVisualization(tspInstance);
-        diversity.prepareVisualization(this);
+        //diversity.prepareVisualization(this);
 
         NearestNeighbour nn = new NearestNeighbour();
 

@@ -2,13 +2,18 @@ package benchmark.stats;
 
 import benchmark.problem.AcoTSP;
 import benchmark.visualization.chart.LineChart;
+import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import thiagodnf.jacof.aco.ACO;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Diversity {
+
+    private static final String CLASSIC_ANTS_PARAMETERS_TEMPLATE = "α=%s, β=%s, ρ=%s, ants=%s";
 
     private ACO aco;
     private LineChart lineChartPR;
@@ -17,7 +22,11 @@ public class Diversity {
     private boolean showPheromoneRatioChart;
     private boolean showAttractivenessDispersionChart;
     private boolean showAttractivenessRatioChart;
-    private long iteration;
+    private int iteration;
+
+    private Map<Integer, List<Double>> pheromoneRatios;
+    private Map<Integer, List<Double>> attractivenessDispersions;
+    private Map<Integer, List<Double>> attractivenessRatios;
 
     private double pheromoneRatio;
     private double attractivenessRatio;
@@ -28,6 +37,19 @@ public class Diversity {
         this.showPheromoneRatioChart = showPheromoneRatioChart;
         this.showAttractivenessDispersionChart = showAttractivenessDispersionChart;
         this.showAttractivenessRatioChart = showAttractivenessRatioChart;
+
+        initMultiRunDiversity();
+    }
+
+    private void initMultiRunDiversity() {
+        pheromoneRatios = new HashMap<>();
+        attractivenessDispersions = new HashMap<>();
+        attractivenessRatios = new HashMap<>();
+        for(int i=1; i <= 100; i++) {
+            pheromoneRatios.put(i, new ArrayList<>());
+            attractivenessDispersions.put(i, new ArrayList<>());
+            attractivenessRatios.put(i, new ArrayList<>());
+        }
     }
 
     public void prepareVisualization(AcoTSP acoTSP) {
@@ -49,22 +71,62 @@ public class Diversity {
         }
     }
 
-    private String getPRChartName() {
-        return String.format("Pheromone Ratio by Iterations\n%s", aco.getClass().getSimpleName());
+    public void initCharts() {
+        if(showPheromoneRatioChart) {
+            this.lineChartPR = new LineChart("berlin52", getPRChartName(), "Pheromone Ratio");
+        }
+        if(showAttractivenessDispersionChart) {
+            this.lineChartAD = new LineChart("berlin52", getADChartName(), "Attractiveness Dispersion");
+
+        }
+        if(showAttractivenessRatioChart) {
+            this.lineChartAR = new LineChart("berlin52", getARChartName(), "Attractiveness Ratio");
+        }
+
+        for(int i = 1; i <= aco.getNumberOfIterations(); i++) {
+            lineChartPR.update(getAverageForIteration(pheromoneRatios, i));
+            lineChartAD.update(getAverageForIteration(attractivenessDispersions, i));
+            lineChartAR.update(getAverageForIteration(attractivenessRatios, i));
+        }
+        lineChartPR.display();
+        lineChartAD.display();
+        lineChartAR.display();
     }
 
+    private double getAverageForIteration(Map<Integer, List<Double>> valuesMap, int iter) {
+        return valuesMap.get(iter).stream().mapToDouble(d -> d).average().getAsDouble();
+    }
+
+    private String getPRChartName() {
+        return String.format("Pheromone Ratio by Iterations\n%s", getAcoName());
+    }
     private String getADChartName() {
-        return String.format("Attractiveness Dispersion by Iterations\n%s", aco.getClass().getSimpleName());
+        return String.format("Attractiveness Dispersion by Iterations\n%s", getAcoName());
     }
     private String getARChartName() {
-        return String.format("Attractiveness Ratio by Iterations\n%s", aco.getClass().getSimpleName());
+        return String.format("Attractiveness Ratio by Iterations\n%s", getAcoName());
+    }
+
+    private String getAcoName() {
+        return aco.getClass().getSimpleName() +" "+ getClassicAntsParameters();
+    }
+
+    private String getClassicAntsParameters() {
+        return String.format(CLASSIC_ANTS_PARAMETERS_TEMPLATE, aco.getAlpha(), aco.getBeta(), aco.getRho(), aco.getAnts().length);
     }
 
     public void update() {
         iteration++;
+        if(nextLaunch()) {
+            iteration = 1;
+        }
         updatePheremoneRatio();
         updateAttractivenessDispersion();
         updateAttractivenessRatio();
+    }
+
+    public boolean nextLaunch() {
+        return iteration > aco.getNumberOfIterations();
     }
 
     private void updatePheremoneRatio() {
@@ -86,9 +148,10 @@ public class Diversity {
         }
 
         pheromoneRatio = ((double)countEdgesWithPheromone/countAllEdges)*100;
-        if(lineChartPR != null) {
-            lineChartPR.update(pheromoneRatio);
-        }
+        pheromoneRatios.get(iteration).add(pheromoneRatio);
+//        if(lineChartPR != null) {
+//            lineChartPR.update(pheromoneRatio);
+//        }
 
 //
 //        if(iteration == 0 || iteration == 1 || iteration == 5 || iteration == 20) {
@@ -137,9 +200,10 @@ public class Diversity {
         }
 
         StandardDeviation standardDeviation = new StandardDeviation();
-        if(lineChartAD != null) {
-            lineChartAD.update(standardDeviation.evaluate(pheromoneValues.stream().mapToDouble(i -> i).toArray()));
-        }
+        attractivenessDispersions.get(iteration).add(standardDeviation.evaluate(pheromoneValues.stream().mapToDouble(i -> i).toArray()));
+//        if(lineChartAD != null) {
+//            lineChartAD.update(standardDeviation.evaluate(pheromoneValues.stream().mapToDouble(i -> i).toArray()));
+//        }
 
     }
 
@@ -168,10 +232,11 @@ public class Diversity {
         double bestSolutionAttractivenessSum = bestSolutionValues.stream().mapToDouble(i -> i).sum();
         double otherSolutionsAttractivenessSum = otherSolutionValues.stream().mapToDouble(i -> i).sum();
         attractivenessRatio = 100 * (bestSolutionAttractivenessSum / otherSolutionsAttractivenessSum);
+        attractivenessRatios.get(iteration).add(attractivenessRatio);
 
-        if(lineChartAR != null) {
-            lineChartAR.update(attractivenessRatio);
-        }
+//        if(lineChartAR != null) {
+//            lineChartAR.update(attractivenessRatio);
+//        }
     }
 
     private double getNodeAttractiveness(int x, int y) {
@@ -192,5 +257,13 @@ public class Diversity {
 
     public void setAttractivenessRatio(double attractivenessRatio) {
         this.attractivenessRatio = attractivenessRatio;
+    }
+
+    public ACO getAco() {
+        return aco;
+    }
+
+    public void setAco(ACO aco) {
+        this.aco = aco;
     }
 }

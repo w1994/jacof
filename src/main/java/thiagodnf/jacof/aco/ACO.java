@@ -114,11 +114,11 @@ public abstract class ACO implements Observer {
 	 * @return the best solution found by the ants
 	 */
 	public int[] solve() {
-		
+
 		LOGGER.info("Starting ACO");
-		
+
 		build();
-		
+
 		printParameters();
 
 		initializePheromones();
@@ -130,7 +130,7 @@ public abstract class ACO implements Observer {
 			updatePheromones();
 			daemonActions(); // optional
 		}
-		
+
 		LOGGER.info("Done");
 
 		return globalBest.getSolution();
