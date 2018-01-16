@@ -2,25 +2,23 @@ package benchmark.runners;
 
 import benchmark.output.CSV;
 import benchmark.output.Output;
+import benchmark.problem.AcoTSP;
 import benchmark.stats.Diversity;
 import benchmark.visualization.Visualization;
+import benchmark.visualization.chart.ChartSeriesDTO;
 import thiagodnf.jacof.aco.*;
 import thiagodnf.jacof.problem.Problem;
-import benchmark.problem.AcoTSP;
 import thiagodnf.jacof.util.ExecutionStats;
 import tsplib.DistanceFunction;
-import tsplib.MulticriteriaDistanceFunction;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ACORunner implements Runner{
 
-    private static final int ITERATION_NUMBER = 1;
+    private static final int ITERATION_NUMBER = 10;
 
     private ACO aco;
     private String instance;
@@ -100,21 +98,9 @@ public class ACORunner implements Runner{
         String instance = "src/main/resources/problems/tsp/berlin52.tsp";
 //        String instance = "src/main/resources/problems/tsp/rat195.tsp";
 
-        for(double alpha = 0; alpha <= 5; alpha+=1) {
-            runAntSystem(instance, alpha, 3.0, 0.01, 100);
-        }
 
-        for(double beta = 0; beta <= 5; beta+=1) {
-            runAntSystem(instance, 2.0, beta, 0.01, 100);
-        }
-
-        for(double rho = 0.01; rho <= 0.2; rho+=0.04) {
-            runAntSystem(instance, 2.0, 3.0, rho, 100);
-        }
-
-        for(int antNumber = 5; antNumber <= 100; antNumber+=15) {
-            runAntSystem(instance, 2.0, 3.0, 0.01, antNumber);
-        }
+//
+        runClassicAntParamComparision(instance);
 
 
 
@@ -131,7 +117,77 @@ public class ACORunner implements Runner{
 
     }
 
-    private static void runAntSystem(String instance, double alpha, double beta, double rho, int antNumber) throws IOException {
+    private static void runClassicAntParamComparision(String instance) throws IOException {
+        runAntSystemAlpha(instance);
+        runAntSystemBeta(instance);
+        runAntSystemRho(instance);
+        runAntSystemAnts(instance);
+    }
+
+    private static void runAntSystemAlpha(String instance) throws IOException {
+        List<ChartSeriesDTO> chartSeriesDTOList = new ArrayList<>();
+        ChartSeriesDTO chartSeriesDTO;
+        AntSystem antSystem = new AntSystem();
+        Diversity diversity = new Diversity(antSystem, true, true, true);
+
+        for(double alpha = 0; alpha <= 5; alpha+=1) {
+            chartSeriesDTO = runAntSystem(instance, alpha, 3.0, 0.01, 100);
+            chartSeriesDTO.setLabel(String.format("α=%s", alpha));
+            chartSeriesDTOList.add(chartSeriesDTO);
+        }
+
+        diversity.setManualParameterString(String.format(Diversity.CLASSIC_ANTS_PARAMETERS_TEMPLATE, "0-5", 3.0, 0.01, 100));
+        diversity.displayMultiLineChart(chartSeriesDTOList);
+    }
+
+    private static void runAntSystemBeta(String instance) throws IOException {
+        List<ChartSeriesDTO> chartSeriesDTOList = new ArrayList<>();
+        ChartSeriesDTO chartSeriesDTO;
+        AntSystem antSystem = new AntSystem();
+        Diversity diversity = new Diversity(antSystem, true, true, true);
+
+        for(double beta = 0; beta <= 5; beta+=1) {
+            chartSeriesDTO = runAntSystem(instance, 2.0, beta, 0.01, 100);
+            chartSeriesDTO.setLabel(String.format("β=%s", beta));
+            chartSeriesDTOList.add(chartSeriesDTO);
+        }
+
+        diversity.setManualParameterString(String.format(Diversity.CLASSIC_ANTS_PARAMETERS_TEMPLATE, 2.0, "0-5", 0.01, 100));
+        diversity.displayMultiLineChart(chartSeriesDTOList);
+    }
+
+    private static void runAntSystemRho(String instance) throws IOException {
+        List<ChartSeriesDTO> chartSeriesDTOList = new ArrayList<>();
+        ChartSeriesDTO chartSeriesDTO;
+        AntSystem antSystem = new AntSystem();
+        Diversity diversity = new Diversity(antSystem, true, true, true);
+
+        for(double rho = 0.01; rho <= 0.2; rho+=0.04) {
+            chartSeriesDTO = runAntSystem(instance, 2.0, 3.0, rho, 100);
+            chartSeriesDTO.setLabel(String.format("ρ=%s", rho));
+            chartSeriesDTOList.add(chartSeriesDTO);
+        }
+
+        diversity.setManualParameterString(String.format(Diversity.CLASSIC_ANTS_PARAMETERS_TEMPLATE, 2.0, 3.0, "0.01-0.17", 100));
+        diversity.displayMultiLineChart(chartSeriesDTOList);
+    }
+
+    private static void runAntSystemAnts(String instance) throws IOException {
+        List<ChartSeriesDTO> chartSeriesDTOList = new ArrayList<>();
+        ChartSeriesDTO chartSeriesDTO;
+        AntSystem antSystem = new AntSystem();
+        Diversity diversity = new Diversity(antSystem, true, true, true);
+
+        for(int antNumber = 5; antNumber <= 100; antNumber+=15) {
+            chartSeriesDTO = runAntSystem(instance, 2.0, 3.0, 0.01, antNumber);
+            chartSeriesDTO.setLabel(String.format("ants=%s", antNumber));
+            chartSeriesDTOList.add(chartSeriesDTO);
+        }
+
+        diversity.setManualParameterString(String.format(Diversity.CLASSIC_ANTS_PARAMETERS_TEMPLATE, 2.0, 3.0, 0.01, "5-95"));
+        diversity.displayMultiLineChart(chartSeriesDTOList);
+    }
+    private static ChartSeriesDTO runAntSystem(String instance, double alpha, double beta, double rho, int antNumber) throws IOException {
 
         Diversity multiIterationDiversity = new Diversity(null, true, true, true);
         for(int i = 0; i < ITERATION_NUMBER; i++) {
@@ -146,7 +202,6 @@ public class ACORunner implements Runner{
             new ACORunner()
                     .withACO(antSystem)
                     .withInstance(instance)
-                    .withDistanceFunction(new MulticriteriaDistanceFunction())
                     .withIteration(100)
                     .withVisualization(false)
                     .withDiversity(multiIterationDiversity)
@@ -154,7 +209,7 @@ public class ACORunner implements Runner{
                     .start();
         }
 
-        multiIterationDiversity.initCharts();
+        return multiIterationDiversity.getChartsSeries();
     }
     private static void runAntColonySystem(String instance) throws IOException {
 
@@ -172,7 +227,6 @@ public class ACORunner implements Runner{
             new ACORunner()
                     .withACO(antColonySystem)
                     .withInstance(instance)
-                    .withDistanceFunction(new MulticriteriaDistanceFunction())
                     .withIteration(100)
                     .withVisualization(false)
                     .withDiversity(multiIterationDiversity)
@@ -198,7 +252,6 @@ public class ACORunner implements Runner{
             new ACORunner()
                     .withACO(elitistAntSystem)
                     .withInstance(instance)
-                    .withDistanceFunction(new MulticriteriaDistanceFunction())
                     .withIteration(100)
                     .withVisualization(false)
                     .withDiversity(multiIterationDiversity)
@@ -224,7 +277,6 @@ public class ACORunner implements Runner{
             new ACORunner()
                     .withACO(rankBasedAntSystem)
                     .withInstance(instance)
-                    .withDistanceFunction(new MulticriteriaDistanceFunction())
                     .withIteration(100)
                     .withVisualization(false)
                     .withDiversity(multiIterationDiversity)
@@ -250,7 +302,6 @@ public class ACORunner implements Runner{
             new ACORunner()
                     .withACO(maxMinAntSystem)
                     .withInstance(instance)
-                    .withDistanceFunction(new MulticriteriaDistanceFunction())
                     .withIteration(100)
                     .withVisualization(false)
                     .withDiversity(multiIterationDiversity)

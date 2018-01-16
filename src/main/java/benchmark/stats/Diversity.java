@@ -1,9 +1,10 @@
 package benchmark.stats;
 
 import benchmark.problem.AcoTSP;
+import benchmark.visualization.chart.ChartSeriesDTO;
 import benchmark.visualization.chart.LineChart;
-import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
+import org.jfree.data.xy.XYSeries;
 import thiagodnf.jacof.aco.ACO;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 public class Diversity {
 
-    private static final String CLASSIC_ANTS_PARAMETERS_TEMPLATE = "α=%s, β=%s, ρ=%s, ants=%s";
+    public static final String CLASSIC_ANTS_PARAMETERS_TEMPLATE = "α=%s, β=%s, ρ=%s, ants=%s";
 
     private ACO aco;
     private LineChart lineChartPR;
@@ -23,6 +24,7 @@ public class Diversity {
     private boolean showAttractivenessDispersionChart;
     private boolean showAttractivenessRatioChart;
     private int iteration;
+    private String manualParameterString;
 
     private Map<Integer, List<Double>> pheromoneRatios;
     private Map<Integer, List<Double>> attractivenessDispersions;
@@ -72,22 +74,77 @@ public class Diversity {
     }
 
     public void initCharts() {
-        if(showPheromoneRatioChart) {
-            this.lineChartPR = new LineChart("berlin52", getPRChartName(), "Pheromone Ratio");
-        }
-        if(showAttractivenessDispersionChart) {
-            this.lineChartAD = new LineChart("berlin52", getADChartName(), "Attractiveness Dispersion");
+        prepareCharts();
+        displayCharts();
+    }
 
-        }
-        if(showAttractivenessRatioChart) {
-            this.lineChartAR = new LineChart("berlin52", getARChartName(), "Attractiveness Ratio");
-        }
+    public ChartSeriesDTO getChartsSeries() {
+        prepareCharts();
+        ChartSeriesDTO toRet = new ChartSeriesDTO();
+        toRet.setChartSeriesPR(lineChartPR.getSeries());
+        toRet.setChartSeriesAD(lineChartAD.getSeries());
+        toRet.setChartSeriesAR(lineChartAR.getSeries());
+        return toRet;
+    }
 
+    public void displayMultiLineChart(List<ChartSeriesDTO> chartSeriesDTOs) {
+        createAndNameCharts();
+        clearChartsDatasets();
+        for(ChartSeriesDTO chartSeriesDTO: chartSeriesDTOs) {
+            lineChartPR.addDataSet(getPRChartSeries(chartSeriesDTO));
+            lineChartAD.addDataSet(getADChartSeries(chartSeriesDTO));
+            lineChartAR.addDataSet(getARChartSeries(chartSeriesDTO));
+        }
+        displayCharts();
+    }
+
+    private XYSeries getPRChartSeries(ChartSeriesDTO chartSeriesDTO) {
+        chartSeriesDTO.getChartSeriesPR().setKey(chartSeriesDTO.getLabel());
+        return chartSeriesDTO.getChartSeriesPR();
+    }
+
+    private XYSeries getADChartSeries(ChartSeriesDTO chartSeriesDTO) {
+        chartSeriesDTO.getChartSeriesAD().setKey(chartSeriesDTO.getLabel());
+        return chartSeriesDTO.getChartSeriesAD();
+    }
+
+    private XYSeries getARChartSeries(ChartSeriesDTO chartSeriesDTO) {
+        chartSeriesDTO.getChartSeriesAR().setKey(chartSeriesDTO.getLabel());
+        return chartSeriesDTO.getChartSeriesAR();
+    }
+
+    private void prepareCharts() {
+        createAndNameCharts();
+        populateChartsWithValues();
+    }
+
+    private void populateChartsWithValues() {
         for(int i = 1; i <= aco.getNumberOfIterations(); i++) {
             lineChartPR.update(getAverageForIteration(pheromoneRatios, i));
             lineChartAD.update(getAverageForIteration(attractivenessDispersions, i));
             lineChartAR.update(getAverageForIteration(attractivenessRatios, i));
         }
+    }
+
+    private void createAndNameCharts() {
+        if(showPheromoneRatioChart) {
+            this.lineChartPR = new LineChart("berlin52", getPRChartName(), "Pheromone Ratio");
+        }
+        if(showAttractivenessDispersionChart) {
+            this.lineChartAD = new LineChart("berlin52", getADChartName(), "Attractiveness Dispersion");
+        }
+        if(showAttractivenessRatioChart) {
+            this.lineChartAR = new LineChart("berlin52", getARChartName(), "Attractiveness Ratio");
+        }
+    }
+
+    private void clearChartsDatasets() {
+        this.lineChartPR.clearDataset();
+        this.lineChartAD.clearDataset();
+        this.lineChartAR.clearDataset();
+    }
+
+    private void displayCharts() {
         lineChartPR.display();
         lineChartAD.display();
         lineChartAR.display();
@@ -112,6 +169,9 @@ public class Diversity {
     }
 
     private String getClassicAntsParameters() {
+        if(manualParameterString != null) {
+            return manualParameterString;
+        }
         return String.format(CLASSIC_ANTS_PARAMETERS_TEMPLATE, aco.getAlpha(), aco.getBeta(), aco.getRho(), aco.getAnts().length);
     }
 
@@ -265,5 +325,13 @@ public class Diversity {
 
     public void setAco(ACO aco) {
         this.aco = aco;
+    }
+
+    public String getManualParameterString() {
+        return manualParameterString;
+    }
+
+    public void setManualParameterString(String manualParameterString) {
+        this.manualParameterString = manualParameterString;
     }
 }
