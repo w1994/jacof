@@ -18,7 +18,7 @@ import java.util.List;
 
 public class ACORunner implements Runner{
 
-    private static final int ITERATION_NUMBER = 10;
+    private static final int RUN_NUMBER = 3;
 
     private ACO aco;
     private String instance;
@@ -100,7 +100,9 @@ public class ACORunner implements Runner{
 
 
 //
-        runClassicAntParamComparision(instance);
+//        runClassicAntParamComparision(instance);
+
+        runAntSystemWithSingleSeriesChart(instance, 2.0, 3.0, 0.01, 100);
 
 
 
@@ -187,34 +189,49 @@ public class ACORunner implements Runner{
         diversity.setManualParameterString(String.format(Diversity.CLASSIC_ANTS_PARAMETERS_TEMPLATE, 2.0, 3.0, 0.01, "5-95"));
         diversity.displayMultiLineChart(chartSeriesDTOList);
     }
+
     private static ChartSeriesDTO runAntSystem(String instance, double alpha, double beta, double rho, int antNumber) throws IOException {
 
-        Diversity multiIterationDiversity = new Diversity(null, true, true, true);
-        for(int i = 0; i < ITERATION_NUMBER; i++) {
-            AntSystem antSystem = new AntSystem();
-
-            antSystem.setNumberOfAnts(antNumber);
-            antSystem.setAlpha(alpha);
-            antSystem.setBeta(beta);
-            antSystem.setRho(rho);
-            antSystem.setNumberOfIterations(100);
-            multiIterationDiversity.setAco(antSystem);
-            new ACORunner()
-                    .withACO(antSystem)
-                    .withInstance(instance)
-                    .withIteration(100)
-                    .withVisualization(false)
-                    .withDiversity(multiIterationDiversity)
-                    .withOutput(new CSV("test.csv"))
-                    .start();
+        Diversity multiRunDiversity = new Diversity(null, true, true, true);
+        for(int i = 0; i < RUN_NUMBER; i++) {
+            executeAntSystemRun(instance, alpha, beta, rho, antNumber, multiRunDiversity);
         }
 
-        return multiIterationDiversity.getChartsSeries();
+        return multiRunDiversity.getChartsSeries();
     }
+
+    private static void runAntSystemWithSingleSeriesChart(String instance, double alpha, double beta, double rho, int antNumber) throws IOException {
+
+        Diversity multiRunDiversity = new Diversity(null, true, true, true);
+        for(int i = 0; i < RUN_NUMBER; i++) {
+            executeAntSystemRun(instance, alpha, beta, rho, antNumber, multiRunDiversity);
+        }
+        multiRunDiversity.initCharts();
+    }
+
+    private static void executeAntSystemRun(String instance, double alpha, double beta, double rho, int antNumber, Diversity multiRunDiversity) throws IOException {
+        AntSystem antSystem = new AntSystem();
+
+        antSystem.setNumberOfAnts(antNumber);
+        antSystem.setAlpha(alpha);
+        antSystem.setBeta(beta);
+        antSystem.setRho(rho);
+        antSystem.setNumberOfIterations(100);
+        multiRunDiversity.setAco(antSystem);
+        new ACORunner()
+                .withACO(antSystem)
+                .withInstance(instance)
+                .withIteration(100)
+                .withVisualization(false)
+                .withDiversity(multiRunDiversity)
+                .withOutput(new CSV("test.csv"))
+                .start();
+    }
+
     private static void runAntColonySystem(String instance) throws IOException {
 
-        Diversity multiIterationDiversity = new Diversity(null, true, true, true);
-        for(int i = 0; i < ITERATION_NUMBER; i++) {
+        Diversity multiRunDiversity = new Diversity(null, true, true, true);
+        for(int i = 0; i < RUN_NUMBER; i++) {
             AntColonySystem antColonySystem = new AntColonySystem();
             antColonySystem.setNumberOfAnts(100);
             antColonySystem.setAlpha(2.0);
@@ -223,24 +240,24 @@ public class ACORunner implements Runner{
             antColonySystem.setNumberOfIterations(100);
             antColonySystem.setOmega(0.1);
             antColonySystem.setQ0(0.9);
-            multiIterationDiversity.setAco(antColonySystem);
+            multiRunDiversity.setAco(antColonySystem);
             new ACORunner()
                     .withACO(antColonySystem)
                     .withInstance(instance)
                     .withIteration(100)
                     .withVisualization(false)
-                    .withDiversity(multiIterationDiversity)
+                    .withDiversity(multiRunDiversity)
                     .withOutput(new CSV("test.csv"))
                     .start();
         }
 
-        multiIterationDiversity.initCharts();
+        multiRunDiversity.initCharts();
     }
 
     private static void runElitistAntSystem(String instance) throws IOException {
 
-        Diversity multiIterationDiversity = new Diversity(null, true, true, true);
-        for(int i = 0; i < ITERATION_NUMBER; i++) {
+        Diversity multiRunDiversity = new Diversity(null, true, true, true);
+        for(int i = 0; i < RUN_NUMBER; i++) {
             ElitistAntSystem elitistAntSystem = new ElitistAntSystem();
             elitistAntSystem.setNumberOfAnts(100);
             elitistAntSystem.setAlpha(2.0);
@@ -248,24 +265,24 @@ public class ACORunner implements Runner{
             elitistAntSystem.setRho(0.01);
             elitistAntSystem.setNumberOfIterations(100);
             elitistAntSystem.setWeight(30);
-            multiIterationDiversity.setAco(elitistAntSystem);
+            multiRunDiversity.setAco(elitistAntSystem);
             new ACORunner()
                     .withACO(elitistAntSystem)
                     .withInstance(instance)
                     .withIteration(100)
                     .withVisualization(false)
-                    .withDiversity(multiIterationDiversity)
+                    .withDiversity(multiRunDiversity)
                     .withOutput(new CSV("test.csv"))
                     .start();
         }
 
-        multiIterationDiversity.initCharts();
+        multiRunDiversity.initCharts();
     }
 
     private static void runRankBasedAntSystem(String instance) throws IOException {
 
-        Diversity multiIterationDiversity = new Diversity(null, true, true, true);
-        for(int i = 0; i < ITERATION_NUMBER; i++) {
+        Diversity multiRunDiversity = new Diversity(null, true, true, true);
+        for(int i = 0; i < RUN_NUMBER; i++) {
             RankBasedAntSystem rankBasedAntSystem = new RankBasedAntSystem();
             rankBasedAntSystem.setNumberOfAnts(100);
             rankBasedAntSystem.setAlpha(2.0);
@@ -273,24 +290,24 @@ public class ACORunner implements Runner{
             rankBasedAntSystem.setRho(0.01);
             rankBasedAntSystem.setNumberOfIterations(100);
             rankBasedAntSystem.setWeight(6);
-            multiIterationDiversity.setAco(rankBasedAntSystem);
+            multiRunDiversity.setAco(rankBasedAntSystem);
             new ACORunner()
                     .withACO(rankBasedAntSystem)
                     .withInstance(instance)
                     .withIteration(100)
                     .withVisualization(false)
-                    .withDiversity(multiIterationDiversity)
+                    .withDiversity(multiRunDiversity)
                     .withOutput(new CSV("test.csv"))
                     .start();
         }
 
-        multiIterationDiversity.initCharts();
+        multiRunDiversity.initCharts();
     }
 
     private static void runMaxMinAntSystem(String instance) throws IOException {
 
-        Diversity multiIterationDiversity = new Diversity(null, true, true, true);
-        for(int i = 0; i < ITERATION_NUMBER; i++) {
+        Diversity multiRunDiversity = new Diversity(null, true, true, true);
+        for(int i = 0; i < RUN_NUMBER; i++) {
             MaxMinAntSystem maxMinAntSystem = new MaxMinAntSystem();
             maxMinAntSystem.setNumberOfAnts(100);
             maxMinAntSystem.setAlpha(2.0);
@@ -298,17 +315,17 @@ public class ACORunner implements Runner{
             maxMinAntSystem.setRho(0.01);
             maxMinAntSystem.setNumberOfIterations(100);
             maxMinAntSystem.setStagnation(1000);
-            multiIterationDiversity.setAco(maxMinAntSystem);
+            multiRunDiversity.setAco(maxMinAntSystem);
             new ACORunner()
                     .withACO(maxMinAntSystem)
                     .withInstance(instance)
                     .withIteration(100)
                     .withVisualization(false)
-                    .withDiversity(multiIterationDiversity)
+                    .withDiversity(multiRunDiversity)
                     .withOutput(new CSV("test.csv"))
                     .start();
         }
 
-        multiIterationDiversity.initCharts();
+        multiRunDiversity.initCharts();
     }
 }
