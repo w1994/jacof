@@ -3,9 +3,6 @@ package tsplib;
 import org.apache.log4j.Logger;
 import thiagodnf.jacof.aco.ACO;
 
-/**
- * Created by wojci on 18.11.2017.
- */
 public class MulticriteriaDistanceFunction extends DistanceFunction {
 
     static final Logger LOGGER = Logger.getLogger(ACO.class);

@@ -12,7 +12,6 @@ import thiagodnf.jacof.aco.rule.globalupdate.deposit.anttypebased.AntTypeBasedDe
 import thiagodnf.jacof.aco.rule.globalupdate.evaporation.AbstractEvaporation;
 import thiagodnf.jacof.aco.rule.globalupdate.evaporation.anttypebased.AntTypeBasedEvaporation;
 import thiagodnf.jacof.aco.rule.localupdate.AbstractLocalUpdateRule;
-import thiagodnf.jacof.problem.MultiobjectiveProblem;
 import thiagodnf.jacof.problem.Problem;
 import benchmark.problem.AcoTSP;
 
@@ -81,8 +80,6 @@ public abstract class ACO implements Observer {
 
     protected GlobalBestRepository globalBestRepository = new GlobalBestRepository();
 
-    protected GlobalBestNondominatedRepository globalBestNondominatedRepository = new GlobalBestNondominatedRepository();
-
     /**
      * Best Current Ant in tour
      */
@@ -92,8 +89,6 @@ public abstract class ACO implements Observer {
      * The addressed problem
      */
     protected Problem problem;
-
-    protected MultiobjectiveProblem multiobjectiveProblem;
 
     protected Integer numberOfNodes = 0;
 
@@ -306,9 +301,9 @@ public abstract class ACO implements Observer {
         }
 
         if (problem instanceof AcoTSP) {
-            ((AcoTSP) problem).getDiversity().update();
+//            ((AcoTSP) problem).getDiversity().update();
             ((AcoTSP) problem).getVisualization().updateVisualization(it, globalBest, ants);
-            ((AcoTSP) problem).getPerformance().update(((AcoTSP) problem).getAcoName(), it, globalBest.getTourLength());
+//            ((AcoTSP) problem).getPerformance().update(((AcoTSP) problem).getAcoName(), it, globalBest.getTourLength());
         }
     }
 
@@ -322,65 +317,35 @@ public abstract class ACO implements Observer {
         Ant ant = (Ant) obj;
 
         // Calculate the fitness function for the found solution
-        if (problem != null) {
 
-            ant.setTourLength(problem.evaluate(ant.getSolution()));
-            // Update the current best solution
-            if (currentBest == null || problem.better(ant.getTourLength(), currentBest.getTourLength())) {
-                currentBest = ant.clone();
-            }
 
-            // Update the global best solution
-            if (globalBest == null || problem.better(ant.getTourLength(), globalBest.getTourLength())) {
-                globalBest = ant.clone();
-                globalBestRepository.addGlobalBest(globalBest);
+        ant.setTourLength(problem.evaluate(ant.getSolution()));
+        // Update the current best solution
+        if (currentBest == null || problem.better(ant.getTourLength(), currentBest.getTourLength())) {
+            currentBest = ant.clone();
+        }
 
-            }
-
-            LOGGER.debug(ant);
-
-            // Verify if all ants have finished their search
-            if (++finishedAnts == numberOfAnts) {
-                // Restart the counter to build the solutions again
-                finishedAnts = 0;
-
-                LOGGER.debug("Current-best: " + currentBest);
-                LOGGER.info("Global-best: " + globalBest);
-
-                // Continue all execution
-                notify();
-            }
-        } else {
-            ant.setTourLength(multiobjectiveProblem.evaluate(ant.getId() % 2, ant.getSolution()));
-
-            globalBestNondominatedRepository.addGlobalBest(multiobjectiveProblem, ant);
-
-            // Update the current best solution
-            if (currentBest == null || multiobjectiveProblem.better(ant.getId() % 2, ant.getTourLength(), currentBest.getTourLength())) {
-                currentBest = ant.clone();
-            }
-
-            // Update the global best solution
-            if (globalBest == null || multiobjectiveProblem.better(ant.getId() % 2, ant.getTourLength(), globalBest.getTourLength())) {
-                globalBest = ant.clone();
-                globalBestRepository.addGlobalBest(globalBest);
-            }
-
-            LOGGER.debug(ant);
-
-            // Verify if all ants have finished their search
-            if (++finishedAnts == numberOfAnts) {
-                // Restart the counter to build the solutions again
-                finishedAnts = 0;
-
-                LOGGER.debug("Current-best: " + currentBest);
-                LOGGER.info("Global-best: " + globalBest);
-
-                // Continue all execution
-                notify();
-            }
+        // Update the global best solution
+        if (globalBest == null || problem.better(ant.getTourLength(), globalBest.getTourLength())) {
+            globalBest = ant.clone();
+            globalBestRepository.addGlobalBest(globalBest);
 
         }
+
+        LOGGER.debug(ant);
+
+        // Verify if all ants have finished their search
+        if (++finishedAnts == numberOfAnts) {
+            // Restart the counter to build the solutions again
+            finishedAnts = 0;
+
+            LOGGER.debug("Current-best: " + currentBest);
+            LOGGER.info("Global-best: " + globalBest);
+
+            // Continue all execution
+            notify();
+        }
+
     }
 
     public double getAlpha() {
@@ -430,16 +395,6 @@ public abstract class ACO implements Observer {
     public void setProblem(Problem problem) {
         this.problem = problem;
         this.numberOfNodes = problem.getNumberOfNodes();
-        this.graph = new AntGraph(problem);
-    }
-
-    public MultiobjectiveProblem getMultiobjectiveProblem() {
-        return multiobjectiveProblem;
-    }
-
-    public void setMultiobjectiveProblem(MultiobjectiveProblem problem) {
-        this.multiobjectiveProblem = problem;
-        this.numberOfNodes = multiobjectiveProblem.getNumberOfNodes(0);
         this.graph = new AntGraph(problem);
     }
 
@@ -553,14 +508,6 @@ public abstract class ACO implements Observer {
 
     public double getRho() {
         return rho;
-    }
-
-    public GlobalBestNondominatedRepository getGlobalBestNondominatedRepository() {
-        return globalBestNondominatedRepository;
-    }
-
-    public void setGlobalBestNondominatedRepository(GlobalBestNondominatedRepository globalBestNondominatedRepository) {
-        this.globalBestNondominatedRepository = globalBestNondominatedRepository;
     }
 
     public void setRho(double rho) {

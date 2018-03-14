@@ -1,21 +1,21 @@
-package thiagodnf.jacof.aco.ant.exploration;
+package thiagodnf.jacof.aco.ant.exploration.anttypebased;
 
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.Ant;
-import thiagodnf.jacof.aco.ant.ScAnt;
+import thiagodnf.jacof.aco.ant.exploration.AbstractAntExploration;
 import thiagodnf.jacof.aco.ant.selection.AbstractAntSelection;
 import thiagodnf.jacof.aco.graph.AntType;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class BasedOnTypeExploration extends AbstractAntExploration{
+public class AntTypeBasedExploration extends AbstractAntExploration {
 
     private Map<AntType, AbstractAntExploration> antExplorationMap = new HashMap<>();
 
-    public BasedOnTypeExploration(ACO aco, AbstractAntSelection antSelection) {
+    public AntTypeBasedExploration(ACO aco, AbstractAntSelection antSelection) {
         super(aco, antSelection);
-        antExplorationMap.put(AntType.A, new AttractiveOffensiveExploration(aco, antSelection));
+        antExplorationMap.put(AntType.A, new TypeBasedPseudoRandomProportionalRule(aco, antSelection));
         antExplorationMap.put(AntType.B, new TypeBasedPseudoRandomProportionalRule(aco, antSelection));
         antExplorationMap.put(AntType.C, new TypeBasedPseudoRandomProportionalRule(aco, antSelection));
     }

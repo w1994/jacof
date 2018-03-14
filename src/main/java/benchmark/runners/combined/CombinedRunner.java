@@ -7,9 +7,6 @@ import benchmark.visualization.Visualization;
 import tsplib.AlgorithmName;
 import tsplib.MulticriteriaDistanceFunction;
 
-/**
- * Created by wojci on 10.12.2017.
- */
 public class CombinedRunner {
 
     public static void main(String[] args) {

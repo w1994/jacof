@@ -63,7 +63,7 @@ public class ACORunner implements Runner{
     }
 
     @Override
-    public ACORunner withInstance(String instance0) {
+    public ACORunner withInstance(String instance) {
         this.instance = instance;
         return this;
     }
@@ -111,7 +111,7 @@ public class ACORunner implements Runner{
 
 //        String instance = "src/main/resources/problems/tsp/a280.tsp";
         String instance = "src/main/resources/problems/tsp/berlin52.tsp";
-        String instance2 = "src/main/resources/problems/tsp/berlin52.tsp";
+//        String instance2 = "src/main/resources/problems/tsp/berlin52.tsp";
 
 //        String instance = "src/main/resources/problems/tsp/rat195.tsp";
 
@@ -165,7 +165,7 @@ public class ACORunner implements Runner{
             new ACORunner()
                     .withACO(antSystem)
                     .withAcoName("AntSystem")
-                    .withInstance(instance, instance2)
+                    .withInstance(instance)
                     .withIteration(100)
                     .withVisualization(false)
                     .withDiversity(false, false, false)

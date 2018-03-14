@@ -16,9 +16,6 @@ public class ScAnt extends Ant{
 
     protected AbstractAntExploration antExploration;
     protected AbstractLocalUpdateRule antLocalUpdate;
-    protected Map<AntType,AbstractDeposit> depositBasedOnAntType = new HashMap<>();
-    protected Map<AntType, AbstractEvaporation> evaporationBasedOnAntType = new HashMap<>();
-
 
     public ScAnt(AntType antType, ACO aco, int id) {
         super(aco, id, antType);
@@ -49,7 +46,7 @@ public class ScAnt extends Ant{
             path[nextNode][currentNode] = 1;
 
             // update the list of the nodes to visit
-            nodesToVisit = aco.getMultiobjectiveProblem().updateNodesToVisit(tour, nodesToVisit);
+            nodesToVisit = aco.getProblem().updateNodesToVisit(tour, nodesToVisit);
 
             // Define the next node as current node
             currentNode = nextNode;
@@ -70,22 +67,6 @@ public class ScAnt extends Ant{
 
     public void setAntLocalUpdate(AbstractLocalUpdateRule antLocalUpdate) {
         this.antLocalUpdate = antLocalUpdate;
-    }
-
-    public AbstractDeposit getDeposit(AntType antType) {
-        return depositBasedOnAntType.get(antType);
-    }
-
-    public void setDeposit(AntType antType, AbstractDeposit deposit) {
-        this.depositBasedOnAntType.put(antType, deposit);
-    }
-
-    public AbstractEvaporation getEvaporation(AntType antType) {
-        return evaporationBasedOnAntType.get(antType);
-    }
-
-    public void setEvaporation(AntType antType, AbstractEvaporation evaporation) {
-        this.evaporationBasedOnAntType.put(antType, evaporation);
     }
 
     @Override

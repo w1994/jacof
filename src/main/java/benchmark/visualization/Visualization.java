@@ -22,9 +22,6 @@ import java.util.List;
 import static java.awt.Color.lightGray;
 import static tsplib.Tour.toTour;
 
-/**
- * Created by wojci on 28.10.2017.
- */
 public class Visualization {
 
     private boolean enable;

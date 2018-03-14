@@ -20,13 +20,8 @@ public class PartialDeposit extends AbstractDeposit {
 
 	@Override
 	public double getTheNewValue(int i, int j) {
-		if(aco.isUseGlobalRepository()) {
-			return aco.getGraph().getTau(i, j) + rate * getDeltaTau(i, j) + aco.getGlobalBestRepository().getDeltaTau(i, j);
-		} else {
-			return aco.getGraph().getTau(i, j) + rate * getDeltaTau(i, j);
-		}
+		return aco.getGraph().getTau(i, j) + rate * getDeltaTau(i, j);
 	}
-
 
 	public double getDeltaTau(int i, int j) {
 
@@ -34,7 +29,7 @@ public class PartialDeposit extends AbstractDeposit {
 
 		for (Ant ant : subSet.getSubSet()) {
 			if (ant.path[i][j] == 1) {
-				deltaTau += aco.getMultiobjectiveProblem().getDeltaTau(ant.getId() %2, ant.getTourLength(), i, j);
+				deltaTau += aco.getProblem().getDeltaTau(ant.getTourLength(), i, j);
 			}
 		}
 

@@ -40,7 +40,7 @@ public class ScAntSystem extends ACO {
     @Override
     public void build() {
         setGraphInitialization(new FixedValueInitialization(this));
-        setEvaporation(new AntTypeBasedEvaporation(this, 1.0));
+        setEvaporation(new AntTypeBasedEvaporation(this, 0.01));
         setDeposit(new AntTypeBasedDeposit(this, 1.0));
     }
 

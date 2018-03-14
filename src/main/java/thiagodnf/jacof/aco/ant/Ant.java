@@ -76,7 +76,7 @@ public class Ant extends Observable implements Runnable{
 		this.currentNode = antInitialization.getPosition(id);
 		this.tourLength = 0.0;
 		this.tour.clear();
-		this.nodesToVisit = aco.getMultiobjectiveProblem().initNodesToVisit(id%2, this.currentNode);
+		this.nodesToVisit = aco.getProblem().initNodesToVisit(this.currentNode);
 		this.tour.add(new Integer(currentNode));
 		this.path = new int[aco.getNumberOfNodes()][aco.getNumberOfNodes()];
 	}
@@ -116,7 +116,7 @@ public class Ant extends Observable implements Runnable{
 			path[nextNode][currentNode] = 1;
 
 			// update the list of the nodes to visit
-			nodesToVisit = aco.getMultiobjectiveProblem().updateNodesToVisit(tour, nodesToVisit);
+			nodesToVisit = aco.getProblem().updateNodesToVisit(tour, nodesToVisit);
 
 			// Define the next node as current node
 			currentNode = nextNode;
@@ -145,7 +145,8 @@ public class Ant extends Observable implements Runnable{
 		ant.nodesToVisit = new ArrayList<>(nodesToVisit);
 		ant.antInitialization = antInitialization;
 		ant.path = path.clone();
-		
+		ant.antType = antType;
+
 		return ant;
 	}
 	
@@ -190,6 +191,6 @@ public class Ant extends Observable implements Runnable{
 	 */
 	@Override
 	public String toString() {
-		return "Ant_" + id + " " + tourLength + " " + tour;
+		return "Ant_" + id +  " " + getAntType() +  " " + tourLength + " " + tour;
 	}
 }

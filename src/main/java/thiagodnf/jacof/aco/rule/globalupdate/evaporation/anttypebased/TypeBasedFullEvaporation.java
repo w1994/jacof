@@ -2,7 +2,6 @@ package thiagodnf.jacof.aco.rule.globalupdate.evaporation.anttypebased;
 
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.graph.AntType;
-import thiagodnf.jacof.aco.rule.globalupdate.evaporation.FullEvaporation;
 
 public class TypeBasedFullEvaporation extends TypeBasedAbstractEvaporation{
 

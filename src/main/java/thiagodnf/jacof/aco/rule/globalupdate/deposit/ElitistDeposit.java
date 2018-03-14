@@ -29,17 +29,7 @@ public class ElitistDeposit extends PartialDeposit {
 
 	@Override
 	public double getTheNewValue(int i, int j) {
-		if(aco.isUseGlobalRepository()) {
-//			return aco.getGraph().getTau(i, j) + rate * getDeltaTau(i, j) + aco.getGlobalBestRepository().getDeltaTau(i, j);
-
-			System.out.printf("VALUE: %f %f %f %f\n", aco.getGraph().getTau(i, j), super.getDeltaTau(i, j), getDeltaTauGlobalBest(i, j), aco.getGlobalBestRepository().getDeltaTau(i, j));
-
-			double value = aco.getGraph().getTau(i, j) + super.getDeltaTau(i, j) + weight * getDeltaTauGlobalBest(i, j) + aco.getGlobalBestRepository().getDeltaTau(i, j);
-			return value;
-		} else {
-			return aco.getGraph().getTau(i, j) + super.getDeltaTau(i, j) + weight * getDeltaTauGlobalBest(i, j);
-		}
-
+		return aco.getGraph().getTau(i, j) + super.getDeltaTau(i, j) + weight * getDeltaTauGlobalBest(i, j);
 	}
 	
 	public double getDeltaTauGlobalBest(int i, int j) {
@@ -47,7 +37,7 @@ public class ElitistDeposit extends PartialDeposit {
 		Ant globalBest = aco.getGlobalBest();
 		
 		if (globalBest.path[i][j] == 1) {
-			return aco.getMultiobjectiveProblem().getDeltaTau(globalBest.getId() % 2, globalBest.getTourLength(), i, j);
+			return aco.getProblem().getDeltaTau(globalBest.getTourLength(), i, j);
 		}
 
 		return 0.0;

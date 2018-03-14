@@ -1,8 +1,5 @@
 package tsplib;
 
-/**
- * Created by wojci on 31.10.2017.
- */
 public enum AlgorithmName {
 
     DBEA, //Implementation of the Improved Decomposition-Based Evolutionary Algorithm (I-DBEA). This implementation is based on the Matlab version published by the original authors.

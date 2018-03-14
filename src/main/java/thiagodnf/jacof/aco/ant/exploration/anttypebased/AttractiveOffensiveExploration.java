@@ -1,11 +1,12 @@
-package thiagodnf.jacof.aco.ant.exploration;
+package thiagodnf.jacof.aco.ant.exploration.anttypebased;
 
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.Ant;
+import thiagodnf.jacof.aco.ant.exploration.AbstractAntExploration;
 import thiagodnf.jacof.aco.ant.selection.AbstractAntSelection;
 import thiagodnf.jacof.aco.graph.AntType;
 
-public class AttractiveOffensiveExploration extends AbstractAntExploration{
+public class AttractiveOffensiveExploration extends AbstractAntExploration {
 
     public AttractiveOffensiveExploration(ACO aco, AbstractAntSelection antSelection) {
         super(aco, antSelection);

@@ -1,8 +1,5 @@
 package benchmark.visualization.chart;
 
-/**
- * Created by wojci on 23.01.2018.
- */
 public class ResultLineChart extends LineChart{
 
     private long iteration;

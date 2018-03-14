@@ -1,14 +1,12 @@
-package thiagodnf.jacof.aco.ant.exploration;
+package thiagodnf.jacof.aco.ant.exploration.anttypebased;
 
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.Ant;
+import thiagodnf.jacof.aco.ant.exploration.PseudoRandomProportionalRule;
 import thiagodnf.jacof.aco.ant.selection.AbstractAntSelection;
 
 import static com.google.common.base.Preconditions.checkState;
 
-/**
- * Created by wojci on 12.03.2018.
- */
 public class TypeBasedPseudoRandomProportionalRule extends PseudoRandomProportionalRule {
     public TypeBasedPseudoRandomProportionalRule(ACO aco, AbstractAntSelection antSelection) {
         super(aco, antSelection);
@@ -27,10 +25,10 @@ public class TypeBasedPseudoRandomProportionalRule extends PseudoRandomProportio
         // Update the sum
         for (Integer j : ant.getNodesToVisit()) {
 
-            checkState(aco.getGraph().getTau(i, j) != 0.0, "The tau(i,j) should not be 0.0");
+            checkState(aco.getGraph().getTau(ant.getAntType(), i, j) != 0.0, "The tau(i,j) should not be 0.0 "+i + " " + j);
 
             tij[j] = Math.pow(aco.getGraph().getTau(ant.getAntType(), i, j), aco.getAlpha());
-            nij[j] = Math.pow(aco.getMultiobjectiveProblem().getNij(ant.getId(), i, j), aco.getBeta());
+            nij[j] = Math.pow(aco.getProblem().getNij(i, j), aco.getBeta());
 
             sum += tij[j] * nij[j];
         }

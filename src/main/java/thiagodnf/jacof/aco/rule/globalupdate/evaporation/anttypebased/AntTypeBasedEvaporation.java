@@ -2,24 +2,22 @@ package thiagodnf.jacof.aco.rule.globalupdate.evaporation.anttypebased;
 
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.graph.AntType;
-import thiagodnf.jacof.aco.rule.globalupdate.evaporation.AbstractEvaporation;
-import thiagodnf.jacof.aco.rule.globalupdate.evaporation.FullEvaporation;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class AntTypeBasedEvaporation {
 
-    protected Map<AntType, AbstractEvaporation> evaporationBasedOnAntType = new HashMap<>();
+    protected Map<AntType, TypeBasedAbstractEvaporation> evaporationBasedOnAntType = new HashMap<>();
 
     public AntTypeBasedEvaporation(ACO aco, double rate) {
-        evaporationBasedOnAntType.put(AntType.A, new FullEvaporation(aco, rate));
-        evaporationBasedOnAntType.put(AntType.B, new FullEvaporation(aco, rate));
-        evaporationBasedOnAntType.put(AntType.C, new FullEvaporation(aco, rate));
+        evaporationBasedOnAntType.put(AntType.A, new TypeBasedFullEvaporation(aco, rate));
+        evaporationBasedOnAntType.put(AntType.B, new TypeBasedFullEvaporation(aco, rate));
+        evaporationBasedOnAntType.put(AntType.C, new TypeBasedFullEvaporation(aco, rate));
     }
 
     public double getTheNewValue(AntType antType, int i, int j) {
-        return evaporationBasedOnAntType.get(antType).getTheNewValue(i,j);
+        return evaporationBasedOnAntType.get(antType).getTheNewValue(antType, i,j);
     }
 
     @Override
@@ -27,11 +25,11 @@ public class AntTypeBasedEvaporation {
         return null;
     }
 
-    public Map<AntType, AbstractEvaporation> getEvaporationBasedOnAntType() {
+    public Map<AntType, TypeBasedAbstractEvaporation> getEvaporationBasedOnAntType() {
         return evaporationBasedOnAntType;
     }
 
-    public void setEvaporationBasedOnAntType(AntType antType, AbstractEvaporation abstractEvaporation) {
+    public void setEvaporationBasedOnAntType(AntType antType, TypeBasedAbstractEvaporation abstractEvaporation) {
         this.evaporationBasedOnAntType.put(antType, abstractEvaporation);
     }
 }

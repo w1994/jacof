@@ -3,7 +3,6 @@ package thiagodnf.jacof.aco.graph;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 
@@ -11,7 +10,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import thiagodnf.jacof.aco.graph.initialization.AbstractGraphInitialization;
-import thiagodnf.jacof.problem.MultiobjectiveProblem;
 import thiagodnf.jacof.problem.Problem;
 
 /**
@@ -29,14 +27,12 @@ public class AntGraph {
      */
     protected double[][] tau;
 
-    protected final Map<AntType, double[][]> antTypeToTau = new HashMap<>();
+    protected Map<AntType, double[][]> antTypeToTau = new HashMap<>();
 
     /**
      * The addressed problem
      */
     protected Problem problem;
-
-    protected MultiobjectiveProblem multiobjectiveProblem;
 
     /**
      * The class logger
@@ -65,18 +61,6 @@ public class AntGraph {
         this.problem = problem;
     }
 
-    public AntGraph(MultiobjectiveProblem multiobjectiveProblem, double tMin, double tMax) {
-
-        checkNotNull(multiobjectiveProblem, "The problem cannot be null");
-//		checkArgument(problem.getNumberOfNodes() > 0, "The number of nodes should be > 0. Passed: %s", problem.getNumberOfNodes());
-//		checkArgument(tMin <= tMax, "The tMin value should be less or equal than tMax one");
-
-        this.tMin = tMin;
-        this.tMax = tMax;
-        this.multiobjectiveProblem = multiobjectiveProblem;
-    }
-
-
     /**
      * Constructor
      *
@@ -86,30 +70,25 @@ public class AntGraph {
         this(problem, 0.0001, 1.0);
     }
 
-    public AntGraph(MultiobjectiveProblem problem) {
-        this(problem, 0.0001, 1.0);
-    }
-
     public void initialize(double t0, AntType... antTypes) {
-        if (multiobjectiveProblem != null) {
-            int numberOfNodes = multiobjectiveProblem.getNumberOfNodes(0);
-            for (AntType antType : antTypes) {
-                double[][] pheromone = new double[numberOfNodes][numberOfNodes];
+        int numberOfNodes = problem.getNumberOfNodes();
+        for (AntType antType : antTypes) {
+            double[][] pheromone = new double[numberOfNodes][numberOfNodes];
 
-                for (int i = 0; i < numberOfNodes; i++) {
-                    for (int j = i; j < numberOfNodes; j++) {
-                        if (i != j) {
-                            pheromone[i][j] = pheromone[j][i] = t0;
-                        }
+            for (int i = 0; i < numberOfNodes; i++) {
+                for (int j = i; j < numberOfNodes; j++) {
+                    if (i != j) {
+                        pheromone[i][j] = pheromone[j][i] = t0;
                     }
                 }
-
-                antTypeToTau.put(antType, pheromone);
-
-                LOGGER.debug("Creating a graph with " + numberOfNodes + " nodes and T0=" + t0);
-                LOGGER.debug("tMin=" + tMin + " and tMax" + tMax);
             }
+
+            antTypeToTau.put(antType, pheromone);
+
+            LOGGER.debug("Creating a graph with " + numberOfNodes + " nodes and T0=" + t0);
+            LOGGER.debug("tMin=" + tMin + " and tMax" + tMax);
         }
+
     }
 
     /**
@@ -119,37 +98,21 @@ public class AntGraph {
      */
     public void initialize(double t0) {
 
-        if (multiobjectiveProblem != null) {
-            int numberOfNodes = multiobjectiveProblem.getNumberOfNodes(0);
+        int numberOfNodes = problem.getNumberOfNodes();
 
-            this.tau = new double[numberOfNodes][numberOfNodes];
+        this.tau = new double[numberOfNodes][numberOfNodes];
 
-            for (int i = 0; i < numberOfNodes; i++) {
-                for (int j = i; j < numberOfNodes; j++) {
-                    if (i != j) {
-                        this.tau[i][j] = this.tau[j][i] = t0;
-                    }
+        for (int i = 0; i < numberOfNodes; i++) {
+            for (int j = i; j < numberOfNodes; j++) {
+                if (i != j) {
+                    this.tau[i][j] = this.tau[j][i] = t0;
                 }
             }
-
-            LOGGER.debug("Creating a graph with " + numberOfNodes + " nodes and T0=" + t0);
-            LOGGER.debug("tMin=" + tMin + " and tMax" + tMax);
-        } else {
-            int numberOfNodes = problem.getNumberOfNodes();
-
-            this.tau = new double[numberOfNodes][numberOfNodes];
-
-            for (int i = 0; i < numberOfNodes; i++) {
-                for (int j = i; j < numberOfNodes; j++) {
-                    if (i != j) {
-                        this.tau[i][j] = this.tau[j][i] = t0;
-                    }
-                }
-            }
-
-            LOGGER.debug("Creating a graph with " + numberOfNodes + " nodes and T0=" + t0);
-            LOGGER.debug("tMin=" + tMin + " and tMax" + tMax);
         }
+
+        LOGGER.debug("Creating a graph with " + numberOfNodes + " nodes and T0=" + t0);
+        LOGGER.debug("tMin=" + tMin + " and tMax" + tMax);
+
     }
 
     /**

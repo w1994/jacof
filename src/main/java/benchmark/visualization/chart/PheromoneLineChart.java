@@ -1,8 +1,5 @@
 package benchmark.visualization.chart;
 
-/**
- * Created by wojci on 23.01.2018.
- */
 public class PheromoneLineChart extends LineChart{
 
     private long iteration;

@@ -32,8 +32,7 @@ public class TypeBasedPartialDeposit extends TypeBasedAbstractDeposit{
 
         for (Ant ant : subSet.getSubSet()) {
             if (ant.path[i][j] == 1) {
-//                deltaTau += aco.getMultiobjectiveProblem().getDeltaTau(ant.getId() % 2, ant.getTourLength(), i, j);
-                deltaTau += aco.getMultiobjectiveProblem().getDeltaTau(ant.getId() % 2, ant.getTourLength(), i, j);
+                deltaTau += aco.getProblem().getDeltaTau(ant.getTourLength(), i, j);
             }
         }
 

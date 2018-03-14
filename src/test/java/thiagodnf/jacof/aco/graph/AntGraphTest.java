@@ -15,7 +15,6 @@ import org.mockito.Mockito;
 import com.mscharhag.oleaster.runner.OleasterRunner;
 
 import thiagodnf.jacof.aco.graph.initialization.AbstractGraphInitialization;
-import thiagodnf.jacof.problem.MultiobjectiveProblem;
 import thiagodnf.jacof.problem.Problem;
 
 @RunWith(OleasterRunner.class)
