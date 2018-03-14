@@ -1,6 +1,7 @@
 package benchmark.runners;
 
 import benchmark.output.Output;
+import benchmark.visualization.Performance;
 import tsplib.DistanceFunction;
 
 import java.io.IOException;
@@ -15,6 +16,8 @@ public interface Runner {
     Runner withInstance(String instance);
 
     Runner withDistanceFunction(DistanceFunction distanceFunction);
+
+    Runner withPerformance(Performance performance);
 
     void start() throws IOException;
 }

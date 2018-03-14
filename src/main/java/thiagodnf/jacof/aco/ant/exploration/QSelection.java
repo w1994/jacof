@@ -71,7 +71,7 @@ public class QSelection extends PseudoRandomProportionalRule {
 			checkState(aco.getGraph().getTau(i, j) != 0.0, "The tau(i,j) should not be 0.0");
 
 			double tij = aco.getGraph().getTau(i, j);
-			double nij = Math.pow(aco.getProblem().getNij(i, j), aco.getBeta());
+			double nij = Math.pow(aco.getMultiobjectiveProblem().getNij(ant.getId(), i, j), aco.getBeta());
 			double value = tij * nij;
 
 			if (value > maxValue) {

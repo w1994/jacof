@@ -1,6 +1,7 @@
 package benchmark.problem;
 
 import benchmark.stats.Diversity;
+import benchmark.visualization.Performance;
 import benchmark.visualization.Visualization;
 import thiagodnf.jacof.aco.ant.Ant;
 import thiagodnf.jacof.problem.Problem;
@@ -47,6 +48,8 @@ public class AcoTSP extends Problem {
     private DistanceFunction distanceFunction;
     private TSPInstance tspInstance;
     private Diversity diversity;
+    private Performance performance;
+    private String acoName;
 
     public AcoTSP(String filename) throws IOException {
         this.filename = filename;
@@ -195,13 +198,19 @@ public class AcoTSP extends Problem {
         return this;
     }
 
+    public AcoTSP withAcoName(String name) {
+        this.acoName = name;
+        return this;
+    }
+
     public AcoTSP build() throws IOException {
         this.tspInstance = new TSPInstance(new File(filename), distanceFunction);
         numberOfCities = tspInstance.getDimension();
         distance = calculateDistanceMatrix(tspInstance.getDistanceTable());
 
-        visualization.prepareVisualization(tspInstance);
-        diversity.prepareVisualization(this);
+//        visualization.prepareVisualization(tspInstance);
+//        diversity.prepareVisualization(this);
+//        performance.setUp(this.acoName);
 
         NearestNeighbour nn = new NearestNeighbour();
 
@@ -212,5 +221,18 @@ public class AcoTSP extends Problem {
 
     public TSPInstance getTspInstance() {
         return tspInstance;
+    }
+
+    public AcoTSP withPerformance(Performance performance) {
+        this.performance = performance;
+        return this;
+    }
+
+    public Performance getPerformance() {
+        return performance;
+    }
+
+    public String getAcoName() {
+        return acoName;
     }
 }

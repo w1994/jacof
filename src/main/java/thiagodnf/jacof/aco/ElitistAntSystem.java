@@ -5,6 +5,7 @@ import thiagodnf.jacof.aco.ant.initialization.AnAntAtEachVertex;
 import thiagodnf.jacof.aco.ant.selection.RouletteWheel;
 import thiagodnf.jacof.aco.graph.initialization.EASInitialization;
 import thiagodnf.jacof.aco.rule.globalupdate.deposit.ElitistDeposit;
+import thiagodnf.jacof.aco.rule.globalupdate.deposit.FullDeposit;
 import thiagodnf.jacof.aco.rule.globalupdate.evaporation.FullEvaporation;
 import thiagodnf.jacof.problem.Problem;
 
@@ -36,7 +37,7 @@ public class ElitistAntSystem extends AntSystem {
 
 		// Global Update Pheromone Rule
 		getEvaporations().add(new FullEvaporation(this, rho));
-		getDeposits().add(new ElitistDeposit(this, weight));
+		getDeposits().add(new FullDeposit(this));
 	}
 
 	@Override

@@ -29,7 +29,11 @@ public class AnAntAtEachVertex extends AbstractAntInitialization {
 		this.positions = new int[aco.getNumberOfAnts()];
 
 		for (int i = 0; i < positions.length; i++) {
-			positions[i] = i % aco.getProblem().getNumberOfNodes();
+			if(aco.getProblem() != null) {
+				positions[i] = i % aco.getProblem().getNumberOfNodes();
+			} else {
+				positions[i] = i % aco.getMultiobjectiveProblem().getNumberOfNodes(0);
+			}
 		}		
 	}
 

@@ -52,23 +52,24 @@ public class PseudoRandomProportionalRule extends AbstractAntExploration {
 
 		double sum = 0.0;
 		
-		double[] tij = new double[aco.getProblem().getNumberOfNodes()];
-		double[] nij = new double[aco.getProblem().getNumberOfNodes()];
+		double[] tij = new double[aco.getNumberOfNodes()];
+		double[] nij = new double[aco.getNumberOfNodes()];
 
 		// Update the sum
 		for (Integer j : ant.getNodesToVisit()) {
 
 			checkState(aco.getGraph().getTau(i, j) != 0.0, "The tau(i,j) should not be 0.0");
 
+//			tij[j] = Math.pow(aco.getGraph().getTau(ant.getAntType(), i, j), aco.getAlpha());
 			tij[j] = Math.pow(aco.getGraph().getTau(i, j), aco.getAlpha());
-			nij[j] = Math.pow(aco.getProblem().getNij(i, j), aco.getBeta());
+			nij[j] = Math.pow(aco.getMultiobjectiveProblem().getNij(ant.getId(), i, j), aco.getBeta());
 
 			sum += tij[j] * nij[j];
 		}
 		
 		checkState(sum != 0.0, "The sum cannot be 0.0");
 
-		double[] probability = new double[aco.getProblem().getNumberOfNodes()];
+		double[] probability = new double[aco.getNumberOfNodes()];
 
 		double sumProbability = 0.0;
 

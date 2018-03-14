@@ -3,6 +3,7 @@ package thiagodnf.jacof.aco;
 import thiagodnf.jacof.aco.ant.exploration.PseudoRandomProportionalRule;
 import thiagodnf.jacof.aco.ant.initialization.AnAntAtEachVertex;
 import thiagodnf.jacof.aco.ant.selection.RouletteWheel;
+import thiagodnf.jacof.aco.graph.AntType;
 import thiagodnf.jacof.aco.graph.initialization.ASInitialization;
 import thiagodnf.jacof.aco.rule.globalupdate.deposit.FullDeposit;
 import thiagodnf.jacof.aco.rule.globalupdate.evaporation.FullEvaporation;
@@ -28,9 +29,12 @@ public class AntSystem extends ACO {
 		getEvaporations().add(new FullEvaporation(this, rho));
 		getDeposits().add(new FullDeposit(this));
 	}
-	
+
+
 	@Override
 	public String toString() {
 		return AntSystem.class.getSimpleName();
 	}
+
+
 }

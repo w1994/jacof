@@ -21,6 +21,7 @@
 package benchmark.runners;
 
 import benchmark.problem.MoeaTSP;
+import benchmark.visualization.Performance;
 import org.moeaframework.core.Algorithm;
 import org.moeaframework.core.Problem;
 import org.moeaframework.core.spi.AlgorithmFactory;
@@ -121,6 +122,11 @@ public class MoeaRunner implements Runner{
     public MoeaRunner withDistanceFunction(DistanceFunction distanceFunction) {
         this.distanceFunction = distanceFunction;
         return this;
+    }
+
+    @Override
+    public Runner withPerformance(Performance performance) {
+        return null;
     }
 
     public static void main(String[] args) throws IOException {

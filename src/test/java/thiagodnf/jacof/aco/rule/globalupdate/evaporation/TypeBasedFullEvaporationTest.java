@@ -16,7 +16,7 @@ import thiagodnf.jacof.aco.graph.AntGraph;
 import thiagodnf.jacof.problem.Problem;
 
 @RunWith(OleasterRunner.class)
-public class FullEvaporationTest {{
+public class TypeBasedFullEvaporationTest {{
 
 	ACO aco = Mockito.mock(ACO.class);
 	Problem problem = Mockito.mock(Problem.class);

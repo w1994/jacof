@@ -1,5 +1,6 @@
 package benchmark.visualization;
 
+import benchmark.visualization.chart.ResultLineChart;
 import org.moeaframework.core.Algorithm;
 import org.moeaframework.core.EvolutionaryAlgorithm;
 import org.moeaframework.core.Population;
@@ -43,6 +44,7 @@ public class Visualization {
     }
 
     public void prepareVisualization(TSPInstance tspInstance) {
+
         if (enable) {
             this.tspInstance = tspInstance;
             panel = new TSPPanel(tspInstance);
@@ -76,6 +78,7 @@ public class Visualization {
             for (Ant ant : ants) {
                 tours.add(toTour(ant));
             }
+
             updateVisualization(iteration, toTour(globalBest), tours);
         }
     }

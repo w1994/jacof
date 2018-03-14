@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.apache.log4j.Logger;
 
 import thiagodnf.jacof.aco.ACO;
+import thiagodnf.jacof.problem.MultiobjectiveProblem;
 import thiagodnf.jacof.problem.Problem;
 
 /**
@@ -21,6 +22,8 @@ public class ExecutionStats {
 	
 	public Problem problem;
 
+	public MultiobjectiveProblem multiobjectiveProblem;
+
 	public int[] bestSolution;
 
 	/** The class logger */
@@ -36,6 +39,19 @@ public class ExecutionStats {
 		ets.bestSolution = aco.solve();
 		ets.executionTime = System.currentTimeMillis() - initTime ;
 		
+		return ets;
+	}
+
+	public static ExecutionStats execute(ACO aco, MultiobjectiveProblem problem) {
+		ExecutionStats ets = new ExecutionStats();
+
+		ets.aco = aco;
+		ets.multiobjectiveProblem = problem;
+
+		long initTime = System.currentTimeMillis();
+		ets.bestSolution = aco.solve();
+		ets.executionTime = System.currentTimeMillis() - initTime ;
+
 		return ets;
 	}
 

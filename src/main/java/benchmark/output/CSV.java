@@ -20,10 +20,17 @@ import static tsplib.Tour.toTour;
 
 public class CSV implements Output {
 
+    private String id;
     private String fileName;
 
     public CSV(String fileName) {
+        this.id = "1";
         this.fileName = fileName;
+    }
+
+    public CSV(String fileName, int id) {
+        this.fileName = fileName;
+        this.id = String.valueOf(id);
     }
 
     @Override
@@ -55,7 +62,7 @@ public class CSV implements Output {
             resultRecord.setAlgorithmName(executionStats.aco.getClass().getSimpleName());
             resultRecord.setBestResultValue(String.valueOf(acoTSP.evaluate(executionStats.bestSolution)));
             resultRecord.setPheromoneRatio(String.valueOf(acoTSP.getDiversity().getPheromoneRatio()));
-
+            resultRecord.setId(this.id);
             try {
                 writeRecordToCSV(resultRecord);
             } catch (IOException | CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {

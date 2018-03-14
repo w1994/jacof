@@ -47,8 +47,8 @@ public class EASInitialization extends AbstractGraphInitialization {
 	@Override
 	public double getT0() {
 		double k = aco.getNumberOfAnts();
-		double n = aco.getProblem().getNumberOfNodes();
-		double cnn = aco.getProblem().getCnn();
+		double n = aco.getMultiobjectiveProblem().getNumberOfNodes(0);
+		double cnn = aco.getMultiobjectiveProblem().getCnn(0);
 		
 		return (n + k) / (rate * cnn);
 	}

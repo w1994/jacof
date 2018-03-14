@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 import com.mscharhag.oleaster.runner.OleasterRunner;
 
 import thiagodnf.jacof.aco.graph.initialization.AbstractGraphInitialization;
+import thiagodnf.jacof.problem.MultiobjectiveProblem;
 import thiagodnf.jacof.problem.Problem;
 
 @RunWith(OleasterRunner.class)
@@ -27,7 +28,7 @@ public class AntGraphTest {{
 			
 			it("should throw an exception when a null problem is passed", () -> {
 				expect(() -> {
-					new AntGraph(null);
+					new AntGraph((Problem) null);
 				}).toThrow(NullPointerException.class);
 			});
 

@@ -1,6 +1,9 @@
 package thiagodnf.jacof.aco.graph;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 
@@ -8,151 +11,231 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import thiagodnf.jacof.aco.graph.initialization.AbstractGraphInitialization;
+import thiagodnf.jacof.problem.MultiobjectiveProblem;
 import thiagodnf.jacof.problem.Problem;
 
 /**
- * This class represents the graph where the ants 
+ * This class represents the graph where the ants
  * will traveled. The default implementation uses a double matrix
  * to represent the pheronome's values.
- * 
+ *
  * @author Thiago N. Ferreira
  * @version 1.0.0
  */
 public class AntGraph {
 
-	/** The pheromone matrix */
-	protected double[][] tau;
+    /**
+     * The pheromone matrix
+     */
+    protected double[][] tau;
 
-	/** The addressed problem*/
-	protected Problem problem;
+    protected final Map<AntType, double[][]> antTypeToTau = new HashMap<>();
 
-	/** The class logger*/
-	static final Logger LOGGER = Logger.getLogger(AntGraph.class);
+    /**
+     * The addressed problem
+     */
+    protected Problem problem;
 
-	protected double tMin;
-	
-	protected double tMax;
-	
-	/**
-	 * Constructor
-	 * 
-	 * @param problem The addressed problem
-	 * @param tMin the minimum pheromone value
-	 * @param tMax the maximum pheromone value
-	 */
-	public AntGraph(Problem problem, double tMin, double tMax) {
+    protected MultiobjectiveProblem multiobjectiveProblem;
 
-		checkNotNull(problem, "The problem cannot be null");
-		checkArgument(problem.getNumberOfNodes() > 0, "The number of nodes should be > 0. Passed: %s", problem.getNumberOfNodes());
-		checkArgument(tMin <= tMax, "The tMin value should be less or equal than tMax one");
-				
-		this.tMin = tMin;
-		this.tMax = tMax;
-		this.problem = problem;		
-	}
-	
-	/**
-	 * Constructor
-	 * 
-	 * @param problem The addressed problem
-	 */
-	public AntGraph(Problem problem) {
-		this(problem, 0.0001, 1.0);
-	}
+    /**
+     * The class logger
+     */
+    static final Logger LOGGER = Logger.getLogger(AntGraph.class);
 
-	/**
-	 * Initialize all edges with the T0 values. 
-	 * 
-	 * @param t0 The initial pheromone value
-	 */
-	public void initialize(double t0) {
+    protected double tMin;
 
-		int numberOfNodes = problem.getNumberOfNodes();
+    protected double tMax;
 
-		this.tau = new double[numberOfNodes][numberOfNodes];
+    /**
+     * Constructor
+     *
+     * @param problem The addressed problem
+     * @param tMin    the minimum pheromone value
+     * @param tMax    the maximum pheromone value
+     */
+    public AntGraph(Problem problem, double tMin, double tMax) {
 
-		for (int i = 0; i < numberOfNodes; i++) {
-			for (int j = i; j < numberOfNodes; j++) {
-				if (i != j) {
-					this.tau[i][j] = this.tau[j][i] = t0;
-				}
-			}
-		}
+        checkNotNull(problem, "The problem cannot be null");
+        checkArgument(problem.getNumberOfNodes() > 0, "The number of nodes should be > 0. Passed: %s", problem.getNumberOfNodes());
+        checkArgument(tMin <= tMax, "The tMin value should be less or equal than tMax one");
 
-		LOGGER.debug("Creating a graph with " + numberOfNodes + " nodes and T0=" + t0);
-		LOGGER.debug("tMin=" + tMin + " and tMax" + tMax);
-	}
-	
-	/**
-	 * Initialize all arc by using a specific graph initialization 
-	 * 
-	 * @param graphInitialization The method used to initialize the arc(i,j)
-	 */
-	public void initialize(AbstractGraphInitialization graphInitialization) {
+        this.tMin = tMin;
+        this.tMax = tMax;
+        this.problem = problem;
+    }
 
-		checkNotNull(graphInitialization, "The graph initialization should not be null");
+    public AntGraph(MultiobjectiveProblem multiobjectiveProblem, double tMin, double tMax) {
 
-		this.initialize(graphInitialization.getT0());
-	}
+        checkNotNull(multiobjectiveProblem, "The problem cannot be null");
+//		checkArgument(problem.getNumberOfNodes() > 0, "The number of nodes should be > 0. Passed: %s", problem.getNumberOfNodes());
+//		checkArgument(tMin <= tMax, "The tMin value should be less or equal than tMax one");
 
-	/**
-	 * Set the pheromone value for an arc(i,j)
-	 * 
-	 * @param i Starting vertex
-	 * @param j Final vertex
-	 * @param value The pheromone value
-	 */
-	public synchronized void setTau(int i, int j, double value) {
-		this.tau[i][j] = value;
-	}
+        this.tMin = tMin;
+        this.tMax = tMax;
+        this.multiobjectiveProblem = multiobjectiveProblem;
+    }
 
-	/**
-	 * Get the pheromone value for an arc(i,j)
-	 * 
-	 * @param i Starting vertex
-	 * @param j Final vertex
-	 * @return The pheromone value
-	 */
-	public synchronized double getTau(int i, int j) {
-		return this.tau[i][j];
-	}
-	
-	/**
-	 * Get the the pheromone matrix
-	 * 
-	 * @return the matrix
-	 */
-	public double[][] getTau(){
-		return this.tau;
-	}
-	
-	public double getTMin() {
-		return tMin;
-	}
 
-	public void setTMin(double tMin) {
-		this.tMin = tMin;
-	}
+    /**
+     * Constructor
+     *
+     * @param problem The addressed problem
+     */
+    public AntGraph(Problem problem) {
+        this(problem, 0.0001, 1.0);
+    }
 
-	public double getTMax() {
-		return tMax;
-	}
+    public AntGraph(MultiobjectiveProblem problem) {
+        this(problem, 0.0001, 1.0);
+    }
 
-	public void setTMax(double tMax) {
-		this.tMax = tMax;
-	}
+    public void initialize(double t0, AntType... antTypes) {
+        if (multiobjectiveProblem != null) {
+            int numberOfNodes = multiobjectiveProblem.getNumberOfNodes(0);
+            for (AntType antType : antTypes) {
+                double[][] pheromone = new double[numberOfNodes][numberOfNodes];
 
-	/**
-	 * Returns a string representation of the object. 
-	 */	
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < numberOfNodes; i++) {
+                    for (int j = i; j < numberOfNodes; j++) {
+                        if (i != j) {
+                            pheromone[i][j] = pheromone[j][i] = t0;
+                        }
+                    }
+                }
 
-		for (int i = 0; i < tau.length; i++) {
-			builder.append(Arrays.toString(tau[i])).append("\n");
-		}
+                antTypeToTau.put(antType, pheromone);
 
-		return builder.toString();
-	}
+                LOGGER.debug("Creating a graph with " + numberOfNodes + " nodes and T0=" + t0);
+                LOGGER.debug("tMin=" + tMin + " and tMax" + tMax);
+            }
+        }
+    }
+
+    /**
+     * Initialize all edges with the T0 values.
+     *
+     * @param t0 The initial pheromone value
+     */
+    public void initialize(double t0) {
+
+        if (multiobjectiveProblem != null) {
+            int numberOfNodes = multiobjectiveProblem.getNumberOfNodes(0);
+
+            this.tau = new double[numberOfNodes][numberOfNodes];
+
+            for (int i = 0; i < numberOfNodes; i++) {
+                for (int j = i; j < numberOfNodes; j++) {
+                    if (i != j) {
+                        this.tau[i][j] = this.tau[j][i] = t0;
+                    }
+                }
+            }
+
+            LOGGER.debug("Creating a graph with " + numberOfNodes + " nodes and T0=" + t0);
+            LOGGER.debug("tMin=" + tMin + " and tMax" + tMax);
+        } else {
+            int numberOfNodes = problem.getNumberOfNodes();
+
+            this.tau = new double[numberOfNodes][numberOfNodes];
+
+            for (int i = 0; i < numberOfNodes; i++) {
+                for (int j = i; j < numberOfNodes; j++) {
+                    if (i != j) {
+                        this.tau[i][j] = this.tau[j][i] = t0;
+                    }
+                }
+            }
+
+            LOGGER.debug("Creating a graph with " + numberOfNodes + " nodes and T0=" + t0);
+            LOGGER.debug("tMin=" + tMin + " and tMax" + tMax);
+        }
+    }
+
+    /**
+     * Initialize all arc by using a specific graph initialization
+     *
+     * @param graphInitialization The method used to initialize the arc(i,j)
+     */
+    public void initialize(AbstractGraphInitialization graphInitialization) {
+
+        checkNotNull(graphInitialization, "The graph initialization should not be null");
+
+        this.initialize(graphInitialization.getT0());
+        this.initialize(graphInitialization.getT0(), AntType.values());
+    }
+
+    /**
+     * Set the pheromone value for an arc(i,j)
+     *
+     * @param i     Starting vertex
+     * @param j     Final vertex
+     * @param value The pheromone value
+     */
+    public synchronized void setTau(int i, int j, double value) {
+        this.tau[i][j] = value;
+    }
+
+    public void setTau(AntType antType, int i, int j, double value) {
+        synchronized (this.antTypeToTau) {
+            this.antTypeToTau.get(antType)[i][j] = value;
+        }
+    }
+
+    /**
+     * Get the pheromone value for an arc(i,j)
+     *
+     * @param i Starting vertex
+     * @param j Final vertex
+     * @return The pheromone value
+     */
+    public synchronized double getTau(int i, int j) {
+        return this.tau[i][j];
+    }
+
+    public double getTau(AntType antType, int i, int j) {
+        synchronized (this.antTypeToTau) {
+            return this.antTypeToTau.get(antType)[i][j];
+        }
+    }
+
+
+    /**
+     * Get the the pheromone matrix
+     *
+     * @return the matrix
+     */
+    public double[][] getTau() {
+        return this.tau;
+    }
+
+    public double getTMin() {
+        return tMin;
+    }
+
+    public void setTMin(double tMin) {
+        this.tMin = tMin;
+    }
+
+    public double getTMax() {
+        return tMax;
+    }
+
+    public void setTMax(double tMax) {
+        this.tMax = tMax;
+    }
+
+    /**
+     * Returns a string representation of the object.
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < tau.length; i++) {
+            builder.append(Arrays.toString(tau[i])).append("\n");
+        }
+
+        return builder.toString();
+    }
 }

@@ -2,6 +2,7 @@ package benchmark.stats;
 
 import benchmark.problem.AcoTSP;
 import benchmark.visualization.chart.LineChart;
+import benchmark.visualization.chart.PheromoneLineChart;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import thiagodnf.jacof.aco.ACO;
 
@@ -30,21 +31,21 @@ public class Diversity {
         this.showAttractivenessRatioChart = showAttractivenessRatioChart;
     }
 
-    public void prepareVisualization(AcoTSP acoTSP) {
-        initCharts(acoTSP);
+    public void prepareVisualization(AcoTSP acoTSP){
+            initCharts(acoTSP);
     }
 
     private void initCharts(AcoTSP acoTSP) {
         if(showPheromoneRatioChart) {
-            this.lineChartPR = new LineChart(acoTSP.getProblemName(), getPRChartName(), "Pheromone Ratio");
+            this.lineChartPR = new PheromoneLineChart(acoTSP.getProblemName(), getPRChartName(), "Pheromone Ratio");
             lineChartPR.display();
         }
         if(showAttractivenessDispersionChart) {
-            this.lineChartAD = new LineChart(acoTSP.getProblemName(), getADChartName(), "Attractiveness Dispersion");
+            this.lineChartAD = new PheromoneLineChart(acoTSP.getProblemName(), getADChartName(), "Attractiveness Dispersion");
             lineChartAD.display();
         }
         if(showAttractivenessRatioChart) {
-            this.lineChartAR = new LineChart(acoTSP.getProblemName(), getARChartName(), "Attractiveness Ratio");
+            this.lineChartAR = new PheromoneLineChart(acoTSP.getProblemName(), getARChartName(), "Attractiveness Ratio");
             lineChartAR.display();
         }
     }

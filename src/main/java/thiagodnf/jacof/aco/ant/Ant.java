@@ -9,6 +9,7 @@ import java.util.Observable;
 
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.initialization.AbstractAntInitialization;
+import thiagodnf.jacof.aco.graph.AntType;
 
 /**
  * This class represents an ant and its process of building a solution
@@ -42,7 +43,9 @@ public class Ant extends Observable implements Runnable{
 	
 	/** The ant initialization */
 	protected AbstractAntInitialization antInitialization;
-	
+
+	protected AntType antType;
+
 	/**
 	 * Constructor
 	 * 
@@ -58,9 +61,14 @@ public class Ant extends Observable implements Runnable{
 		this.id = id;		
 		this.nodesToVisit = new ArrayList<>();
 		this.tour = new ArrayList<>();
-		this.path = new int[aco.getProblem().getNumberOfNodes()][aco.getProblem().getNumberOfNodes()];
+		this.path = new int[aco.getNumberOfNodes()][aco.getNumberOfNodes()];
 	}
-	
+
+	public Ant(ACO aco, int id, AntType antType) {
+		this(aco,id);
+		this.antType = antType;
+	}
+
 	/**
 	 * Restart all information before starting the search process
 	 */
@@ -68,9 +76,9 @@ public class Ant extends Observable implements Runnable{
 		this.currentNode = antInitialization.getPosition(id);
 		this.tourLength = 0.0;
 		this.tour.clear();
-		this.nodesToVisit = aco.getProblem().initNodesToVisit(this.currentNode);
+		this.nodesToVisit = aco.getMultiobjectiveProblem().initNodesToVisit(id%2, this.currentNode);
 		this.tour.add(new Integer(currentNode));
-		this.path = new int[aco.getProblem().getNumberOfNodes()][aco.getProblem().getNumberOfNodes()];		
+		this.path = new int[aco.getNumberOfNodes()][aco.getNumberOfNodes()];
 	}
 	
 	@Override
@@ -108,7 +116,7 @@ public class Ant extends Observable implements Runnable{
 			path[nextNode][currentNode] = 1;
 
 			// update the list of the nodes to visit
-			nodesToVisit = aco.getProblem().updateNodesToVisit(tour, nodesToVisit);
+			nodesToVisit = aco.getMultiobjectiveProblem().updateNodesToVisit(tour, nodesToVisit);
 
 			// Define the next node as current node
 			currentNode = nextNode;
@@ -171,6 +179,10 @@ public class Ant extends Observable implements Runnable{
 
 	public void setAntInitialization(AbstractAntInitialization antInitialization) {
 		this.antInitialization = antInitialization;
+	}
+
+	public AntType getAntType() {
+		return antType;
 	}
 
 	/**

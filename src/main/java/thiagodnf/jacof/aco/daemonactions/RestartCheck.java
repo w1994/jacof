@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.Ant;
+import thiagodnf.jacof.aco.graph.AntType;
 
 /**
  * Pheromone trail reinitialization is typically triggered when the algorithm
@@ -60,6 +61,9 @@ public class RestartCheck extends AbstractDaemonActions {
 			LOGGER.debug("The stagnation was reached. The pheromone matrix will be restarted");
 			
 			aco.getGraph().initialize(aco.getGraph().getTMax());
+			aco.getGraph().initialize(aco.getGraph().getTMax(), AntType.A);
+			//todo moce initizlize outside
+
 			stagnationCounter = 0;
 		}
 	}
