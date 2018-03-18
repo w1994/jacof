@@ -8,6 +8,8 @@ import thiagodnf.jacof.aco.rule.globalupdate.evaporation.anttypebased.AntTypeBas
 
 public class ScAntSystem extends ACO {
 
+    private AntColonyGenerator antColonyGenerator;
+
     @Override
     protected void updatePheromones() {
         LOGGER.debug("Updating pheromones");
@@ -33,8 +35,13 @@ public class ScAntSystem extends ACO {
     @Override
     protected void initializeAnts() {
         LOGGER.debug("Initializing the ants");
-        this.ants = AntColonyGenerator.generate(numberOfAnts, this);
+        this.ants = antColonyGenerator.generate(numberOfAnts, this);
 
+    }
+
+    public ScAntSystem withAntColonyGenerator(AntColonyGenerator antColonyGenerator) {
+        this.antColonyGenerator = antColonyGenerator;
+        return this;
     }
 
     @Override

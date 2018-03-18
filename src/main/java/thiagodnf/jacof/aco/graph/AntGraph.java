@@ -3,6 +3,7 @@ package thiagodnf.jacof.aco.graph;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -27,7 +28,7 @@ public class AntGraph {
      */
     protected double[][] tau;
 
-    protected Map<AntType, double[][]> antTypeToTau = new HashMap<>();
+    protected final Map<AntType, double[][]> antTypeToTau = new HashMap<>();
 
     /**
      * The addressed problem
@@ -159,6 +160,12 @@ public class AntGraph {
     public double getTau(AntType antType, int i, int j) {
         synchronized (this.antTypeToTau) {
             return this.antTypeToTau.get(antType)[i][j];
+        }
+    }
+
+    public double getTau(Set<AntType> antType, int i, int j) {
+        synchronized (this.antTypeToTau) {
+            return antType.stream().mapToDouble(type -> this.antTypeToTau.get(type)[i][j]).sum() / antType.size();
         }
     }
 

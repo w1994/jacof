@@ -21,7 +21,7 @@ public class AttractiveOffensiveExploration extends AbstractAntExploration {
 
         for (Integer targetNode : ant.getNodesToVisit()) {
             double value  = aco.getGraph().getTau(ant.getAntType(), currentNode, targetNode) -
-                                      aco.getGraph().getTau(AntType.B, currentNode, targetNode);
+                                      aco.getGraph().getTau(AntType.AC, currentNode, targetNode);
             if(value > maxValue) {
                 maxValue = value;
                 nextNode = targetNode;

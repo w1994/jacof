@@ -3,7 +3,10 @@ package thiagodnf.jacof.aco.ant.exploration.anttypebased;
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.Ant;
 import thiagodnf.jacof.aco.ant.exploration.AbstractAntExploration;
+import thiagodnf.jacof.aco.ant.exploration.QSelection;
 import thiagodnf.jacof.aco.ant.selection.AbstractAntSelection;
+import thiagodnf.jacof.aco.ant.selection.RandomSelection;
+import thiagodnf.jacof.aco.ant.selection.RouletteWheel;
 import thiagodnf.jacof.aco.graph.AntType;
 
 import java.util.HashMap;
@@ -13,11 +16,13 @@ public class AntTypeBasedExploration extends AbstractAntExploration {
 
     private Map<AntType, AbstractAntExploration> antExplorationMap = new HashMap<>();
 
-    public AntTypeBasedExploration(ACO aco, AbstractAntSelection antSelection) {
-        super(aco, antSelection);
-        antExplorationMap.put(AntType.A, new TypeBasedPseudoRandomProportionalRule(aco, antSelection));
-        antExplorationMap.put(AntType.B, new TypeBasedPseudoRandomProportionalRule(aco, antSelection));
-        antExplorationMap.put(AntType.C, new TypeBasedPseudoRandomProportionalRule(aco, antSelection));
+    public AntTypeBasedExploration(ACO aco) {
+        super(aco);
+    }
+
+    public AntTypeBasedExploration addRule(AntType antType, AbstractAntExploration abstractAntExploration) {
+        antExplorationMap.put(antType, abstractAntExploration);
+        return this;
     }
 
     @Override

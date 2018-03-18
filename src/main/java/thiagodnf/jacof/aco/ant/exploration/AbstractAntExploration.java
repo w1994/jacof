@@ -47,7 +47,12 @@ public abstract class AbstractAntExploration {
 		this.aco = aco;
 		this.antSelection = antSelection;
 	}
-	
+
+	public AbstractAntExploration(ACO aco){
+		checkNotNull(aco, "The aco cannot be null");
+		this.aco = aco;
+	}
+
 	/**
 	 * Get the ant selection
 	 * 

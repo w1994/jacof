@@ -1,5 +1,5 @@
 package thiagodnf.jacof.aco.graph;
 
 public enum AntType {
-    A, B, C
+    EC, AC, GC, BC;
 }

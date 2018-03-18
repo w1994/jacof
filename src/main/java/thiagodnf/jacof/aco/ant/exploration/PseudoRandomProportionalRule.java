@@ -7,6 +7,10 @@ import thiagodnf.jacof.aco.ant.Ant;
 import thiagodnf.jacof.aco.ant.selection.AbstractAntSelection;
 import thiagodnf.jacof.aco.ant.selection.RouletteWheel;
 
+import java.util.Arrays;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 /**
  * This class represents how an ant in AS algorithm chooses the next node
  * 

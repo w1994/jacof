@@ -61,7 +61,7 @@ public class RestartCheck extends AbstractDaemonActions {
 			LOGGER.debug("The stagnation was reached. The pheromone matrix will be restarted");
 			
 			aco.getGraph().initialize(aco.getGraph().getTMax());
-			aco.getGraph().initialize(aco.getGraph().getTMax(), AntType.A);
+			aco.getGraph().initialize(aco.getGraph().getTMax(), AntType.EC);
 			//todo moce initizlize outside
 
 			stagnationCounter = 0;

@@ -208,8 +208,8 @@ public class AcoTSP extends Problem {
         numberOfCities = tspInstance.getDimension();
         distance = calculateDistanceMatrix(tspInstance.getDistanceTable());
 
-//        visualization.prepareVisualization(tspInstance);
-//        diversity.prepareVisualization(this);
+        visualization.prepareVisualization(tspInstance);
+        diversity.prepareVisualization(this);
 //        performance.setUp(this.acoName);
 
         NearestNeighbour nn = new NearestNeighbour();

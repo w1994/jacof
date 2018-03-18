@@ -11,9 +11,10 @@ public class AntTypeBasedEvaporation {
     protected Map<AntType, TypeBasedAbstractEvaporation> evaporationBasedOnAntType = new HashMap<>();
 
     public AntTypeBasedEvaporation(ACO aco, double rate) {
-        evaporationBasedOnAntType.put(AntType.A, new TypeBasedFullEvaporation(aco, rate));
-        evaporationBasedOnAntType.put(AntType.B, new TypeBasedFullEvaporation(aco, rate));
-        evaporationBasedOnAntType.put(AntType.C, new TypeBasedFullEvaporation(aco, rate));
+        evaporationBasedOnAntType.put(AntType.EC, new TypeBasedFullEvaporation(aco, rate));
+        evaporationBasedOnAntType.put(AntType.AC, new TypeBasedFullEvaporation(aco, rate));
+        evaporationBasedOnAntType.put(AntType.GC, new TypeBasedFullEvaporation(aco, rate));
+        evaporationBasedOnAntType.put(AntType.BC, new TypeBasedFullEvaporation(aco, rate));
     }
 
     public double getTheNewValue(AntType antType, int i, int j) {

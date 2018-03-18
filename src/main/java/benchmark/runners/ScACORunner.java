@@ -7,13 +7,17 @@ import benchmark.stats.Diversity;
 import benchmark.visualization.Performance;
 import benchmark.visualization.Visualization;
 import thiagodnf.jacof.aco.*;
+import thiagodnf.jacof.aco.ant.exploration.anttypebased.AntTypeBasedExploration;
+import thiagodnf.jacof.aco.ant.generators.AntColonyGenerator;
+import thiagodnf.jacof.aco.ant.initialization.AnAntAtEachVertex;
+import thiagodnf.jacof.aco.ant.selection.RouletteWheel;
 import thiagodnf.jacof.problem.Problem;
 import thiagodnf.jacof.util.ExecutionStats;
 import tsplib.DistanceFunction;
 
 import java.io.IOException;
 
-public class ScACORunner implements Runner{
+public class ScACORunner implements Runner {
 
     private ACO aco;
     private String instance;
@@ -95,28 +99,29 @@ public class ScACORunner implements Runner{
 
     public static void main(String[] args) throws IOException {
 
-        String instance = "src/main/resources/problems/tsp/berlin52.tsp";
+        for (int i = 0; i < 5; i++) {
+            String instance = "src/main/resources/problems/tsp/berlin52.tsp";
 
-        ScAntSystem scAntSystem = new ScAntSystem();
+            ScAntSystem scAntSystem = new ScAntSystem();
+            scAntSystem.setNumberOfAnts(100);
+            scAntSystem.setAlpha(2.0);
+            scAntSystem.setBeta(3.0);
+            scAntSystem.setRho(0.1);
+            scAntSystem.withAntColonyGenerator(new AntColonyGenerator());
 
-        scAntSystem.setNumberOfAnts(100);
-        scAntSystem.setAlpha(2.0);
-        scAntSystem.setBeta(3.0);
-        scAntSystem.setRho(0.1);
+            Performance performance = new Performance(false);
 
-        Performance performance = new Performance(false);
-
-        new ScACORunner()
-                .withACO(scAntSystem)
-                .withAcoName("ScAntSystem")
-                .withInstance(instance)
-                .withIteration(300)
-                .withVisualization(false)
-//                .withDiversity(false, false, false)
-                .withOutput(new CSV("acoElistic.csv", 99))
-                .withPerformance(performance)
-                .start();
-
+            new ScACORunner()
+                    .withACO(scAntSystem)
+                    .withAcoName("ScAntSystem")
+                    .withInstance(instance)
+                    .withIteration(300)
+                    .withVisualization(false)
+                    .withDiversity(true, true, true)
+                    .withOutput(new CSV("scAntSystem.csv", 4))
+                    .withPerformance(performance)
+                    .start();
+        }
     }
 
 
