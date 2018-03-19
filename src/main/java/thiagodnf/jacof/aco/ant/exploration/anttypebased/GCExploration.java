@@ -4,16 +4,11 @@ import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.Ant;
 import thiagodnf.jacof.aco.ant.exploration.PseudoRandomProportionalRule;
 import thiagodnf.jacof.aco.ant.selection.AbstractAntSelection;
-import thiagodnf.jacof.aco.graph.AntType;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkState;
 
-public class TypeBasedPseudoRandomProportionalRule extends PseudoRandomProportionalRule {
-    public TypeBasedPseudoRandomProportionalRule(ACO aco, AbstractAntSelection antSelection) {
+public class GCExploration extends PseudoRandomProportionalRule {
+    public GCExploration(ACO aco, AbstractAntSelection antSelection) {
         super(aco, antSelection);
     }
 
@@ -33,9 +28,8 @@ public class TypeBasedPseudoRandomProportionalRule extends PseudoRandomProportio
             checkState(aco.getGraph().getTau(ant.getAntType(), i, j) != 0.0, "The tau(i,j) should not be 0.0 "+i + " " + j);
 
             tij[j] = Math.pow(aco.getGraph().getTau(ant.getCombinationRules(), i, j) , aco.getAlpha());
-            nij[j] = Math.pow(aco.getProblem().getNij(i, j), aco.getBeta());
 
-            sum += tij[j] * nij[j];
+            sum += tij[j];
         }
 
         checkState(sum != 0.0, "The sum cannot be 0.0");
@@ -47,7 +41,7 @@ public class TypeBasedPseudoRandomProportionalRule extends PseudoRandomProportio
 
         for (Integer j : ant.getNodesToVisit()) {
 
-            probability[j] = (tij[j] * nij[j]) / sum;
+            probability[j] = (tij[j]) / sum;
 
             sumProbability += probability[j];
         }

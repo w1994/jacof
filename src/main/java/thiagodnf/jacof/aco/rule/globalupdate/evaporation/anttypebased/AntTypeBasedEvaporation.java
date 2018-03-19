@@ -15,6 +15,7 @@ public class AntTypeBasedEvaporation {
         evaporationBasedOnAntType.put(AntType.AC, new TypeBasedFullEvaporation(aco, rate));
         evaporationBasedOnAntType.put(AntType.GC, new TypeBasedFullEvaporation(aco, rate));
         evaporationBasedOnAntType.put(AntType.BC, new TypeBasedFullEvaporation(aco, rate));
+        evaporationBasedOnAntType.put(AntType.GCD, new TypeBasedFullEvaporation(aco, rate));
     }
 
     public double getTheNewValue(AntType antType, int i, int j) {

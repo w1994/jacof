@@ -6,9 +6,9 @@ public class Rater {
 
     public static double getRate(ACO aco, double rate) {
 
-        return rate * ( 1 - (double)(aco.getNumberOfCurrentIteration() / aco.getNumberOfIterations()));
+//        return rate * ( 1 - (double)(aco.getNumberOfCurrentIteration() / aco.getNumberOfIterations()));
 
-//        return rate;
+        return rate;
     }
 
 }

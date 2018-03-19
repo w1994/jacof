@@ -15,6 +15,7 @@ public class AntTypeBasedDeposit {
         depositBasedOnAntType.put(AntType.AC, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
         depositBasedOnAntType.put(AntType.GC, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
         depositBasedOnAntType.put(AntType.BC, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
+        depositBasedOnAntType.put(AntType.GCD, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
     }
 
     public double getTheNewValue(AntType antType, int i, int j) {
