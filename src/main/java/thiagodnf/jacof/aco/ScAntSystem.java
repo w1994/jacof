@@ -9,6 +9,8 @@ import thiagodnf.jacof.aco.rule.globalupdate.evaporation.anttypebased.AntTypeBas
 public class ScAntSystem extends ACO {
 
     private AntColonyGenerator antColonyGenerator;
+    private double evaporationRate;
+    private double depositRate;
 
     @Override
     protected void updatePheromones() {
@@ -47,8 +49,16 @@ public class ScAntSystem extends ACO {
     @Override
     public void build() {
         setGraphInitialization(new FixedValueInitialization(this));
-        setEvaporation(new AntTypeBasedEvaporation(this, 0.01));
-        setDeposit(new AntTypeBasedDeposit(this, 1.0));
+        setEvaporation(new AntTypeBasedEvaporation(this, evaporationRate));
+        setDeposit(new AntTypeBasedDeposit(this, depositRate));
+    }
+
+    public void setEvaporationRate(double evaporationRate) {
+        this.evaporationRate = evaporationRate;
+    }
+
+    public void setDepositRate(double depositRate) {
+        this.depositRate = depositRate;
     }
 
     @Override

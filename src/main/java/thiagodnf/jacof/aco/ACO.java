@@ -388,6 +388,10 @@ public abstract class ACO implements Observer {
         this.numberOfIterations = numberOfIterations;
     }
 
+    public int getNumberOfCurrentIteration() {
+        return it;
+    }
+
     public Problem getProblem() {
         return problem;
     }

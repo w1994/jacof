@@ -27,11 +27,11 @@ public class ECExploration extends AbstractAntExploration {
         // Update the sum
         for (Integer j : ant.getNodesToVisit()) {
 
-            checkState(aco.getGraph().getTau(currentNode, j) != 0.0, "The tau(i,j) should not be 0.0");
+            checkState(aco.getGraph().getTau(ant.getCombinationRules(), currentNode, j) != 0.0, "The tau(i,j) should not be 0.0");
 
             nij[j] = Math.pow(aco.getProblem().getNij(currentNode, j), 3.0);
 
-            sum += 1 / nij[j];
+            sum += nij[j];
         }
 
         checkState(sum != 0.0, "The sum cannot be 0.0");

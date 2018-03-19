@@ -163,8 +163,15 @@ public class AntGraph {
         }
     }
 
+    public double getTau(Map<AntType, Double> antType, int i, int j) {
+        synchronized (this.antTypeToTau) {
+            return antType.entrySet().stream().mapToDouble(entry -> this.antTypeToTau.get(entry.getKey())[i][j] * entry.getValue()).sum();
+        }
+    }
+
     public double getTau(Set<AntType> antType, int i, int j) {
         synchronized (this.antTypeToTau) {
+
             return antType.stream().mapToDouble(type -> this.antTypeToTau.get(type)[i][j]).sum() / antType.size();
         }
     }

@@ -5,11 +5,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.initialization.AbstractAntInitialization;
 import thiagodnf.jacof.aco.graph.AntType;
+import thiagodnf.jacof.aco.graph.CombinationRules;
 
 /**
  * This class represents an ant and its process of building a solution
@@ -45,6 +47,7 @@ public class Ant extends Observable implements Runnable{
 	protected AbstractAntInitialization antInitialization;
 
 	protected AntType antType;
+	private CombinationRules combinationRules;
 
 	/**
 	 * Constructor
@@ -192,5 +195,13 @@ public class Ant extends Observable implements Runnable{
 	@Override
 	public String toString() {
 		return "Ant_" + id +  " " + getAntType() +  " " + tourLength + " " + tour;
+	}
+
+	public void setCombinationRules(CombinationRules combinationRules) {
+		this.combinationRules = combinationRules;
+	}
+
+	public Map<AntType, Double> getCombinationRules() {
+		return combinationRules.get(antType);
 	}
 }

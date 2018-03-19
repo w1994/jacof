@@ -7,7 +7,6 @@ import thiagodnf.jacof.aco.rule.globalupdate.deposit.PartialDeposit;
 import thiagodnf.jacof.aco.subset.AbstractSubSet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static thiagodnf.jacof.aco.graph.AffectingAntTypes.getAffectedAntType;
 
 public class TypeBasedPartialDeposit extends TypeBasedAbstractDeposit{
 
@@ -23,7 +22,7 @@ public class TypeBasedPartialDeposit extends TypeBasedAbstractDeposit{
 
     @Override
     public double getTheNewValue(AntType antType, int i, int j) {
-            return aco.getGraph().getTau(getAffectedAntType(antType), i, j) + rate * getDeltaTau(antType, i, j);
+            return aco.getGraph().getTau(antType, i, j) + rate * getDeltaTau(antType, i, j);
     }
 
 

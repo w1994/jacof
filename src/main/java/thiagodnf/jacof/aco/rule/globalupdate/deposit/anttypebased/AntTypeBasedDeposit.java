@@ -11,10 +11,10 @@ public class AntTypeBasedDeposit {
     protected Map<AntType, TypeBasedAbstractDeposit> depositBasedOnAntType = new HashMap<>();
 
     public AntTypeBasedDeposit(ACO aco, double rate) {
-        depositBasedOnAntType.put(AntType.EC, new TypeBasedPartialDeposit(aco, 1.0, new AllAnts(aco)));
-        depositBasedOnAntType.put(AntType.AC, new TypeBasedPartialDeposit(aco, 1.0, new AllAnts(aco)));
-        depositBasedOnAntType.put(AntType.GC, new TypeBasedPartialDeposit(aco, 1.0, new AllAnts(aco)));
-        depositBasedOnAntType.put(AntType.BC, new TypeBasedPartialDeposit(aco, 1.0, new AllAnts(aco)));
+        depositBasedOnAntType.put(AntType.EC, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
+        depositBasedOnAntType.put(AntType.AC, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
+        depositBasedOnAntType.put(AntType.GC, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
+        depositBasedOnAntType.put(AntType.BC, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
     }
 
     public double getTheNewValue(AntType antType, int i, int j) {

@@ -99,15 +99,17 @@ public class ScACORunner implements Runner {
 
     public static void main(String[] args) throws IOException {
 
-        for (int i = 0; i < 5; i++) {
+//        for (int i = 0; i < 5; i++) {
             String instance = "src/main/resources/problems/tsp/berlin52.tsp";
 
             ScAntSystem scAntSystem = new ScAntSystem();
-            scAntSystem.setNumberOfAnts(100);
+            scAntSystem.setNumberOfAnts(150);
             scAntSystem.setAlpha(2.0);
             scAntSystem.setBeta(3.0);
             scAntSystem.setRho(0.1);
             scAntSystem.withAntColonyGenerator(new AntColonyGenerator());
+            scAntSystem.setEvaporationRate(0.5);
+            scAntSystem.setDepositRate(1.0);
 
             Performance performance = new Performance(false);
 
@@ -115,13 +117,13 @@ public class ScACORunner implements Runner {
                     .withACO(scAntSystem)
                     .withAcoName("ScAntSystem")
                     .withInstance(instance)
-                    .withIteration(300)
+                    .withIteration(100)
                     .withVisualization(false)
-                    .withDiversity(true, true, true)
+                    .withDiversity(false, false, false)
                     .withOutput(new CSV("scAntSystem.csv", 4))
                     .withPerformance(performance)
                     .start();
-        }
+//        }
     }
 
 
