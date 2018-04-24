@@ -10,19 +10,31 @@ import thiagodnf.jacof.aco.graph.CombinationRules;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class AntColonyGenerator {
+
+
+//    public static List<AntType> types = Arrays.asList(AntType.GCD);
+    public List<AntType> types;
+    public static CombinationRules combinationRules;
+    Random random = new Random(System.nanoTime());
+
+    public AntColonyGenerator() {
+    }
+
+    public AntColonyGenerator(List<AntType> types) {
+        this.types = types;
+    }
 
     public ScAnt[] generate(int numberOfAnts, ACO aco) {
         ScAnt[] scAnts = new ScAnt[numberOfAnts];
 
-        List<AntType> types = Arrays.asList(AntType.EC, AntType.AC, AntType.GC, AntType.GCD);
-
         for (int i = 0; i < numberOfAnts; i++) {
             ScAnt scAnt = null;
 
-            for(int t = 0; t < types.size(); t++) {
-                if(i % types.size() == t) {
+            for (int t = 0; t < types.size(); t++) {
+                if (i % types.size() == t) {
                     scAnt = new ScAnt(types.get(t), aco, i);
                 }
             }
@@ -31,31 +43,46 @@ public class AntColonyGenerator {
                     .addRule(AntType.EC, new ECExploration(aco, new RouletteWheel()))
                     .addRule(AntType.AC, new ACExploration(aco, new RouletteWheel()))
                     .addRule(AntType.GC, new GCExploration(aco, new RouletteWheel()))
-                    .addRule(AntType.GCD,new GCDExploration(aco, new RouletteWheel())));
+                    .addRule(AntType.GCD, new GCDExploration(aco, new RouletteWheel())));
 
-            scAnt.setCombinationRules(new CombinationRules()
+
+            combinationRules = new CombinationRules()
                     .forType(AntType.EC)
                     .affecting(AntType.GCD).weight(12.0)
-                    .affecting(AntType.GC).weight(8.0)
-                    .affecting(AntType.EC).weight(14.0)
-                    .affecting(AntType.AC).weight(8.0)
+                    .affecting(AntType.GC).weight(12.0)
+                    .affecting(AntType.EC).weight(16.0)
+                    .affecting(AntType.AC).weight(4.0)
                     .forType(AntType.AC)
                     .affecting(AntType.GCD).weight(12.0)
-                    .affecting(AntType.GC).weight(8.0)
-                    .affecting(AntType.EC).weight(14.0)
-                    .affecting(AntType.AC).weight(8.0)
+                    .affecting(AntType.GC).weight(12.0)
+                    .affecting(AntType.EC).weight(10.0)
+                    .affecting(AntType.AC).weight(4.0)
                     .forType(AntType.GC)
-                    .affecting(AntType.GCD).weight(14.0)
-                    .affecting(AntType.GC).weight(8.0)
-                    .affecting(AntType.EC).weight(14.0)
-                    .affecting(AntType.AC).weight(8.0)
+                    .affecting(AntType.GCD).weight(12.0)
+                    .affecting(AntType.GC).weight(12.0)
+                    .affecting(AntType.EC).weight(10.0)
+                    .affecting(AntType.AC).weight(4.0)
                     .forType(AntType.GCD)
                     .affecting(AntType.GCD).weight(12.0)
-                    .affecting(AntType.GC).weight(8.0)
-                    .affecting(AntType.EC).weight(14.0)
-                    .affecting(AntType.AC).weight(8.0));
+                    .affecting(AntType.GC).weight(12.0)
+                    .affecting(AntType.EC).weight(16.0)
+                    .affecting(AntType.AC).weight(4.0);
 
+            scAnt.setCombinationRules(combinationRules);
             scAnt.setAntInitialization(new AlwaysRandomPositions(aco));
+
+
+//            scAnt.setDistanceStrategy(new double[]{1.0, 0});
+//            scAnt.setDeltaStrategy(new double[]{1.0, 0});
+//            scAnt.setCnnStrategy(new double[]{1.0, 0});
+//
+
+            double value = random.nextDouble();
+
+            scAnt.setDistanceStrategy(new double[]{value, 1-value});
+            scAnt.setDeltaStrategy(new double[]{value, 1-value});
+            scAnt.setCnnStrategy(new double[]{value, 1-value});
+
 
             scAnt.addObserver(aco);
             scAnts[i] = scAnt;

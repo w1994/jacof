@@ -47,7 +47,7 @@ public class AcoTSP extends Problem {
     private Visualization visualization;
     private DistanceFunction distanceFunction;
     private TSPInstance tspInstance;
-    private Diversity diversity;
+    private List<Diversity> diversity;
     private Performance performance;
     private String acoName;
 
@@ -139,11 +139,11 @@ public class AcoTSP extends Problem {
         this.visualization = visualization;
     }
 
-    public Diversity getDiversity() {
+    public List<Diversity> getDiversity() {
         return diversity;
     }
 
-    public void setDiversity(Diversity diversity) {
+    public void setDiversity(List<Diversity> diversity) {
         this.diversity = diversity;
     }
 
@@ -193,7 +193,7 @@ public class AcoTSP extends Problem {
         return this;
     }
 
-    public AcoTSP withDiversity(Diversity diversity) {
+    public AcoTSP withDiversity(List<Diversity> diversity) {
         this.diversity = diversity;
         return this;
     }
@@ -208,8 +208,9 @@ public class AcoTSP extends Problem {
         numberOfCities = tspInstance.getDimension();
         distance = calculateDistanceMatrix(tspInstance.getDistanceTable());
 
-        visualization.prepareVisualization(tspInstance);
-        diversity.prepareVisualization(this);
+//        visualization.prepareVisualization(tspInstance);
+        diversity.forEach(diversity1 -> diversity1.prepareVisualization(this));
+//        diversity.prepareVisualization(this);
 //        performance.setUp(this.acoName);
 
         NearestNeighbour nn = new NearestNeighbour();
@@ -226,6 +227,10 @@ public class AcoTSP extends Problem {
     public AcoTSP withPerformance(Performance performance) {
         this.performance = performance;
         return this;
+    }
+
+    public void update(){
+        diversity.forEach(Diversity::update);
     }
 
     public Performance getPerformance() {

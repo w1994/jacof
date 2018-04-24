@@ -6,6 +6,7 @@ import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.Ant;
 import thiagodnf.jacof.aco.ant.selection.AbstractAntSelection;
 import thiagodnf.jacof.aco.ant.selection.RouletteWheel;
+import thiagodnf.jacof.aco.graph.AntType;
 
 import java.util.Arrays;
 import java.util.stream.Collector;
@@ -44,8 +45,8 @@ public class PseudoRandomProportionalRule extends AbstractAntExploration {
 	}
 
 	@Override
-	public double getNodeAttractiveness(int i, int j) {
-		double tau = Math.pow(aco.getGraph().getTau(i, j), aco.getAlpha());
+	public double getNodeAttractiveness(AntType antType, int i, int j) {
+		double tau = Math.pow(aco.getGraph().getTau(antType, i, j), aco.getAlpha());
 		double n = Math.pow(aco.getProblem().getNij(i, j), aco.getBeta());
 		return tau * n;
 	}

@@ -3,7 +3,9 @@ package thiagodnf.jacof.aco.ant.exploration.anttypebased;
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.Ant;
 import thiagodnf.jacof.aco.ant.exploration.PseudoRandomProportionalRule;
+import thiagodnf.jacof.aco.ant.generators.AntColonyGenerator;
 import thiagodnf.jacof.aco.ant.selection.AbstractAntSelection;
+import thiagodnf.jacof.aco.graph.AntType;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -53,6 +55,12 @@ public class GCExploration extends PseudoRandomProportionalRule {
         checkState(nextNode != -1, "The next node should not be -1");
 
         return nextNode;
+    }
+
+    @Override
+    public double getNodeAttractiveness(AntType antType, int i, int j) {
+        double tau = Math.pow(aco.getGraph().getTau(AntColonyGenerator.combinationRules.get(antType), i, j) , aco.getAlpha());
+        return tau;
     }
 
 

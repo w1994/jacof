@@ -2,8 +2,10 @@ package thiagodnf.jacof.aco.ant.exploration.anttypebased;
 
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.Ant;
+import thiagodnf.jacof.aco.ant.ScAnt;
 import thiagodnf.jacof.aco.ant.exploration.AbstractAntExploration;
 import thiagodnf.jacof.aco.ant.selection.AbstractAntSelection;
+import thiagodnf.jacof.aco.graph.AntType;
 
 import java.util.Arrays;
 
@@ -27,9 +29,7 @@ public class ECExploration extends AbstractAntExploration {
         // Update the sum
         for (Integer j : ant.getNodesToVisit()) {
 
-            checkState(aco.getGraph().getTau(ant.getCombinationRules(), currentNode, j) != 0.0, "The tau(i,j) should not be 0.0");
-
-            nij[j] = Math.pow(aco.getProblem().getNij(currentNode, j), 3.0);
+            nij[j] = Math.pow(aco.getProblem().getNij((ScAnt)ant, currentNode, j), 3.0);
 
             sum += nij[j];
         }
@@ -55,11 +55,12 @@ public class ECExploration extends AbstractAntExploration {
         return nextNode;
 
     }
-
     @Override
-    public double getNodeAttractiveness(int i, int j) {
-        return 0;
+    public double getNodeAttractiveness(AntType antType, int i, int j) {
+        double n = Math.pow(aco.getProblem().getNij(i, j), aco.getBeta());
+        return n;
     }
+
 
     @Override
     public String toString() {

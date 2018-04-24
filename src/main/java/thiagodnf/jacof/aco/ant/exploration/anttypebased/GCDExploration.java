@@ -2,8 +2,10 @@ package thiagodnf.jacof.aco.ant.exploration.anttypebased;
 
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.Ant;
+import thiagodnf.jacof.aco.ant.ScAnt;
 import thiagodnf.jacof.aco.ant.exploration.PseudoRandomProportionalRule;
 import thiagodnf.jacof.aco.ant.selection.AbstractAntSelection;
+import thiagodnf.jacof.aco.graph.AntType;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -25,10 +27,8 @@ public class GCDExploration extends PseudoRandomProportionalRule {
         // Update the sum
         for (Integer j : ant.getNodesToVisit()) {
 
-            checkState(aco.getGraph().getTau(ant.getAntType(), i, j) != 0.0, "The tau(i,j) should not be 0.0 "+i + " " + j);
-
             tij[j] = Math.pow(aco.getGraph().getTau(ant.getCombinationRules(), i, j) , aco.getAlpha());
-            nij[j] = Math.pow(aco.getProblem().getNij(i, j), aco.getBeta());
+            nij[j] = Math.pow(aco.getProblem().getNij((ScAnt)ant, i, j), aco.getBeta());
 
             sum += tij[j] * nij[j];
         }
@@ -54,6 +54,13 @@ public class GCDExploration extends PseudoRandomProportionalRule {
         checkState(nextNode != -1, "The next node should not be -1");
 
         return nextNode;
+    }
+
+    @Override
+    public double getNodeAttractiveness(AntType antType, int i, int j) {
+        double tau = Math.pow(aco.getGraph().getTau(antType, i, j), aco.getAlpha());
+        double n = Math.pow(aco.getProblem().getNij(i, j), aco.getBeta());
+        return tau * n;
     }
 
 

@@ -5,12 +5,16 @@ import benchmark.visualization.chart.LineChart;
 import benchmark.visualization.chart.PheromoneLineChart;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import thiagodnf.jacof.aco.ACO;
+import thiagodnf.jacof.aco.ant.exploration.anttypebased.*;
+import thiagodnf.jacof.aco.ant.selection.RouletteWheel;
+import thiagodnf.jacof.aco.graph.AntType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Diversity {
 
+    private AntType antType;
     private ACO aco;
     private LineChart lineChartPR;
     private LineChart lineChartAD;
@@ -19,16 +23,23 @@ public class Diversity {
     private boolean showAttractivenessDispersionChart;
     private boolean showAttractivenessRatioChart;
     private long iteration;
-
+    AntTypeBasedExploration antTypeBasedExploration;
     private double pheromoneRatio;
     private double attractivenessRatio;
 
-    public Diversity(ACO aco, boolean showPheromoneRatioChart, boolean showAttractivenessDispersionChart, boolean showAttractivenessRatioChart) {
+    public Diversity(AntType antType, ACO aco, boolean showPheromoneRatioChart, boolean showAttractivenessDispersionChart, boolean showAttractivenessRatioChart) {
         this.aco = aco;
+        this.antType = antType;
         this.iteration = 0;
         this.showPheromoneRatioChart = showPheromoneRatioChart;
         this.showAttractivenessDispersionChart = showAttractivenessDispersionChart;
         this.showAttractivenessRatioChart = showAttractivenessRatioChart;
+        this.antTypeBasedExploration =
+        new AntTypeBasedExploration(aco)
+                .addRule(AntType.EC, new ECExploration(aco, new RouletteWheel()))
+                .addRule(AntType.AC, new ACExploration(aco, new RouletteWheel()))
+                .addRule(AntType.GC, new GCExploration(aco, new RouletteWheel()))
+                .addRule(AntType.GCD,new GCDExploration(aco, new RouletteWheel()));
     }
 
     public void prepareVisualization(AcoTSP acoTSP){
@@ -37,28 +48,28 @@ public class Diversity {
 
     private void initCharts(AcoTSP acoTSP) {
         if(showPheromoneRatioChart) {
-            this.lineChartPR = new PheromoneLineChart(acoTSP.getProblemName(), getPRChartName(), "Pheromone Ratio");
+            this.lineChartPR = new PheromoneLineChart(acoTSP.getProblemName() +" " + antType +" " +getPRChartName(), getPRChartName(), "Pheromone Ratio");
             lineChartPR.display();
         }
         if(showAttractivenessDispersionChart) {
-            this.lineChartAD = new PheromoneLineChart(acoTSP.getProblemName(), getADChartName(), "Attractiveness Dispersion");
+            this.lineChartAD = new PheromoneLineChart(acoTSP.getProblemName() +" " + antType +" " + getADChartName(), getADChartName(), "Attractiveness Dispersion");
             lineChartAD.display();
         }
         if(showAttractivenessRatioChart) {
-            this.lineChartAR = new PheromoneLineChart(acoTSP.getProblemName(), getARChartName(), "Attractiveness Ratio");
+            this.lineChartAR = new PheromoneLineChart(acoTSP.getProblemName() +" " + antType + " " + getARChartName(), getARChartName(), "Attractiveness Ratio");
             lineChartAR.display();
         }
     }
 
     private String getPRChartName() {
-        return String.format("Pheromone Ratio by Iterations\n%s", aco.getClass().getSimpleName());
+        return String.format("Pheromone Ratio by Iterations\n%s", antType);
     }
 
     private String getADChartName() {
-        return String.format("Attractiveness Dispersion by Iterations\n%s", aco.getClass().getSimpleName());
+        return String.format("Attractiveness Dispersion by Iterations\n%s", antType);
     }
     private String getARChartName() {
-        return String.format("Attractiveness Ratio by Iterations\n%s", aco.getClass().getSimpleName());
+        return String.format("Attractiveness Ratio by Iterations\n%s", antType);
     }
 
     public void update() {
@@ -71,7 +82,7 @@ public class Diversity {
     private void updatePheremoneRatio() {
         long countEdgesWithPheromone = 0;
         long countAllEdges = 0;
-        double[][] edges = aco.getGraph().getTau();
+        double[][] edges = aco.getGraph().getTau(antType);
         double initalPheromoneValue = getAverageThresold();
 
         int x;
@@ -105,7 +116,7 @@ public class Diversity {
     }
 
     private double getAverageThresold() {
-        double[][] edges = aco.getGraph().getTau();
+        double[][] edges = aco.getGraph().getTau(antType);
         int x;
         int y;
         double[] currentRow;
@@ -124,7 +135,7 @@ public class Diversity {
 
 
     private void updateAttractivenessDispersion() {
-        double[][] attractiveness = new double[aco.getGraph().getTau()[0].length][aco.getGraph().getTau().length];
+        double[][] attractiveness = new double[aco.getGraph().getTau(antType)[0].length][aco.getGraph().getTau(antType).length];
         int x;
         int y;
         double[] currentRow;
@@ -176,7 +187,8 @@ public class Diversity {
     }
 
     private double getNodeAttractiveness(int x, int y) {
-        return aco.getAntExploration().getNodeAttractiveness(x, y);
+        return antTypeBasedExploration.getNodeAttractiveness(antType, x, y);
+//        return aco.getAntExploration().getNodeAttractiveness(antType, x, y);
     }
 
     public double getPheromoneRatio() {

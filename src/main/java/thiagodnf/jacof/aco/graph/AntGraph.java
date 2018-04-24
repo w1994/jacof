@@ -186,6 +186,10 @@ public class AntGraph {
         return this.tau;
     }
 
+    public double[][] getTau(AntType antType) {
+        return this.antTypeToTau.get(antType);
+    }
+
     public double getTMin() {
         return tMin;
     }

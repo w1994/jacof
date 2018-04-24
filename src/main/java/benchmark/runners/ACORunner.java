@@ -6,6 +6,7 @@ import benchmark.stats.Diversity;
 import benchmark.visualization.Performance;
 import benchmark.visualization.Visualization;
 import thiagodnf.jacof.aco.*;
+import thiagodnf.jacof.aco.graph.AntType;
 import thiagodnf.jacof.problem.Problem;
 import benchmark.problem.AcoTSP;
 import thiagodnf.jacof.util.ExecutionStats;
@@ -13,6 +14,8 @@ import tsplib.DistanceFunction;
 import tsplib.MulticriteriaDistanceFunction;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ACORunner implements Runner{
@@ -24,7 +27,7 @@ public class ACORunner implements Runner{
     private Visualization visualization;
     private Output output;
     private DistanceFunction distanceFunction;
-    private Diversity diversity;
+    private List<Diversity> diversity = new ArrayList<>();
     private Performance performance;
     private String name;
 
@@ -82,7 +85,11 @@ public class ACORunner implements Runner{
     }
 
     public ACORunner withDiversity(boolean showPheromoneRatioChart, boolean showAttractivenessRationChart, boolean showAttractivenessRatioChart) {
-        this.diversity = new Diversity(aco, showPheromoneRatioChart, showAttractivenessRationChart, showAttractivenessRatioChart);
+
+        for(AntType antType : AntType.values()) {
+            diversity.add(new Diversity(antType, aco, showPheromoneRatioChart, showAttractivenessRationChart, showAttractivenessRatioChart));
+        }
+
         return this;
     }
 

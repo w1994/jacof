@@ -4,18 +4,19 @@ import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.exploration.AbstractAntExploration;
 import thiagodnf.jacof.aco.ant.initialization.AbstractAntInitialization;
 import thiagodnf.jacof.aco.graph.AntType;
-import thiagodnf.jacof.aco.rule.globalupdate.deposit.AbstractDeposit;
-import thiagodnf.jacof.aco.rule.globalupdate.evaporation.AbstractEvaporation;
 import thiagodnf.jacof.aco.rule.localupdate.AbstractLocalUpdateRule;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 
 public class ScAnt extends Ant{
 
     protected AbstractAntExploration antExploration;
     protected AbstractLocalUpdateRule antLocalUpdate;
+
+    private double [] distanceStrategy;
+    private double [] cnnStrategy;
+    private double [] deltaStrategy;
 
     public ScAnt(AntType antType, ACO aco, int id) {
         super(aco, id, antType);
@@ -78,4 +79,47 @@ public class ScAnt extends Ant{
     public void setAntInitialization(AbstractAntInitialization antInitialization) {
         this.antInitialization = antInitialization;
     }
+
+    public void setDistanceStrategy(double[] distanceStrategy) {
+        this.distanceStrategy = distanceStrategy;
+    }
+
+    public void setCnnStrategy(double[] cnnStrategy) {
+        this.cnnStrategy = cnnStrategy;
+    }
+
+    public void setDeltaStrategy(double[] deltaStrategy) {
+        this.deltaStrategy = deltaStrategy;
+    }
+
+    public double[] getDistanceStrategy() {
+        return distanceStrategy;
+    }
+
+    public double[] getCnnStrategy() {
+        return cnnStrategy;
+    }
+
+    public  double[] getDeltaStrategy() {
+        return deltaStrategy;
+}
+
+    public ScAnt clone() {
+        ScAnt ant = new ScAnt(antType, aco, id);
+
+        ant.id = id;
+        ant.currentNode = currentNode;
+        ant.tourLength = tourLength;
+        ant.tour = new ArrayList<>(tour);
+        ant.nodesToVisit = new ArrayList<>(nodesToVisit);
+        ant.antInitialization = antInitialization;
+        ant.path = path.clone();
+        ant.antType = antType;
+        ant.setCnnStrategy(this.cnnStrategy);
+        ant.setDeltaStrategy(this.deltaStrategy);
+        ant.setDistanceStrategy(this.distanceStrategy);
+        
+        return ant;
+    }
+
 }

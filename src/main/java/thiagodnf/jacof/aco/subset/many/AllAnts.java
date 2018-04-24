@@ -5,6 +5,7 @@ import java.util.List;
 
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.Ant;
+import thiagodnf.jacof.aco.ant.ScAnt;
 
 /**
  * This class represents the subset with all ants used 
@@ -32,7 +33,7 @@ public class AllAnts extends AbstractManyAnts {
 		List<Ant> list = new ArrayList<>();
 
 		for (int i = 0; i < ants.length; i++) {
-			list.add(ants[i].clone());
+			list.add((ScAnt)ants[i].clone());
 		}
 
 		return list;

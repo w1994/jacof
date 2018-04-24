@@ -61,7 +61,7 @@ public class CSV implements Output {
             resultRecord.setProblemName(acoTSP.getTspInstance().getName());
             resultRecord.setAlgorithmName(executionStats.aco.getClass().getSimpleName());
             resultRecord.setBestResultValue(String.valueOf(acoTSP.evaluate(executionStats.bestSolution)));
-            resultRecord.setPheromoneRatio(String.valueOf(acoTSP.getDiversity().getPheromoneRatio()));
+//            resultRecord.setPheromoneRatio(String.valueOf(acoTSP.getDiversity().getPheromoneRatio()));
             resultRecord.setId(this.id);
             try {
                 writeRecordToCSV(resultRecord);

@@ -28,8 +28,6 @@ public class ACExploration extends AbstractAntExploration {
         // Update the sum
         for (Integer j : ant.getNodesToVisit()) {
 
-            checkState(aco.getGraph().getTau(currentNode, j) != 0.0, "The tau(i,j) should not be 0.0");
-
             tij[j] = Math.pow(aco.getGraph().getTau(AntType.AC, currentNode, j), 2.0);
 
             sum += tij[j];
@@ -58,9 +56,11 @@ public class ACExploration extends AbstractAntExploration {
     }
 
     @Override
-    public double getNodeAttractiveness(int i, int j) {
-        return 0;
+    public double getNodeAttractiveness(AntType antType, int i, int j) {
+        double tau = Math.pow(aco.getGraph().getTau(antType, i, j), aco.getAlpha());
+        return tau;
     }
+
 
     @Override
     public String toString() {

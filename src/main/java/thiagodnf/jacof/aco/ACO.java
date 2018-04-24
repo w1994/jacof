@@ -1,7 +1,9 @@
 package thiagodnf.jacof.aco;
 
+import benchmark.problem.MultiObjectiveAcoTSP;
 import org.apache.log4j.Logger;
 import thiagodnf.jacof.aco.ant.Ant;
+import thiagodnf.jacof.aco.ant.ScAnt;
 import thiagodnf.jacof.aco.ant.exploration.AbstractAntExploration;
 import thiagodnf.jacof.aco.ant.initialization.AbstractAntInitialization;
 import thiagodnf.jacof.aco.daemonactions.AbstractDaemonActions;
@@ -79,6 +81,8 @@ public abstract class ACO implements Observer {
     protected Ant globalBest;
 
     protected GlobalBestRepository globalBestRepository = new GlobalBestRepository();
+
+    protected NondominatedRepository nondominatedRepository = new NondominatedRepository();
 
     /**
      * Best Current Ant in tour
@@ -289,7 +293,7 @@ public abstract class ACO implements Observer {
      * Perform the daemon actions
      */
     public void daemonActions() {
-
+        System.out.println("HR111");
         if (daemonActions.isEmpty()) {
             LOGGER.debug("There are no daemon actions for this algorithm");
         } else {
@@ -300,11 +304,11 @@ public abstract class ACO implements Observer {
             daemonAction.doAction();
         }
 
-        if (problem instanceof AcoTSP) {
-//            ((AcoTSP) problem).getDiversity().update();
-            ((AcoTSP) problem).getVisualization().updateVisualization(it, globalBest, ants);
-//            ((AcoTSP) problem).getPerformance().update(((AcoTSP) problem).getAcoName(), it, globalBest.getTourLength());
-        }
+//        if (problem instanceof MultiObjectiveAcoTSP) {
+//            ((MultiObjectiveAcoTSP) problem).update();
+////            ((MultiObjectiveAcoTSP) problem).getVisualization().updateVisualization(it, globalBest, ants);
+////            ((AcoTSP) problem).getPerformance().update(((AcoTSP) problem).getAcoName(), it, globalBest.getTourLength());
+//        }
     }
 
     /**
@@ -319,17 +323,29 @@ public abstract class ACO implements Observer {
         // Calculate the fitness function for the found solution
 
 
-        ant.setTourLength(problem.evaluate(ant.getSolution()));
+        ant.setTourLength(problem.evaluate((ScAnt) ant, ant.getSolution()));
         // Update the current best solution
+
+        nondominatedRepository.add((MultiObjectiveAcoTSP)problem, (ScAnt)ant);
+
+
         if (currentBest == null || problem.better(ant.getTourLength(), currentBest.getTourLength())) {
             currentBest = ant.clone();
+        } else if (ant.getTourLength() == currentBest.getTourLength()) {
+//        } else {
+            double distance = ((MultiObjectiveAcoTSP) problem).evaluatePerArg(new double[]{1.0, 0}, ant.getSolution());
+            double distance2 = ((MultiObjectiveAcoTSP) problem).evaluatePerArg(new double[]{0, 1.0}, ant.getSolution());
+
+            double distancee = ((MultiObjectiveAcoTSP) problem).evaluatePerArg(new double[]{1.0, 0}, currentBest.getSolution());
+            double distancee2 = ((MultiObjectiveAcoTSP) problem).evaluatePerArg(new double[]{0, 1.0}, currentBest.getSolution());
+            System.out.println("distance: " + distance+ " " +distance2 + " " + distancee+ " " +distancee2);
         }
+//
 
         // Update the global best solution
         if (globalBest == null || problem.better(ant.getTourLength(), globalBest.getTourLength())) {
             globalBest = ant.clone();
             globalBestRepository.addGlobalBest(globalBest);
-
         }
 
         LOGGER.debug(ant);
@@ -555,5 +571,9 @@ public abstract class ACO implements Observer {
 
     public void withGlobalRepository(boolean b) {
         this.useGlobalRepository = b;
+    }
+
+    public NondominatedRepository getNondominatedRepository() {
+        return nondominatedRepository;
     }
 }

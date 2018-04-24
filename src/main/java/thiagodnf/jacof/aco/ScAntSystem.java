@@ -6,6 +6,9 @@ import thiagodnf.jacof.aco.graph.initialization.FixedValueInitialization;
 import thiagodnf.jacof.aco.rule.globalupdate.deposit.anttypebased.AntTypeBasedDeposit;
 import thiagodnf.jacof.aco.rule.globalupdate.evaporation.anttypebased.AntTypeBasedEvaporation;
 
+import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
+
 public class ScAntSystem extends ACO {
 
     private AntColonyGenerator antColonyGenerator;
@@ -20,14 +23,24 @@ public class ScAntSystem extends ACO {
         for (int i = 0; i < numberOfNodes; i++) {
             for (int j = i; j < numberOfNodes; j++) {
                 if (i != j) {
+                    CountDownLatch latch = new CountDownLatch(AntType.values().length);
                     for (AntType antType : AntType.values()) {
-                        // Do AntType Based Evaporation
-                        graph.setTau(antType, i, j, evaporation.getTheNewValue(antType, i, j));
-                        graph.setTau(antType, j, i, graph.getTau(antType,i, j));
-
-                        // Do AntType Based Deposit
-                        graph.setTau(antType, i, j, deposit.getTheNewValue(antType, i, j));
-                        graph.setTau(antType, j, i, graph.getTau(antType,i, j));
+                        final int ii = i;
+                        final int jj = j;
+                        new Thread(() -> {
+                            graph.setTau(antType, ii, jj, evaporation.getTheNewValue(antType, ii, jj));
+                            graph.setTau(antType, jj, ii, graph.getTau(antType,ii , jj));
+                            // Do AntType Based Deposit
+                            graph.setTau(antType, ii, jj, deposit.getTheNewValue(antType, ii, jj));
+                            graph.setTau(antType, jj, ii, graph.getTau(antType,ii, jj));
+                            latch.countDown();
+//                            System.out.println(Thread.currentThread().getId());
+                        }).start();
+                    }
+                    try {
+                        latch.await();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -44,6 +57,10 @@ public class ScAntSystem extends ACO {
     public ScAntSystem withAntColonyGenerator(AntColonyGenerator antColonyGenerator) {
         this.antColonyGenerator = antColonyGenerator;
         return this;
+    }
+
+    public AntColonyGenerator getAntColonyGenerator() {
+        return antColonyGenerator;
     }
 
     @Override
