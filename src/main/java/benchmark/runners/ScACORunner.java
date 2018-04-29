@@ -8,11 +8,13 @@ import benchmark.stats.Diversity;
 import benchmark.visualization.Performance;
 import benchmark.visualization.Visualization;
 import benchmark.visualization.chart.ScatterPlotExample;
+import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import thiagodnf.jacof.aco.*;
 import thiagodnf.jacof.aco.Configuration;
+import thiagodnf.jacof.aco.ant.Ant;
 import thiagodnf.jacof.aco.ant.exploration.anttypebased.AntTypeBasedExploration;
 import thiagodnf.jacof.aco.ant.generators.AntColonyGenerator;
 import thiagodnf.jacof.aco.ant.initialization.AnAntAtEachVertex;
@@ -42,6 +44,7 @@ public class ScACORunner implements Runner {
     private List<Diversity> diversity = new ArrayList<>();
     private Performance performance = new Performance(false);
     private String name;
+    private Problem problem;
 
     public ScACORunner withACO(ACO aco) {
         this.aco = aco;
@@ -96,17 +99,13 @@ public class ScACORunner implements Runner {
         return this;
     }
 
+    public ScACORunner withProblem(Problem problem) {
+        this.problem = problem;
+        return this;
+    }
+
     @Override
     public void start() throws IOException {
-        String instance = "src/main/resources/problems/tsp/kroA100.tsp";
-        String instance2 = "src/main/resources/problems/tsp/kroB100.tsp";
-        Problem problem = new MultiObjectiveAcoTSP(instance, instance2)
-//                .withAcoName(name)
-                .withDistanceFunction(distanceFunction)
-//                .withVisualization(this.visualization)
-                .withDiversity(this.diversity)
-                .withPerformance(this.performance)
-                .build();
 
         aco.setProblem(problem);
         aco.setNumberOfIterations(this.iterationNumber);
@@ -119,89 +118,103 @@ public class ScACORunner implements Runner {
 
     public static void main(String[] args) throws IOException {
 
-//        for(int i =0; i < 30; i++) {
-//        for (int i = 0; i < 5; i++) {
-            String instance = "src/main/resources/problems/tsp/kroA100.tsp";
-            String instance2 = "src/main/resources/problems/tsp/kroB100.tsp";
-//            String instance = "src/main/resources/problems/tsp/berlin52.tsp";
-            long time = System.currentTimeMillis();
+        String instance = "src/main/resources/problems/tsp/kroA100.tsp";
+        String instance2 = "src/main/resources/problems/tsp/kroB100.tsp";
 
-            int iteration = 5;
+        MultiObjectiveAcoTSP problem = new MultiObjectiveAcoTSP(instance, instance2)
+                .withDistanceFunction(null)
+                .withDiversity(new ArrayList<>())
+                .withPerformance(new Performance(false))
+                .build();
 
-            ScAntSystem scAntSystem = new ScAntSystem();
-            scAntSystem.setNumberOfAnts(100);
-            scAntSystem.setAlpha(2.0);
-            scAntSystem.setBeta(3.0);
-            scAntSystem.setRho(0.5);
-            scAntSystem.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCD)));
-            scAntSystem.setEvaporationRate(0.5);
-            scAntSystem.setDepositRate(1);
+        MultiObjectiveAcoTSP problem2 = new MultiObjectiveAcoTSP(instance, instance2)
+                .withDistanceFunction(null)
+                .withDiversity(new ArrayList<>())
+                .withPerformance(new Performance(false))
+                .build();
 
-            ScAntSystem scAntSystem2 = new ScAntSystem();
-            scAntSystem2.setNumberOfAnts(100);
-            scAntSystem2.setAlpha(2.0);
-            scAntSystem2.setBeta(3.0);
-            scAntSystem2.setRho(0.5);
-            scAntSystem2.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCD, AntType.EC)));
-            scAntSystem2.setEvaporationRate(0.5);
-            scAntSystem2.setDepositRate(1);
+        Pair<Double, Double> deposit = ConfigurationGenerator.generateDeposit(0);
+
+        for (int d = 0; d < 10; d++) {
+
+            int left = 0;
+            int right = 0;
+
+            for (int i = 0; i < 10; i++) {
+
+                int iteration = 10;
+
+                ScAntSystem scAntSystem = new ScAntSystem();
+
+                scAntSystem.setNumberOfAnts(60);
+                scAntSystem.setAlpha(2.0);
+                scAntSystem.setBeta(3.0);
+                scAntSystem.setRho(0.5);
+                scAntSystem.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCD)));
+                scAntSystem.setEvaporationRate(0.5);
+                scAntSystem.setDepositRate(deposit.getLeft());
+
+                ScAntSystem scAntSystem2 = new ScAntSystem();
+                scAntSystem2.setNumberOfAnts(60);
+                scAntSystem2.setAlpha(2.0);
+                scAntSystem2.setBeta(3.0);
+                scAntSystem2.setRho(0.5);
+                scAntSystem2.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCD)));
+                scAntSystem2.setEvaporationRate(0.5);
+                scAntSystem2.setDepositRate(deposit.getRight());
+
+                Configuration.useGlobalDeposit = false;
+
+                new ScACORunner()
+                        .withProblem(problem)
+                        .withACO(scAntSystem)
+                        .withAcoName("ScAntSystem")
+                        .withIteration(iteration)
+                        .start();
+
+//        Configuration.useGlobalDeposit = true;
+//        Configuration.globalDepositWeight = 0.4;
+
+                new ScACORunner()
+                        .withProblem(problem2)
+                        .withACO(scAntSystem2)
+                        .withAcoName("ScAntSystem2")
+                        .withIteration(iteration)
+                        .start();
 
 
-            new ScACORunner()
-                    .withACO(scAntSystem)
-                    .withAcoName("ScAntSystem")
-                    .withIteration(iteration)
-                    .start();
+                ResultEvaluator resultEvaluator = new ResultEvaluator();
 
-            Configuration.globalDepositWeight = 0.4;
+                NondominatedRepository nondominatedRepository = resultEvaluator.evaluate(scAntSystem, scAntSystem2, problem);
 
-            new ScACORunner()
-                    .withACO(scAntSystem2)
-                    .withAcoName("ScAntSystem2")
-                    .withIteration(iteration)
-                    .start();
+                int all = nondominatedRepository.getList().size();
 
+                Long leftCount = nondominatedRepository.getList().stream()
+                        .filter(ant -> ant.getSourceId() == 0)
+                        .count();
 
-            System.out.println("Time " + (System.currentTimeMillis() - time));
+                if(leftCount > (all - leftCount)) {
+                    left++;
+                } else {
+                    right++;
+                }
 
-            XYSeries series1 = scAntSystem.getNondominatedRepository().getAsSeries("Sc1");
-            XYSeries series2 = scAntSystem2.getNondominatedRepository().getAsSeries("Sc2");
-            XYSeries series3 = new XYSeries("Best known");
-
-            try {
-                Files.write(Paths.get("C:\\Users\\wojci\\Desktop\\STUDIA\\MAGISTERKA\\result" + System.currentTimeMillis() + ".txt")
-                        , scAntSystem.getNondominatedRepository().asString().getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
+                Saver.save(scAntSystem, scAntSystem2, iteration);
+//                Draw.draw(scAntSystem, scAntSystem2, nondominatedRepository);
+//                scAntSystem.getNondominatedRepository().compare(scAntSystem2.getNondominatedRepository());
             }
+
+            if(left > right) {
+                deposit = ConfigurationGenerator.generateDeposit(deposit.getLeft());
+            } else {
+                deposit = ConfigurationGenerator.generateDeposit(deposit.getRight());
+            }
+
+            System.out.println("CURRENT DEPOSIT: " + deposit);
+        }
 //
-//
-//            try {
-//                Files.write(Paths.get("C:\\Users\\wojci\\Desktop\\STUDIA\\MAGISTERKA\\resul2" + System.currentTimeMillis() + ".txt")
-//                        , objectMapper.writeValueAsBytes(scAntSystem2.getNondominatedRepository()));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
 
-//            Files.readAllLines(Paths.get("src/main/resources/problems/tsp/best"))
-//                    .stream().map(line -> line.split(" "))
-//                    .forEach(results -> series3.add(Long.valueOf(results[0]), Long.valueOf(results[1])));
-//        }
-
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(series1);
-        dataset.addSeries(series2);
-        dataset.addSeries(series3);
-
-        SwingUtilities.invokeLater(() -> {
-            ScatterPlotExample example = new ScatterPlotExample("Aco quality", dataset);
-            example.setSize(800, 400);
-            example.setLocationRelativeTo(null);
-            example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            example.setVisible(true);
-        });
-
-//
+        System.out.println("BEST RESULT: " + deposit);
 
     }
 }

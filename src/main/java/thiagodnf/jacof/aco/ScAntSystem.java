@@ -1,11 +1,13 @@
 package thiagodnf.jacof.aco;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import thiagodnf.jacof.aco.ant.generators.AntColonyGenerator;
 import thiagodnf.jacof.aco.graph.AntType;
 import thiagodnf.jacof.aco.graph.initialization.FixedValueInitialization;
 import thiagodnf.jacof.aco.rule.globalupdate.deposit.anttypebased.AntTypeBasedDeposit;
 import thiagodnf.jacof.aco.rule.globalupdate.evaporation.anttypebased.AntTypeBasedEvaporation;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
@@ -82,4 +84,42 @@ public class ScAntSystem extends ACO {
     public String toString() {
         return null;
     }
+
+    public String getConfig() {
+
+        StringBuilder config = new StringBuilder();
+        config.append("NumberOfAnts:");
+        config.append(this.getNumberOfAnts());
+
+        config.append(" Alpha:");
+        config.append(this.getAlpha());
+
+        config.append(" Beta:");
+        config.append(this.getBeta());
+
+        config.append(" Rho:");
+        config.append(this.getRho());
+
+        config.append(" EvaporationRate:");
+        config.append(this.evaporationRate);
+
+        config.append(" DepositRate:");
+        config.append(this.depositRate);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            config.append(objectMapper.writeValueAsString(this.antColonyGenerator));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        config.append(Configuration.config());
+        config.append("\n");
+
+        config.append(this.getNondominatedRepository().asString());
+        config.append("\n");
+        return config.toString();
+    }
+
 }

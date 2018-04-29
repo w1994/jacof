@@ -12,6 +12,8 @@ import thiagodnf.jacof.aco.graph.AntType;
 import thiagodnf.jacof.aco.rule.globalupdate.deposit.PartialDeposit;
 import thiagodnf.jacof.aco.subset.AbstractSubSet;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -32,7 +34,7 @@ public class TypeBasedPartialDeposit extends TypeBasedAbstractDeposit{
     @Override
     public double getTheNewValue(AntType antType, int i, int j) {
 
-        if(Configuration.useGlobalDeposit) {
+        if(Configuration.useGlobalDeposit & aco.getNumberOfCurrentIteration() > Configuration.numberOfIterations) {
             return aco.getGraph().getTau(antType, i, j) + rate * getDeltaTau(antType, i, j)
                     + Configuration.globalDepositWeight * getGlobalDeltaTau(aco.getNondominatedRepository(),i ,j);
         } else {
@@ -45,32 +47,36 @@ public class TypeBasedPartialDeposit extends TypeBasedAbstractDeposit{
 
     public double getGlobalDeltaTau(NondominatedRepository nondominatedRepository, int i, int j) {
 
-       if(aco.getNumberOfIterations() > 1) {
-           double deltaTau = 0.0;
+       if(aco.getNumberOfIterations() > 5) {
+           List<Double> deltaTau = new ArrayList<>();
 
            int index = random.nextInt(nondominatedRepository.getList().size());
 
 //           ScAnt scAnt = nondominatedRepository.getList().get(index).getScAnt();
 
            for (Ant ant : subSet.getSubSet()) {
+               Double values[] = getValues(ant);
 
-               ScAnt scAnt = nondominatedRepository.getList().stream()
-                       .map(a -> Pair.of(a, distance(a, ant)))
+               nondominatedRepository.getList().stream()
+                       .parallel()
+                       .filter(a -> a.getValues()[0] < values[0] || a.getValues()[1] < values[1])
+                       .map(a -> Pair.of(a, distance(a.getValues(), values)))
                        .min((o1, o2) -> (int)(o1.getRight() - o2.getRight()))
-                       .get()
-                       .getLeft()
-                       .getScAnt();
+                       .ifPresent(antWrapperDoublePair -> {
 
-               if (ant.path[i][j] == scAnt.path[i][j] && scAnt.path[i][j] == 1) {
-                   deltaTau += aco.getProblem().getDeltaTau((ScAnt) ant, ant.getTourLength(), i, j);
-               }
+                           if (ant.path[i][j] ==  antWrapperDoublePair.getLeft().getScAnt().path[i][j] &&  antWrapperDoublePair.getLeft().getScAnt().path[i][j] == 1) {
+                               deltaTau.add(aco.getProblem().getDeltaTau((ScAnt) ant, ant.getTourLength(), i, j));
+                           }
+                       });
+
            }
 
 
-           System.out.println("DD: " + deltaTau);
-           return deltaTau;
+//           System.out.println("DD: " + deltaTau);
+           return deltaTau.stream().mapToDouble(Double::doubleValue).sum();
 
-       } return 0;
+       }
+       return 0;
     }
 
     public double getDeltaTau(AntType antType, int i, int j) {
@@ -91,17 +97,13 @@ public class TypeBasedPartialDeposit extends TypeBasedAbstractDeposit{
         return PartialDeposit.class.getSimpleName() + " with " + subSet + " and rate=" + rate;
     }
 
-    public double distance(NondominatedRepository.AntWrapper antWrapper, Ant scAnt) {
-
+    public Double[] getValues(Ant scAnt) {
         DistanceEvaluator distanceEvaluator = new DistanceEvaluator();
-        Double[] scValues = distanceEvaluator.getDistances((MultiObjectiveAcoTSP) aco.getProblem(), scAnt);
+        return distanceEvaluator.getDistances((MultiObjectiveAcoTSP) aco.getProblem(), scAnt);
+    }
 
-        double x1 = antWrapper.getValues()[0];
-        double y1 = antWrapper.getValues()[1];
-        double x2 = scValues[0];
-        double y2 = scValues[1];
-
-        return Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
+    public double distance(Double values1[], Double values2[]) {
+        return Math.sqrt((values2[0]-values1[0])*(values2[0]-values1[0])+(values2[1]-values1[1])*(values2[1]-values1[1]));
     }
 
 

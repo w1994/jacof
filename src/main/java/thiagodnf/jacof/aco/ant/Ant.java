@@ -204,4 +204,8 @@ public class Ant extends Observable implements Runnable{
 	public Map<AntType, Double> getCombinationRules() {
 		return combinationRules.get(antType);
 	}
+
+	public void setTour(List<Integer> tour) {
+		this.tour = tour;
+	}
 }

@@ -30,4 +30,9 @@ public class CombinationRules {
     public Map<AntType, Double> get(AntType antType) {
         return antTypeAffectingWeightMap.get(antType);
     }
+
+    public Map<AntType, Map<AntType, Double>> getAntTypeAffectingWeightMap() {
+        return antTypeAffectingWeightMap;
+    }
+
 }

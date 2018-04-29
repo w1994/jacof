@@ -50,7 +50,7 @@ public class AntColonyGenerator {
                     .forType(AntType.EC)
                     .affecting(AntType.GCD).weight(12.0)
                     .affecting(AntType.GC).weight(12.0)
-                    .affecting(AntType.EC).weight(16.0)
+                    .affecting(AntType.EC).weight(14.0)
                     .affecting(AntType.AC).weight(4.0)
                     .forType(AntType.AC)
                     .affecting(AntType.GCD).weight(12.0)
@@ -65,7 +65,7 @@ public class AntColonyGenerator {
                     .forType(AntType.GCD)
                     .affecting(AntType.GCD).weight(12.0)
                     .affecting(AntType.GC).weight(12.0)
-                    .affecting(AntType.EC).weight(16.0)
+                    .affecting(AntType.EC).weight(14.0)
                     .affecting(AntType.AC).weight(4.0);
 
             scAnt.setCombinationRules(combinationRules);
@@ -77,7 +77,7 @@ public class AntColonyGenerator {
 //            scAnt.setCnnStrategy(new double[]{1.0, 0});
 //
 
-            double value = random.nextDouble();
+            double value = 0.5d;//random.nextDouble();
 
             scAnt.setDistanceStrategy(new double[]{value, 1-value});
             scAnt.setDeltaStrategy(new double[]{value, 1-value});
@@ -89,6 +89,10 @@ public class AntColonyGenerator {
         }
 
         return scAnts;
+    }
+
+    public CombinationRules getCombinationRules() {
+        return combinationRules;
     }
 }
 
