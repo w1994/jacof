@@ -60,8 +60,8 @@ public class UpdateTMinAndTMaxValues extends AbstractDaemonActions {
 		aco.getGraph().setTMin(aco.getGraph().getTMax() / 10.0);
 
 		LOGGER.info("Now tMin=" + aco.getGraph().getTMin() + " and tMax=" + aco.getGraph().getTMax());
-	}
-	
+}
+
 	@Override
 	public String toString() {
 		return UpdateTMinAndTMaxValues.class.getSimpleName();

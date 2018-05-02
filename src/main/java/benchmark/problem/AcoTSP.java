@@ -44,7 +44,7 @@ public class AcoTSP extends Problem {
      */
     protected double cnn;
 
-    private Visualization visualization;
+    private Visualization visualization = new Visualization(true);
     private DistanceFunction distanceFunction;
     private TSPInstance tspInstance;
     private List<Diversity> diversity;
@@ -208,8 +208,8 @@ public class AcoTSP extends Problem {
         numberOfCities = tspInstance.getDimension();
         distance = calculateDistanceMatrix(tspInstance.getDistanceTable());
 
-//        visualization.prepareVisualization(tspInstance);
-        diversity.forEach(diversity1 -> diversity1.prepareVisualization(this));
+        visualization.prepareVisualization(tspInstance);
+//        diversity.forEach(diversity1 -> diversity1.prepareVisualization(this));
 //        diversity.prepareVisualization(this);
 //        performance.setUp(this.acoName);
 

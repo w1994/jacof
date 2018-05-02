@@ -26,6 +26,7 @@ public class MultiObjectiveAcoTSP extends Problem {
     private List<AcoTSP> acoTspInstances;
     private DistanceFunction distanceFunction;
     private List<Diversity> diversity;
+    private Visualization visualization;
 
     public MultiObjectiveAcoTSP(String... filenames) throws IOException {
         System.out.println("FILE NAME " + filenames[0]);
@@ -100,7 +101,10 @@ public class MultiObjectiveAcoTSP extends Problem {
 
         double result = 0;
 
+        long l = System.nanoTime();
         for (int index = 0; index < weights.length; index++) {
+//            Double value = biFunction.apply(acoTspInstances, index);
+//            System.out.println("value: " +l + " " + value +" weight: " + weights[index] + " "+ weights.length);
             result += biFunction.apply(acoTspInstances, index) * weights[index];
         }
 
@@ -116,7 +120,7 @@ public class MultiObjectiveAcoTSP extends Problem {
         return multiplyByWeightsAndSum(scAnt.getDistanceStrategy(), (acoTspInstances, index) -> acoTspInstances.get(index).getDistance(i, j));
     }
 
-    public Visualization getVisualization(Integer index) {
+    public Visualization getVisualization(int index) {
         return acoTspInstances.get(index).getVisualization();
     }
 
@@ -189,10 +193,10 @@ public class MultiObjectiveAcoTSP extends Problem {
         return nodesToVisit;
     }
 
-    //    public MultiObjectiveAcoTSP withVisualization(Visualization visualization) {
-//        this.visualization = visualization;
-//        return this;
-//    }
+        public MultiObjectiveAcoTSP withVisualization(Visualization visualization) {
+        this.visualization = visualization;
+        return this;
+    }
 //
     public MultiObjectiveAcoTSP withDistanceFunction(DistanceFunction distanceFunction) {
         this.distanceFunction = distanceFunction;

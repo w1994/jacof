@@ -14,12 +14,21 @@ public class ScAnt extends Ant{
     protected AbstractAntExploration antExploration;
     protected AbstractLocalUpdateRule antLocalUpdate;
 
+    private Alpha alpha;
+    private Beta beta;
+
     private double [] distanceStrategy;
     private double [] cnnStrategy;
     private double [] deltaStrategy;
 
     public ScAnt(AntType antType, ACO aco, int id) {
         super(aco, id, antType);
+    }
+
+    public ScAnt(Alpha alpha, Beta beta, AntType antType, ACO aco, int id) {
+        super(aco, id, antType);
+        this.alpha = alpha;
+        this.beta = beta;
     }
 
     @Override
@@ -122,4 +131,19 @@ public class ScAnt extends Ant{
         return ant;
     }
 
+    public double getAlpha(int currentIterationNumber, int iterationNumber) {
+        return alpha.getValueForIteration(currentIterationNumber, iterationNumber);
+    }
+
+    public double getBeta(int currentIterationNumber, int iterationNumber) {
+        return beta.getValueForIteration(currentIterationNumber, iterationNumber);
+    }
+
+    public AgingType getAlpha() {
+        return alpha.getAgingType();
+    }
+
+    public AgingType getBeta() {
+        return beta.getAgingType();
+    }
 }

@@ -1,5 +1,6 @@
 package thiagodnf.jacof.aco.ant.exploration.anttypebased;
 
+import benchmark.problem.MultiObjectiveAcoTSP;
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.Ant;
 import thiagodnf.jacof.aco.ant.ScAnt;
@@ -29,7 +30,11 @@ public class ECExploration extends AbstractAntExploration {
         // Update the sum
         for (Integer j : ant.getNodesToVisit()) {
 
-            nij[j] = Math.pow(aco.getProblem().getNij((ScAnt)ant, currentNode, j), 3.0);
+//            if(!(aco.getProblem() instanceof MultiObjectiveAcoTSP)) throw new NullPointerException();
+
+            System.out.println("D11: " + aco.getProblem().getNij((ScAnt)ant, currentNode, j));
+
+            nij[j] = Math.pow(aco.getProblem().getNij((ScAnt)ant, currentNode, j), aco.getBeta());
 
             sum += nij[j];
         }
@@ -55,6 +60,7 @@ public class ECExploration extends AbstractAntExploration {
         return nextNode;
 
     }
+
     @Override
     public double getNodeAttractiveness(AntType antType, int i, int j) {
         double n = Math.pow(aco.getProblem().getNij(i, j), aco.getBeta());

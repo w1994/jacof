@@ -5,23 +5,25 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import thiagodnf.jacof.aco.NondominatedRepository;
 import thiagodnf.jacof.aco.ScAntSystem;
+import thiagodnf.jacof.aco.ant.AgingType;
 
 import javax.swing.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * Created by wojci on 29.04.2018.
  */
 public class Draw {
 
-    public static void draw(ScAntSystem scAntSystem, ScAntSystem scAntSystem2, NondominatedRepository nondominatedRepository) {
+    public static void draw(ScAntSystem scAntSystem, ScAntSystem scAntSystem2, List<AgingType> types, NondominatedRepository nondominatedRepository) {
 
         XYSeries series4 = nondominatedRepository.getAsSeries("merged");
 
         XYSeries series1 = scAntSystem.getNondominatedRepository().getAsSeries("Sc1");
-        XYSeries series2 = scAntSystem2.getNondominatedRepository().getAsSeries("Sc2");
+        XYSeries series2 = scAntSystem2.getNondominatedRepository().getAsSeries(types.toString());
         XYSeries series3 = new XYSeries("Best known");
 
         try {

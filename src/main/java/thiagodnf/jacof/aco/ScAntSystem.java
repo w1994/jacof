@@ -1,6 +1,8 @@
 package thiagodnf.jacof.aco;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import thiagodnf.jacof.aco.ant.AgingType;
+import thiagodnf.jacof.aco.ant.ScAnt;
 import thiagodnf.jacof.aco.ant.generators.AntColonyGenerator;
 import thiagodnf.jacof.aco.graph.AntType;
 import thiagodnf.jacof.aco.graph.initialization.FixedValueInitialization;
@@ -25,35 +27,36 @@ public class ScAntSystem extends ACO {
         for (int i = 0; i < numberOfNodes; i++) {
             for (int j = i; j < numberOfNodes; j++) {
                 if (i != j) {
-                    CountDownLatch latch = new CountDownLatch(AntType.values().length);
-                    for (AntType antType : AntType.values()) {
+//                    CountDownLatch latch = new CountDownLatch(AntType.values().length);
+//                    for (AntType antType : AntType.values()) {
                         final int ii = i;
                         final int jj = j;
-                        new Thread(() -> {
+                        AntType antType = AntType.GCDAge;
+//                        new Thread(() -> {
                             graph.setTau(antType, ii, jj, evaporation.getTheNewValue(antType, ii, jj));
                             graph.setTau(antType, jj, ii, graph.getTau(antType,ii , jj));
                             // Do AntType Based Deposit
                             graph.setTau(antType, ii, jj, deposit.getTheNewValue(antType, ii, jj));
                             graph.setTau(antType, jj, ii, graph.getTau(antType,ii, jj));
-                            latch.countDown();
+//                            latch.countDown();
 //                            System.out.println(Thread.currentThread().getId());
-                        }).start();
+                        }
+//                        ).start();
                     }
-                    try {
-                        latch.await();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+//                    try {
+//                        latch.await();
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+
             }
         }
-    }
+
 
     @Override
     protected void initializeAnts() {
         LOGGER.debug("Initializing the ants");
         this.ants = antColonyGenerator.generate(numberOfAnts, this);
-
     }
 
     public ScAntSystem withAntColonyGenerator(AntColonyGenerator antColonyGenerator) {

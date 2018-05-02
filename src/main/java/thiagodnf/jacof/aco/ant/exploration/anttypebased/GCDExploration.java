@@ -58,6 +58,7 @@ public class GCDExploration extends PseudoRandomProportionalRule {
 
     @Override
     public double getNodeAttractiveness(AntType antType, int i, int j) {
+
         double tau = Math.pow(aco.getGraph().getTau(antType, i, j), aco.getAlpha());
         double n = Math.pow(aco.getProblem().getNij(i, j), aco.getBeta());
         return tau * n;

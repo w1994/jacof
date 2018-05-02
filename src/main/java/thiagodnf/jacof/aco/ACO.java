@@ -304,11 +304,12 @@ public abstract class ACO implements Observer {
             daemonAction.doAction();
         }
 
-//        if (problem instanceof MultiObjectiveAcoTSP) {
+        if (problem instanceof MultiObjectiveAcoTSP) {
 //            ((MultiObjectiveAcoTSP) problem).update();
-////            ((MultiObjectiveAcoTSP) problem).getVisualization().updateVisualization(it, globalBest, ants);
-////            ((AcoTSP) problem).getPerformance().update(((AcoTSP) problem).getAcoName(), it, globalBest.getTourLength());
-//        }
+            ((MultiObjectiveAcoTSP) problem).getVisualization(0).updateVisualization(it, globalBest, ants);
+            ((MultiObjectiveAcoTSP) problem).getVisualization(1).updateVisualization(it, globalBest, ants);
+//            ((AcoTSP) problem).getPerformance().update(((AcoTSP) problem).getAcoName(), it, globalBest.getTourLength());
+        }
     }
 
     /**
