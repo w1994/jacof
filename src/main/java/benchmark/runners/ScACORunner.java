@@ -149,23 +149,24 @@ public class ScACORunner implements Runner {
 
 //            for (int i = 0; i < 10; i++) {
 
-        int iteration = 50;
+        int iteration = 30;
+
+        List<AgingType> types = Arrays.asList(AgingType.SLOW, AgingType.MEDIUM);
+        List<AgingType> types2 = Arrays.asList(AgingType.SLOW, AgingType.MEDIUM, AgingType.MEDIUM_A);
 
         ScAntSystem scAntSystem = new ScAntSystem();
-
         scAntSystem.setNumberOfAnts(100);
         scAntSystem.setRho(0.5);
-        scAntSystem.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCDAge), Arrays.asList(AgingType.STATIC)));
-        scAntSystem.setEvaporationRate(0.5);
-        scAntSystem.setDepositRate(0.6);
+        scAntSystem.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCDAge), types));
+        scAntSystem.setEvaporationRate(0.2);
+        scAntSystem.setDepositRate(0.8);
 
-        List<AgingType> types = Arrays.asList( AgingType.SLOW);
         ScAntSystem scAntSystem2 = new ScAntSystem();
         scAntSystem2.setNumberOfAnts(100);
-        //scAntSystem2.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCDAge), Arrays.asList(AgingType.MEDIUM, AgingType.MEDIUM, AgingType.FAST, AgingType.SLOW, AgingType.SLOW)));
-        scAntSystem2.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCDAge), types));
-        scAntSystem2.setEvaporationRate(0.5);
-        scAntSystem2.setDepositRate(0.6);
+        scAntSystem2.setRho(0.5);
+        scAntSystem2.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCDAge), types2));
+        scAntSystem2.setEvaporationRate(0.2);
+        scAntSystem2.setDepositRate(0.8);
 
         System.out.println(types);
 
@@ -181,6 +182,9 @@ public class ScACORunner implements Runner {
 //        Configuration.useGlobalDeposit = true;
 //        Configuration.globalDepositWeight = 0.4;
 //
+        Configuration.isNonDominatedUsed = true;
+        Configuration.useGaussian = false;
+
                 new ScACORunner()
                         .withProblem(problem2)
                         .withACO(scAntSystem2)
@@ -214,7 +218,7 @@ public class ScACORunner implements Runner {
 //                    right++;
 //                }
 
-        Draw.draw(scAntSystem, scAntSystem2, types, nondominatedRepository);
+        Draw.draw(scAntSystem, scAntSystem2, nondominatedRepository);
 
         Saver.save(scAntSystem, scAntSystem2, iteration);
 //                Draw.draw(scAntSystem, scAntSystem2, nondominatedRepository);

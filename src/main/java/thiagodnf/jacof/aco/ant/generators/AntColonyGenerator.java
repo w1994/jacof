@@ -15,6 +15,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import static thiagodnf.jacof.aco.Configuration.isNonDominatedUsed;
+import static thiagodnf.jacof.aco.Configuration.useGaussian;
+
 public class AntColonyGenerator {
 
 
@@ -108,7 +111,16 @@ public class AntColonyGenerator {
 //            double value = random.nextInt(11) / 10d;
 
 
-            double value = random.nextInt(11) / 10d;// 0.5d;//random.nextDouble();
+//            double value = random.nextInt(11) / 10d;// 0.5d;//random.nextDouble();
+
+//            double value = random.nextInt(32) % 2;
+            double value;
+            if(useGaussian) {
+                value = Math.abs(random.nextGaussian() + 1) % 1;
+            } else {
+                value = random.nextInt(11) / 10d;
+            }
+
 
             scAnt.setDistanceStrategy(new double[]{value, 1-value});
             scAnt.setDeltaStrategy(new double[]{value, 1-value});

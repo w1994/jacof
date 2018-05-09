@@ -38,7 +38,7 @@ public class TypeBasedPartialDeposit extends TypeBasedAbstractDeposit{
             return aco.getGraph().getTau(antType, i, j) + rate * getDeltaTau(antType, i, j)
                     + Configuration.globalDepositWeight * getGlobalDeltaTau(aco.getNondominatedRepository(),i ,j);
         } else {
-            return aco.getGraph().getTau(antType, i, j) +  0.7 * getDeltaTau(antType, i, j);
+            return aco.getGraph().getTau(antType, i, j) +  1 * getDeltaTau(antType, i, j);
 
         }
 
@@ -83,15 +83,16 @@ public class TypeBasedPartialDeposit extends TypeBasedAbstractDeposit{
 
 
         double deltaTau = 0.0;
-//        for (NondominatedRepository.AntWrapper ant : aco.getNondominatedRepository().getList()) {
-////            if (ant.path[i][j] == 1 && ant.getAntType().equals(antType)) {
-////                deltaTau += aco.getProblem().getDeltaTau((ScAnt) ant, ant.getTourLength(), i, j);
-////            }
-//            if (ant.getScAnt().path[i][j] == 1) {
-//                deltaTau += aco.getProblem().getDeltaTau(ant.getScAnt(), ant.getScAnt().getTourLength(), i, j);
+        if(Configuration.isNonDominatedUsed) {
+            for (NondominatedRepository.AntWrapper ant : aco.getNondominatedRepository().getList()) {
+//            if (ant.path[i][j] == 1 && ant.getAntType().equals(antType)) {
+//                deltaTau += aco.getProblem().getDeltaTau((ScAnt) ant, ant.getTourLength(), i, j);
 //            }
-//        }
-
+                if (ant.getScAnt().path[i][j] == 1) {
+                    deltaTau += 1*aco.getProblem().getDeltaTau(ant.getScAnt(), ant.getScAnt().getTourLength(), i, j);
+                }
+            }
+        }
         for (Ant ant : subSet.getSubSet()) {
             if (ant.path[i][j] == 1 && ant.getAntType().equals(antType)) {
                 deltaTau += aco.getProblem().getDeltaTau((ScAnt) ant, ant.getTourLength(), i, j);

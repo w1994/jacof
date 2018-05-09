@@ -8,6 +8,8 @@ public class Configuration {
     public static boolean useGlobalDeposit = true;
     public static double globalDepositWeight = 1;
     public static int numberOfIterations = 7;
+    public static boolean isNonDominatedUsed = false;
+    public static boolean useGaussian = false;
 
     public static String config() {
 

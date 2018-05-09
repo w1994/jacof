@@ -18,12 +18,14 @@ import java.util.List;
  */
 public class Draw {
 
-    public static void draw(ScAntSystem scAntSystem, ScAntSystem scAntSystem2, List<AgingType> types, NondominatedRepository nondominatedRepository) {
+    public static void draw(ScAntSystem scAntSystem, ScAntSystem scAntSystem2, NondominatedRepository nondominatedRepository) {
 
-        XYSeries series4 = nondominatedRepository.getAsSeries("merged");
+        XYSeries series40 = nondominatedRepository.getAsSeries("worst0", 0);
+        XYSeries series41 = nondominatedRepository.getAsSeries("better1", 1);
 
-        XYSeries series1 = scAntSystem.getNondominatedRepository().getAsSeries("Sc1");
-        XYSeries series2 = scAntSystem2.getNondominatedRepository().getAsSeries(types.toString());
+
+        XYSeries series1 = scAntSystem.getNondominatedRepository().getAsSeries(scAntSystem.getAntColonyGenerator().agingTypes.toString(),0);
+        XYSeries series2 = scAntSystem2.getNondominatedRepository().getAsSeries(scAntSystem2.getAntColonyGenerator().agingTypes.toString(),0);
         XYSeries series3 = new XYSeries("Best known");
 
         try {
@@ -37,24 +39,13 @@ public class Draw {
         XYSeriesCollection dataset = new XYSeriesCollection();
         dataset.addSeries(series1);
         dataset.addSeries(series2);
-        System.out.println("count: " + series4.getItemCount());
         dataset.addSeries(series3);
-        dataset.addSeries(series4);
+
 
         XYSeriesCollection dataset2 = new XYSeriesCollection();
-//        dataset.addSeries(series1);
-//        dataset.addSeries(series2);
-        System.out.println("count: " + series4.getItemCount());
+        dataset2.addSeries(series40);
+        dataset2.addSeries(series41);
         dataset2.addSeries(series3);
-        dataset2.addSeries(series4);
-
-        XYSeriesCollection dataset3 = new XYSeriesCollection();
-        dataset3.addSeries(series1);
-        dataset3.addSeries(series2);
-        System.out.println("count: " + series4.getItemCount());
-        dataset3.addSeries(series3);
-//        dataset3.addSeries(series4);
-
 
         SwingUtilities.invokeLater(() -> {
             ScatterPlotExample example = new ScatterPlotExample("Aco quality", dataset);
@@ -71,16 +62,6 @@ public class Draw {
             example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             example.setVisible(true);
         });
-
-        SwingUtilities.invokeLater(() -> {
-            ScatterPlotExample example = new ScatterPlotExample("Aco quality3", dataset3);
-            example.setSize(800, 400);
-            example.setLocationRelativeTo(null);
-            example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            example.setVisible(true);
-        });
-
-
 
     }
 

@@ -172,16 +172,12 @@ public class NondominatedRepository {
             }
     }
 
-    public XYSeries getAsSeries(String name) {
-
+    public XYSeries getAsSeries(String name, int sourceId) {
         XYSeries xySeries = new XYSeries(name);
-        for(NondominatedRepository.AntWrapper antWrapper : list) {
-//            result += antWrapper.getValues()[0] + " " + antWrapper.getValues()[1] + "\n";
-            xySeries.add(antWrapper.getValues()[0], antWrapper.getValues()[1]);
-
-        }
+        list.stream()
+                .filter(antWrapper -> antWrapper.getSourceId() == sourceId)
+                .forEach(antWrapper -> xySeries.add(antWrapper.getValues()[0], antWrapper.getValues()[1]));
         return xySeries;
-
     }
 
     public String asString() {
