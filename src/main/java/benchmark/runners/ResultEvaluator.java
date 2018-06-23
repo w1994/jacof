@@ -23,4 +23,18 @@ public class ResultEvaluator {
         return nondominatedRepository;
 
     }
+
+    public void evaluate(NondominatedRepository nondominatedRepository, ScAntSystem scAntSystem, ScAntSystem scAntSystem2, MultiObjectiveAcoTSP problem) {
+
+        scAntSystem.getNondominatedRepository().getList().forEach(
+                ant -> nondominatedRepository.add(ant, 0));
+
+        scAntSystem2.getNondominatedRepository().getList().forEach(
+                ant -> nondominatedRepository.add(ant, 1));
+
+
+
+    }
+
+
 }

@@ -44,7 +44,7 @@ public class AcoTSP extends Problem {
      */
     protected double cnn;
 
-    private Visualization visualization = new Visualization(true);
+    private Visualization visualization = new Visualization(false);
     private DistanceFunction distanceFunction;
     private TSPInstance tspInstance;
     private List<Diversity> diversity;

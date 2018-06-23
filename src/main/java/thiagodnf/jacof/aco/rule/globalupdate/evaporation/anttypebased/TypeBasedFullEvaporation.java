@@ -18,7 +18,11 @@ public class TypeBasedFullEvaporation extends TypeBasedAbstractEvaporation{
                 .map(NondominatedRepository.AntWrapper::getScAnt)
                 .filter(ant -> ant.path[i][j] == 1)
                 .count();
-
+////
+//        if(aco.getNumberOfCurrentIteration() % 50 == 0) {
+//            System.out.println("HERE");
+//            return 0.5;
+//        }
 
         if(inNondominated > 0 && Configuration.isNonDominatedUsed) {
             return (1.0 - rate) * aco.getGraph().getTau(antType, i, j);

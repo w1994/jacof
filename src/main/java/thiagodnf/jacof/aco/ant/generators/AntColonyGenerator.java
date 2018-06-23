@@ -7,6 +7,8 @@ import thiagodnf.jacof.aco.ant.Beta;
 import thiagodnf.jacof.aco.ant.ScAnt;
 import thiagodnf.jacof.aco.ant.exploration.anttypebased.*;
 import thiagodnf.jacof.aco.ant.initialization.AlwaysRandomPositions;
+import thiagodnf.jacof.aco.ant.initialization.AnAntAtARandomVertex;
+import thiagodnf.jacof.aco.ant.selection.RandomSelection;
 import thiagodnf.jacof.aco.ant.selection.RouletteWheel;
 import thiagodnf.jacof.aco.graph.AntType;
 import thiagodnf.jacof.aco.graph.CombinationRules;
@@ -57,29 +59,33 @@ public class AntColonyGenerator {
 
 
                     } else {
-                        scAnt = new ScAnt(types.get(t), aco, i);
+                        scAnt = new ScAnt(new Alpha(AgingType.STATIC, 2), new Beta(AgingType.STATIC, 10),types.get(t), aco, i);
                     }
                 }
             }
 
-            scAnt.setAntExploration(new AntTypeBasedExploration(aco)
-                    .addRule(AntType.EC, new ECExploration(aco, new RouletteWheel()))
-                    .addRule(AntType.AC, new ACExploration(aco, new RouletteWheel()))
-                    .addRule(AntType.GC, new GCExploration(aco, new RouletteWheel()))
-                    .addRule(AntType.GCDAge, new GCDAgeExploration(aco, new RouletteWheel()))
-                    .addRule(AntType.GCD, new GCDExploration(aco, new RouletteWheel())));
+
+    scAnt.setAntExploration(new AntTypeBasedExploration(aco)
+            .addRule(AntType.EC, new MEACOExploration(aco, new RouletteWheel()))
+            .addRule(AntType.AC, new MACACOExploration(aco, new RouletteWheel()))
+            .addRule(AntType.GC, new GCExploration(aco, new RouletteWheel()))
+            .addRule(AntType.GCDAge, new MACOExploration(aco, new RouletteWheel()))
+            .addRule(AntType.GCD, new GCDExploration(aco, new RouletteWheel())));
+
 
             combinationRules = new CombinationRules()
                     .forType(AntType.EC)
-                    .affecting(AntType.GCD).weight(0.5)
-                    .affecting(AntType.GC).weight(0.1)
-                    .affecting(AntType.EC).weight(0.3)
-                    .affecting(AntType.AC).weight(0.1)
+                    .affecting(AntType.GCD).weight(1)
+                    .affecting(AntType.GCDAge).weight(1)
+                    .affecting(AntType.GC).weight(0)
+                    .affecting(AntType.EC).weight(0)
+                    .affecting(AntType.AC).weight(0)
                     .forType(AntType.AC)
-                    .affecting(AntType.GCD).weight(0.5)
-                    .affecting(AntType.GC).weight(0.1)
-                    .affecting(AntType.EC).weight(0.3)
-                    .affecting(AntType.AC).weight(0.1)
+                    .affecting(AntType.GCD).weight(1)
+                    .affecting(AntType.GCDAge).weight(1)
+                    .affecting(AntType.GC).weight(1)
+                    .affecting(AntType.EC).weight(1)
+                    .affecting(AntType.AC).weight(1)
                     .forType(AntType.GC)
                     .affecting(AntType.GCD).weight(0.5)
                     .affecting(AntType.GC).weight(0.1)
@@ -87,17 +93,19 @@ public class AntColonyGenerator {
                     .affecting(AntType.AC).weight(0.1)
                     .forType(AntType.GCD)
                     .affecting(AntType.GCD).weight(1)
-                    .affecting(AntType.GC).weight(0)
-                    .affecting(AntType.EC).weight(0)
-                    .affecting(AntType.AC).weight(0)
+                    .affecting(AntType.GCDAge).weight(1)
+                    .affecting(AntType.GC).weight(1)
+                    .affecting(AntType.EC).weight(1)
+                    .affecting(AntType.AC).weight(1)
                     .forType(AntType.GCDAge)
                     .affecting(AntType.GCDAge).weight(1)
+                    .affecting(AntType.GCD).weight(1)
                     .affecting(AntType.GC).weight(0)
                     .affecting(AntType.EC).weight(0)
                     .affecting(AntType.AC).weight(0);
 
             scAnt.setCombinationRules(combinationRules);
-            scAnt.setAntInitialization(new AlwaysRandomPositions(aco));
+            scAnt.setAntInitialization(new AnAntAtARandomVertex(aco));
 
 
 //            scAnt.setDistanceStrategy(new double[]{1.0, 0});
@@ -114,17 +122,22 @@ public class AntColonyGenerator {
 //            double value = random.nextInt(11) / 10d;// 0.5d;//random.nextDouble();
 
 //            double value = random.nextInt(32) % 2;
-            double value;
-            if(useGaussian) {
-                value = Math.abs(random.nextGaussian() + 1) % 1;
-            } else {
-                value = random.nextInt(11) / 10d;
-            }
+            double value = 0.5d;
+//            if(useGaussian) {
+//                value = Math.abs(random.nextGaussian() + 1) % 1;
+//            } else {
+//                value = random.nextInt(11) / 10d;
+//            }
+
+//            double value = random.nextInt(100) % 2;
+
 
 
             scAnt.setDistanceStrategy(new double[]{value, 1-value});
             scAnt.setDeltaStrategy(new double[]{value, 1-value});
             scAnt.setCnnStrategy(new double[]{value, 1-value});
+
+            scAnt.setLambda((i + 1d)/numberOfAnts);
 
 
             scAnt.addObserver(aco);

@@ -34,6 +34,11 @@ public class MultiObjectiveAcoTSP extends Problem {
     }
 
     @Override
+    public double getNij(int problem, int i, int j) {
+        return acoTspInstances.get(problem).getNij(i, j);
+    }
+
+    @Override
     public double getNij(ScAnt scAnt, int i, int j) {
         return multiplyByWeightsAndSum(scAnt.getDistanceStrategy(), (acoTspInstances, index) -> acoTspInstances.get(index).getNij(i, j));
     }

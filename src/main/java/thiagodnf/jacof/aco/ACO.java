@@ -83,6 +83,7 @@ public abstract class ACO implements Observer {
     protected GlobalBestRepository globalBestRepository = new GlobalBestRepository();
 
     protected NondominatedRepository nondominatedRepository = new NondominatedRepository();
+    protected TopRepository topRepository = new TopRepository();
 
     /**
      * Best Current Ant in tour
@@ -327,8 +328,8 @@ public abstract class ACO implements Observer {
         ant.setTourLength(problem.evaluate((ScAnt) ant, ant.getSolution()));
         // Update the current best solution
 
-        nondominatedRepository.add((MultiObjectiveAcoTSP)problem, (ScAnt)ant);
-
+        nondominatedRepository.add((MultiObjectiveAcoTSP) problem, (ScAnt) ant);
+        topRepository.add((MultiObjectiveAcoTSP) problem, (ScAnt) ant);
 
         if (currentBest == null || problem.better(ant.getTourLength(), currentBest.getTourLength())) {
             currentBest = ant.clone();
@@ -339,7 +340,7 @@ public abstract class ACO implements Observer {
 
             double distancee = ((MultiObjectiveAcoTSP) problem).evaluatePerArg(new double[]{1.0, 0}, currentBest.getSolution());
             double distancee2 = ((MultiObjectiveAcoTSP) problem).evaluatePerArg(new double[]{0, 1.0}, currentBest.getSolution());
-            System.out.println("distance: " + distance+ " " +distance2 + " " + distancee+ " " +distancee2);
+            System.out.println("distance: " + distance + " " + distance2 + " " + distancee + " " + distancee2);
         }
 //
 
@@ -576,5 +577,23 @@ public abstract class ACO implements Observer {
 
     public NondominatedRepository getNondominatedRepository() {
         return nondominatedRepository;
+    }
+
+    public TopRepository getTopRepository() {
+        return topRepository;
+    }
+
+    public double getQ(double currentIteration, double iterations) {
+
+//        System.out.println("VAAAL: " + (((-0.7)/iterations) * currentIteration + 1));
+//        return (iterations - currentIteration) / iterations;
+        if (Configuration.isNonDominatedUsed) {
+//            return (((-0.04) / iterations) * currentIteration + 1);
+
+    return 0.98;
+        } else {
+            return 0.98;
+        }
+//        return  0.2;
     }
 }

@@ -34,6 +34,10 @@ public abstract class Problem {
 
 	public abstract double getNij(int i, int j);
 
+	public double getNij(int problem, int i, int j){
+		return 0;
+	}
+
 	public double getNij(ScAnt scAnt, int i, int j) {
 		return 0;
 	}

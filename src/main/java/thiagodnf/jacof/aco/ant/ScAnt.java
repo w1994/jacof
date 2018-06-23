@@ -20,6 +20,7 @@ public class ScAnt extends Ant{
     private double [] distanceStrategy;
     private double [] cnnStrategy;
     private double [] deltaStrategy;
+    private double lambda;
 
     public ScAnt(AntType antType, ACO aco, int id) {
         super(aco, id, antType);
@@ -145,5 +146,13 @@ public class ScAnt extends Ant{
 
     public AgingType getBeta() {
         return beta.getAgingType();
+    }
+
+    public double getLambda() {
+        return lambda;
+    }
+
+    public void setLambda(double lambda) {
+        this.lambda = lambda;
     }
 }
