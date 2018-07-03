@@ -33,8 +33,15 @@ public class ResultEvaluator {
                 ant -> nondominatedRepository.add(ant, 1));
 
 
-
     }
 
+    public void evaluate(NondominatedRepository nondominatedRepository, ScAntSystem scAntSystem) {
+
+        scAntSystem.getNondominatedRepository().getList().forEach(
+                ant -> nondominatedRepository.add(ant, 0));
+
+
+
+    }
 
 }

@@ -26,20 +26,18 @@ public class MEACOExploration extends PseudoRandomProportionalRule {
 
         double sum = 0.0;
 
-        double[] tij = new double[aco.getNumberOfNodes()];
         double[] nij = new double[aco.getNumberOfNodes()];
 
-        if(random.nextDouble() < aco.getQ(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations())) {
+        if(random.nextDouble() < 0.95){//aco.getQ(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations())) {
             double maxValue = 0;
             int index = 0;
             double value;
 
             for (Integer j : ant.getNodesToVisit()) {
 
-                if(Configuration.isNonDominatedUsed) {
+                if(Configuration.useAlpha) {
                     value =
 //                            Math.pow(aco.getGraph().getTau(ant.getCombinationRules(), i, j), ((ScAnt) ant).getAlpha(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()))
-
                                     Math.pow(aco.getProblem().getNij(0, i, j), ((ScAnt) ant).getBeta(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()) * ((ScAnt) ant).getLambda())
                                     * Math.pow(aco.getProblem().getNij(1, i, j), ((ScAnt) ant).getBeta(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()) * (1 - ((ScAnt) ant).getLambda()));
 
@@ -77,7 +75,7 @@ public class MEACOExploration extends PseudoRandomProportionalRule {
 
             for (Integer j : ant.getNodesToVisit()) {
 
-                probability[j] = (tij[j] * nij[j]) / sum;
+                probability[j] = (nij[j]) / sum;
 
                 sumProbability += probability[j];
             }

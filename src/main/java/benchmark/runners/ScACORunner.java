@@ -129,8 +129,10 @@ public class ScACORunner implements Runner {
 
 
         NondominatedRepository nondominatedRepository = new NondominatedRepository();
+        NondominatedRepository nondominatedRepository2 = new NondominatedRepository();
+        NondominatedRepository nondominatedRepository3 = new NondominatedRepository();
 
-        for(int i = 0; i < 1; i++) {
+        for(int i = 0; i < 5; i++) {
             MultiObjectiveAcoTSP problem = new MultiObjectiveAcoTSP(instance, instance2)
                     .withDistanceFunction(null)
                     .withDiversity(new ArrayList<>())
@@ -154,13 +156,14 @@ public class ScACORunner implements Runner {
 
 //            for (int i = 0; i < 10; i++) {
 
-            int iteration = 30;
+            int iteration = 50;
             int ants = 100;
-            double evaporation = 0.5;
+            double evaporation = 0.2;
             double deposit = 1;
 
 
             List<AgingType> types = Arrays.asList(AgingType.STATIC);
+//            List<AgingType> types2 = Arrays.asList(AgingType.SLOW_A, AgingType.FAST_A, AgingType.MEDIUM_A);
             List<AgingType> types2 = Arrays.asList(AgingType.STATIC);
 
             ScAntSystem scAntSystem = new ScAntSystem();
@@ -173,17 +176,19 @@ public class ScACORunner implements Runner {
             ScAntSystem scAntSystem2 = new ScAntSystem();
             scAntSystem2.setNumberOfAnts(ants);
             scAntSystem2.setRho(0.5);
-            scAntSystem2.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCDAge), types2));
+            scAntSystem2.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.EC, AntType.AC, AntType.GCDAge, AntType.GCDAge), types2));
             scAntSystem2.setEvaporationRate(evaporation);
             scAntSystem2.setDepositRate(deposit);
 
             System.out.println(types);
 
-            Configuration.useGlobalDeposit = false;
-////
+            Configuration.isNonDominatedUsed = true;
+            Configuration.useParetoSetUpdate = false;
+            Configuration.useGaussian = false;
+            Configuration.useAlpha = false;
 
             long currentTime = System.currentTimeMillis();
-//
+
             new ScACORunner()
                     .withProblem(problem)
                     .withACO(scAntSystem)
@@ -193,12 +198,13 @@ public class ScACORunner implements Runner {
                     .start();
             long firstTime = System.currentTimeMillis() - currentTime;
 
-
-//        Configuration.useGlobalDeposit = true;
-//        Configuration.globalDepositWeight = 0.4;
 //
             Configuration.isNonDominatedUsed = true;
+            Configuration.useParetoSetUpdate = true;
             Configuration.useGaussian = false;
+            Configuration.useAlpha = true;
+            Configuration.useMulti = true;
+
             currentTime = System.currentTimeMillis();
             new ScACORunner()
                     .withProblem(problem2)
@@ -213,6 +219,8 @@ public class ScACORunner implements Runner {
             ResultEvaluator resultEvaluator = new ResultEvaluator();
 
             resultEvaluator.evaluate(nondominatedRepository, scAntSystem, scAntSystem2, problem);
+            resultEvaluator.evaluate(nondominatedRepository2, scAntSystem);
+            resultEvaluator.evaluate(nondominatedRepository3, scAntSystem2);
 
 
 //        DistanceEvaluator distanceEvaluator = new DistanceEvaluator();
@@ -247,6 +255,8 @@ public class ScACORunner implements Runner {
         String msg = a + " vs " + b;
 
         Draw.draw(nondominatedRepository, msg);
+        Draw.draw(nondominatedRepository2, nondominatedRepository2.getList().size() + " 1 ");
+        Draw.draw(nondominatedRepository3, nondominatedRepository3.getList().size() + " 2 ");
 
 //        Saver.save(scAntSystem, scAntSystem2, iteration);
 

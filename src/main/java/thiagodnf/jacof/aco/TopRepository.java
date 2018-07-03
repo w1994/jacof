@@ -19,7 +19,7 @@ public class TopRepository {
 
         add(problem, ant, 0);
         list.sort(Comparator.naturalOrder());
-        if(list.size() > 500) this.list = list.subList(0, 500);
+        if(list.size() > 100) this.list = list.subList(0, 100);
     }
 
     public void add(MultiObjectiveAcoTSP problem, ScAnt ant, int sourceId) {

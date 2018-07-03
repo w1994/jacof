@@ -10,6 +10,10 @@ public class Configuration {
     public static int numberOfIterations = 7;
     public static boolean isNonDominatedUsed = false;
     public static boolean useGaussian = false;
+    public static boolean useAlpha = false;
+    public static boolean useMulti = false;
+
+    public static boolean useParetoSetUpdate = false;
 
     public static String config() {
 

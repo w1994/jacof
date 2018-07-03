@@ -1,6 +1,7 @@
 package thiagodnf.jacof.aco.ant.generators;
 
 import thiagodnf.jacof.aco.ACO;
+import thiagodnf.jacof.aco.Configuration;
 import thiagodnf.jacof.aco.ant.AgingType;
 import thiagodnf.jacof.aco.ant.Alpha;
 import thiagodnf.jacof.aco.ant.Beta;
@@ -18,16 +19,18 @@ import java.util.List;
 import java.util.Random;
 
 import static thiagodnf.jacof.aco.Configuration.isNonDominatedUsed;
+import static thiagodnf.jacof.aco.Configuration.useAlpha;
 import static thiagodnf.jacof.aco.Configuration.useGaussian;
 
 public class AntColonyGenerator {
 
 
-//    public static List<AntType> types = Arrays.asList(AntType.GCD);
+    //    public static List<AntType> types = Arrays.asList(AntType.GCD);
     public List<AntType> types;
     public List<AgingType> agingTypes;
     public static CombinationRules combinationRules;
     Random random = new Random(System.nanoTime());
+    int distanceIndex = 0;
 
     public AntColonyGenerator() {
     }
@@ -49,60 +52,93 @@ public class AntColonyGenerator {
 
             for (int t = 0; t < types.size(); t++) {
                 if (i % types.size() == t) {
-                    if(types.get(t).equals(AntType.GCDAge)) {
+                    if (types.get(t).equals(AntType.GCDAge)) {
 
                         for (int a = 0; a < agingTypes.size(); a++) {
-                            if(i % agingTypes.size() == a) {
-                                scAnt = new ScAnt(new Alpha(agingTypes.get(a), 2), new Beta(agingTypes.get(a), 10), types.get(t), aco, i);
+                            if (i % agingTypes.size() == a) {
+                                scAnt = new ScAnt(new Alpha(agingTypes.get(a), 3), new Beta(agingTypes.get(a), 10), types.get(t), aco, i);
                             }
                         }
 
 
                     } else {
-                        scAnt = new ScAnt(new Alpha(AgingType.STATIC, 2), new Beta(AgingType.STATIC, 10),types.get(t), aco, i);
+                        scAnt = new ScAnt(new Alpha(AgingType.STATIC, 3), new Beta(AgingType.STATIC, 10), types.get(t), aco, i);
                     }
                 }
             }
 
 
-    scAnt.setAntExploration(new AntTypeBasedExploration(aco)
-            .addRule(AntType.EC, new MEACOExploration(aco, new RouletteWheel()))
-            .addRule(AntType.AC, new MACACOExploration(aco, new RouletteWheel()))
-            .addRule(AntType.GC, new GCExploration(aco, new RouletteWheel()))
-            .addRule(AntType.GCDAge, new MACOExploration(aco, new RouletteWheel()))
-            .addRule(AntType.GCD, new GCDExploration(aco, new RouletteWheel())));
+            scAnt.setAntExploration(new AntTypeBasedExploration(aco)
+                    .addRule(AntType.EC, new MEACOExploration(aco, new RouletteWheel()))
+                    .addRule(AntType.AC, new MACACOExploration(aco, new RouletteWheel()))
+                    .addRule(AntType.GC, new GCExploration(aco, new RouletteWheel()))
+                    .addRule(AntType.GCDAge, new MACOExploration(aco, new RouletteWheel()))
+                    .addRule(AntType.GCD, new GCDExploration(aco, new RouletteWheel())));
 
+            if (useAlpha) {
+                combinationRules = new CombinationRules()
+                        .forType(AntType.EC)
+                        .affecting(AntType.GCD).weight(1)
+                        .affecting(AntType.GCDAge).weight(0)
+                        .affecting(AntType.GC).weight(0)
+                        .affecting(AntType.EC).weight(0)
+                        .affecting(AntType.AC).weight(0)
+                        .forType(AntType.AC)
+                        .affecting(AntType.GCD).weight(0)
+                        .affecting(AntType.GCDAge).weight(1)
+                        .affecting(AntType.GC).weight(0)
+                        .affecting(AntType.EC).weight(1)
+                        .affecting(AntType.AC).weight(1)
+                        .forType(AntType.GC)
+                        .affecting(AntType.GCD).weight(0.5)
+                        .affecting(AntType.GC).weight(0.1)
+                        .affecting(AntType.EC).weight(0.3)
+                        .affecting(AntType.AC).weight(0.1)
+                        .forType(AntType.GCD)
+                        .affecting(AntType.GCD).weight(1)
+                        .affecting(AntType.GCDAge).weight(1)
+                        .affecting(AntType.GC).weight(1)
+                        .affecting(AntType.EC).weight(1)
+                        .affecting(AntType.AC).weight(1)
+                        .forType(AntType.GCDAge)
+                        .affecting(AntType.GCDAge).weight(4)
+                        .affecting(AntType.GCD).weight(0)
+                        .affecting(AntType.GC).weight(0)
+                        .affecting(AntType.EC).weight(12)
+                        .affecting(AntType.AC).weight(6);
+            } else {
+                combinationRules = new CombinationRules()
+                        .forType(AntType.EC)
+                        .affecting(AntType.GCD).weight(1)
+                        .affecting(AntType.GCDAge).weight(0)
+                        .affecting(AntType.GC).weight(0)
+                        .affecting(AntType.EC).weight(0)
+                        .affecting(AntType.AC).weight(0)
+                        .forType(AntType.AC)
+                        .affecting(AntType.GCD).weight(0)
+                        .affecting(AntType.GCDAge).weight(1)
+                        .affecting(AntType.GC).weight(0)
+                        .affecting(AntType.EC).weight(0)
+                        .affecting(AntType.AC).weight(1)
+                        .forType(AntType.GC)
+                        .affecting(AntType.GCD).weight(0.5)
+                        .affecting(AntType.GC).weight(0.1)
+                        .affecting(AntType.EC).weight(0.3)
+                        .affecting(AntType.AC).weight(0.1)
+                        .forType(AntType.GCD)
+                        .affecting(AntType.GCD).weight(1)
+                        .affecting(AntType.GCDAge).weight(1)
+                        .affecting(AntType.GC).weight(1)
+                        .affecting(AntType.EC).weight(1)
+                        .affecting(AntType.AC).weight(1)
+                        .forType(AntType.GCDAge)
+                        .affecting(AntType.GCDAge).weight(1)
+                        .affecting(AntType.GCD).weight(0)
+                        .affecting(AntType.GC).weight(0)
+                        .affecting(AntType.EC).weight(0)
+                        .affecting(AntType.AC).weight(0);
+            }
 
-            combinationRules = new CombinationRules()
-                    .forType(AntType.EC)
-                    .affecting(AntType.GCD).weight(1)
-                    .affecting(AntType.GCDAge).weight(1)
-                    .affecting(AntType.GC).weight(0)
-                    .affecting(AntType.EC).weight(0)
-                    .affecting(AntType.AC).weight(0)
-                    .forType(AntType.AC)
-                    .affecting(AntType.GCD).weight(1)
-                    .affecting(AntType.GCDAge).weight(1)
-                    .affecting(AntType.GC).weight(1)
-                    .affecting(AntType.EC).weight(1)
-                    .affecting(AntType.AC).weight(1)
-                    .forType(AntType.GC)
-                    .affecting(AntType.GCD).weight(0.5)
-                    .affecting(AntType.GC).weight(0.1)
-                    .affecting(AntType.EC).weight(0.3)
-                    .affecting(AntType.AC).weight(0.1)
-                    .forType(AntType.GCD)
-                    .affecting(AntType.GCD).weight(1)
-                    .affecting(AntType.GCDAge).weight(1)
-                    .affecting(AntType.GC).weight(1)
-                    .affecting(AntType.EC).weight(1)
-                    .affecting(AntType.AC).weight(1)
-                    .forType(AntType.GCDAge)
-                    .affecting(AntType.GCDAge).weight(1)
-                    .affecting(AntType.GCD).weight(1)
-                    .affecting(AntType.GC).weight(0)
-                    .affecting(AntType.EC).weight(0)
-                    .affecting(AntType.AC).weight(0);
 
             scAnt.setCombinationRules(combinationRules);
             scAnt.setAntInitialization(new AnAntAtARandomVertex(aco));
@@ -132,12 +168,16 @@ public class AntColonyGenerator {
 //            double value = random.nextInt(100) % 2;
 
 
+            scAnt.setDistanceStrategy(new double[]{value, 1 - value});
+            scAnt.setDeltaStrategy(new double[]{value, 1 - value});
+            scAnt.setCnnStrategy(new double[]{value, 1 - value});
 
-            scAnt.setDistanceStrategy(new double[]{value, 1-value});
-            scAnt.setDeltaStrategy(new double[]{value, 1-value});
-            scAnt.setCnnStrategy(new double[]{value, 1-value});
 
-            scAnt.setLambda((i + 1d)/numberOfAnts);
+            if (Configuration.useMulti && !scAnt.getAntType().equals(AntType.AC)) {
+                scAnt.setLambda((distanceIndex++ + 1d) / 75);
+            } else {
+                scAnt.setLambda((i + 1d) / numberOfAnts);
+            }
 
 
             scAnt.addObserver(aco);

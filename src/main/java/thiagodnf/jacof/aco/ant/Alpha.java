@@ -12,22 +12,22 @@ public class Alpha {
 
     public double getValueForIteration(int currentIterationNumber, int iterationNumber) {
 
-        return 3.0;
+//        return 3.0;
 //        return f1x(currentIterationNumber, iterationNumber);
 //
-//        switch(agingType){
-//            case SLOW :
-//                return sin(currentIterationNumber, iterationNumber);
-//            case MEDIUM :
-//                return x(currentIterationNumber, iterationNumber);
-////              return   2.0;
-//            case FAST :
-//                return f1x(currentIterationNumber, iterationNumber);
-////            case PARA :
-////                return plusf_x2(currentIterationNumber, iterationNumber);
-//            default:
-//                return 5.0;
-//        }
+        switch(agingType){
+            case SLOW_A :
+                return sin(currentIterationNumber, iterationNumber);
+            case MEDIUM_A :
+                return x(currentIterationNumber, iterationNumber);
+//              return   2.0;
+            case FAST_A :
+                return f1x(currentIterationNumber, iterationNumber);
+//            case PARA :
+//                return plusf_x2(currentIterationNumber, iterationNumber);
+            default:
+                return 3.0;
+        }
 
 
 

@@ -36,7 +36,7 @@ public class MACOExploration extends PseudoRandomProportionalRule {
 
             for (Integer j : ant.getNodesToVisit()) {
 
-                if(Configuration.isNonDominatedUsed) {
+                if(Configuration.useAlpha) {
                     value =
 //                            Math.pow(aco.getGraph().getTau(ant.getCombinationRules(), i, j), ((ScAnt) ant).getAlpha(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()))
                             Math.pow(aco.getGraph().getTau(ant.getCombinationRules(), i, j), ((ScAnt) ant).getAlpha(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()))
@@ -63,7 +63,7 @@ public class MACOExploration extends PseudoRandomProportionalRule {
             // Update the sum
             for (Integer j : ant.getNodesToVisit()) {
 
-                if(Configuration.isNonDominatedUsed) {
+                if(Configuration.useAlpha) {
                     //tij[j] = Math.pow(aco.getGraph().getTau(ant.getCombinationRules(), i, j), ((ScAnt) ant).getAlpha(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()));
                     tij[j] =aco.getGraph().getTau(ant.getCombinationRules(), i, j);
                 } else {

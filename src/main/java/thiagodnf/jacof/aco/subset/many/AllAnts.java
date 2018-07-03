@@ -1,6 +1,7 @@
 package thiagodnf.jacof.aco.subset.many;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import thiagodnf.jacof.aco.ACO;
@@ -30,13 +31,13 @@ public class AllAnts extends AbstractManyAnts {
 
 		Ant[] ants = aco.getAnts();
 
-		List<Ant> list = new ArrayList<>();
+//		List<Ant> list = new ArrayList<>();
+//
+//		for (int i = 0; i < ants.length; i++) {
+//			list.add((ScAnt)ants[i].clone());
+//		}
 
-		for (int i = 0; i < ants.length; i++) {
-			list.add((ScAnt)ants[i].clone());
-		}
-
-		return list;
+		return Arrays.asList(ants);
 	}
 
 	@Override

@@ -27,29 +27,22 @@ public class MACACOExploration extends PseudoRandomProportionalRule {
         double sum = 0.0;
 
         double[] tij = new double[aco.getNumberOfNodes()];
-        double[] nij = new double[aco.getNumberOfNodes()];
 
-        if(random.nextDouble() < aco.getQ(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations())) {
+        if(random.nextDouble() < 0.95){// aco.getQ(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations())) {
             double maxValue = 0;
             int index = 0;
             double value;
 
             for (Integer j : ant.getNodesToVisit()) {
 
-                if(Configuration.isNonDominatedUsed) {
+                if(Configuration.useAlpha) {
                     value =
-                            Math.pow(aco.getGraph().getTau(ant.getCombinationRules(), i, j), ((ScAnt) ant).getAlpha(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()))
-                                    * Math.pow(aco.getProblem().getNij(0, i, j), ((ScAnt) ant).getBeta(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()) * ((ScAnt) ant).getLambda())
-                                    * Math.pow(aco.getProblem().getNij(1, i, j), ((ScAnt) ant).getBeta(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()) * (1 - ((ScAnt) ant).getLambda()));
+                            Math.pow(aco.getGraph().getTau(ant.getCombinationRules(), i, j), ((ScAnt) ant).getAlpha(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()));
 
                 } else {
                     value =
-                            Math.pow(aco.getGraph().getTau(ant.getCombinationRules(), i, j), ((ScAnt) ant).getAlpha(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()))
-                                    * Math.pow(aco.getProblem().getNij(0, i, j), ((ScAnt) ant).getBeta(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()) * ((ScAnt) ant).getLambda())
-                                    * Math.pow(aco.getProblem().getNij(1, i, j), ((ScAnt) ant).getBeta(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()) * (1 - ((ScAnt) ant).getLambda()));
-
+                            Math.pow(aco.getGraph().getTau(ant.getCombinationRules(), i, j), ((ScAnt) ant).getAlpha(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()));
                 }
-
 
                 if (value > maxValue) {
                     maxValue = value;
@@ -62,17 +55,13 @@ public class MACACOExploration extends PseudoRandomProportionalRule {
             // Update the sum
             for (Integer j : ant.getNodesToVisit()) {
 
-                if(Configuration.isNonDominatedUsed) {
+                if(Configuration.useAlpha) {
                     tij[j] = Math.pow(aco.getGraph().getTau(ant.getCombinationRules(), i, j), ((ScAnt) ant).getAlpha(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()));
                 } else {
-                    tij[j] =aco.getGraph().getTau(ant.getCombinationRules(), i, j);
+                    tij[j] = aco.getGraph().getTau(ant.getCombinationRules(), i, j);
                 }
 
-
-                nij[j] = Math.pow(aco.getProblem().getNij(0, i, j), ((ScAnt) ant).getBeta(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()) * ((ScAnt) ant).getLambda())
-                        * Math.pow(aco.getProblem().getNij(1, i, j), ((ScAnt) ant).getBeta(aco.getNumberOfCurrentIteration(), aco.getNumberOfIterations()) * (1 - ((ScAnt) ant).getLambda()));
-
-                sum += tij[j] * nij[j];
+                sum += tij[j];
             }
 
             checkState(sum != 0.0, "The sum cannot be 0.0");
@@ -84,11 +73,10 @@ public class MACACOExploration extends PseudoRandomProportionalRule {
 
             for (Integer j : ant.getNodesToVisit()) {
 
-                probability[j] = (tij[j] * nij[j]) / sum;
+                probability[j] = (tij[j]) / sum;
 
                 sumProbability += probability[j];
             }
-
 
             // Select the next node by probability
             nextNode = antSelection.select(probability, sumProbability);

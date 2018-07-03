@@ -32,9 +32,9 @@ public class NondominatedRepository {
 
             int add = 0;
 
-            //if (list.size() == 0) {
+            if (list.size() == 0) {
                 list.add(new AntWrapper(ant, newValues, sourceId));
-           /* } else {
+            } else {
                 for (int i = 0; i < list.size(); i++) {
                     // mniej = lepiej
                     Double[] currentValues = list.get(i).getValues();
@@ -60,7 +60,7 @@ public class NondominatedRepository {
 
             for (int index = 0; index < indexesMarkedToRemove.size(); index++) {
                 list.remove(indexesMarkedToRemove.get(index) - index);
-        }*/
+        }
     }
 
     public void add(AntWrapper ant, int sourceId) {

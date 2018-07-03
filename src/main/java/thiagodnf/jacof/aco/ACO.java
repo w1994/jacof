@@ -587,13 +587,17 @@ public abstract class ACO implements Observer {
 
 //        System.out.println("VAAAL: " + (((-0.7)/iterations) * currentIteration + 1));
 //        return (iterations - currentIteration) / iterations;
-        if (Configuration.isNonDominatedUsed) {
-//            return (((-0.04) / iterations) * currentIteration + 1);
 
-    return 0.98;
-        } else {
-            return 0.98;
-        }
+//        if(Configuration.useAlpha) return 0.96;
+        return 0.98;
+
+//        if (Configuration.isNonDominatedUsed) {
+////            return (((-0.04) / iterations) * currentIteration + 1);
+//
+//    return 0.98;
+//        } else {
+//            return 0.98;
+//        }
 //        return  0.2;
     }
 }

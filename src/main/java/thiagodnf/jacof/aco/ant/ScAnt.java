@@ -22,6 +22,7 @@ public class ScAnt extends Ant{
     private double [] deltaStrategy;
     private double lambda;
 
+
     public ScAnt(AntType antType, ACO aco, int id) {
         super(aco, id, antType);
     }
