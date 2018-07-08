@@ -79,6 +79,10 @@ public class ScAntSystem extends ACO {
         this.evaporationRate = evaporationRate;
     }
 
+    public double getEvaporationRate() {
+        return evaporationRate;
+    }
+
     public void setDepositRate(double depositRate) {
         this.depositRate = depositRate;
     }

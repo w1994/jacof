@@ -65,6 +65,8 @@ public abstract class ACO implements Observer {
      */
     protected AntGraph graph;
 
+    protected double rji = 0;
+
     /**
      * The current iteration
      */

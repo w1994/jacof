@@ -168,21 +168,23 @@ public class ScACORunner implements Runner {
 
             ScAntSystem scAntSystem = new ScAntSystem();
             scAntSystem.setNumberOfAnts(ants);
-            scAntSystem.setRho(0.5);
+            scAntSystem.setRho(1);
             scAntSystem.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCDAge), types));
             scAntSystem.setEvaporationRate(evaporation);
             scAntSystem.setDepositRate(deposit);
 
             ScAntSystem scAntSystem2 = new ScAntSystem();
             scAntSystem2.setNumberOfAnts(ants);
-            scAntSystem2.setRho(0.5);
+            scAntSystem2.setRho(1);
+//            scAntSystem2.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCDAge), types));
             scAntSystem2.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.EC, AntType.AC, AntType.GCDAge, AntType.GCDAge), types2));
+//            scAntSystem2.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCDAge), types));
             scAntSystem2.setEvaporationRate(evaporation);
             scAntSystem2.setDepositRate(deposit);
 
             System.out.println(types);
 
-            Configuration.isNonDominatedUsed = true;
+//            Configuration.isNonDominatedUsed = true;
             Configuration.useParetoSetUpdate = false;
             Configuration.useGaussian = false;
             Configuration.useAlpha = false;

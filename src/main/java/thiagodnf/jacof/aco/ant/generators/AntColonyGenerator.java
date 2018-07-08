@@ -75,7 +75,8 @@ public class AntColonyGenerator {
                     .addRule(AntType.GCDAge, new MACOExploration(aco, new RouletteWheel()))
                     .addRule(AntType.GCD, new GCDExploration(aco, new RouletteWheel())));
 
-            if (useAlpha) {
+            System.out.println(types.size());
+            if (useAlpha && types.size() != 1) {
                 combinationRules = new CombinationRules()
                         .forType(AntType.EC)
                         .affecting(AntType.GCD).weight(1)
