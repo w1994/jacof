@@ -12,6 +12,7 @@ public class Configuration {
     public static boolean useGaussian = false;
     public static boolean useAlpha = false;
     public static boolean useMulti = false;
+    public static boolean original = false;
 
     public static boolean useParetoSetUpdate = false;
 

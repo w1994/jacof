@@ -1,5 +1,6 @@
 package thiagodnf.jacof.aco.ant.exploration.anttypebased;
 
+import benchmark.problem.MultiObjectiveAcoTSP;
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.Configuration;
 import thiagodnf.jacof.aco.ant.Ant;
@@ -96,6 +97,12 @@ public class MACOExploration extends PseudoRandomProportionalRule {
             nextNode = antSelection.select(probability, sumProbability);
 
             checkState(nextNode != -1, "The next node should not be -1");
+
+            if(Configuration.original) {
+                System.out.println("check");
+                aco.getGraph().setTau(AntType.GCDAge, i, nextNode, 0.2 * aco.getGraph().getTau(i, nextNode) + 0.8 * ((MultiObjectiveAcoTSP) aco.getProblem()).getR0());
+                System.out.println("check2");
+            }
 
             return nextNode;
         }

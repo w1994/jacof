@@ -1,5 +1,6 @@
 package thiagodnf.jacof.aco;
 
+import benchmark.problem.MultiObjectiveAcoTSP;
 import org.codehaus.jackson.map.ObjectMapper;
 import thiagodnf.jacof.aco.ant.AgingType;
 import thiagodnf.jacof.aco.ant.ScAnt;
@@ -23,26 +24,79 @@ public class ScAntSystem extends ACO {
     protected void updatePheromones() {
         LOGGER.debug("Updating pheromones");
 
-        int x = 0;
-        for (int i = 0; i < numberOfNodes; i++) {
-            for (int j = i; j < numberOfNodes; j++) {
-                if (i != j) {
+        AntType antType = AntType.GCDAge;
+        if (Configuration.original) {
+
+            double first = 0.0;
+            double second = 0.0;
+
+            for (NondominatedRepository.AntWrapper ant : this.getNondominatedRepository().getList()) {
+                first += ((MultiObjectiveAcoTSP) this.getProblem()).evaluatePerArg(new double[]{1,0}, ant.getScAnt().getSolution());
+                second += ((MultiObjectiveAcoTSP) this.getProblem()).evaluatePerArg(new double[]{0,1}, ant.getScAnt().getSolution());
+            }
+
+            double firstAvg = first / this.getNondominatedRepository().getList().size();
+            double secondAvg = second / this.getNondominatedRepository().getList().size();
+            double newRij = 1 / (firstAvg * secondAvg);
+            if(newRij > ((MultiObjectiveAcoTSP)this.getProblem()).getR0()) {
+                for (int i = 0; i < numberOfNodes; i++) {
+                    for (int j = i; j < numberOfNodes; j++) {
+                        if (i != j) {
+                            graph.setTau(antType, i, j, newRij);
+                            graph.setTau(antType, j, i, newRij);
+                        }
+                    }
+                }
+                ((MultiObjectiveAcoTSP)this.getProblem()).setR0(newRij);
+            } else {
+
+                for (int i = 0; i < numberOfNodes; i++) {
+                    for (int j = i; j < numberOfNodes; j++) {
+                        if (i != j) {
+                            double oldValue = graph.getTau(antType, i,j);
+                            double newValue = 0;
+                            for (NondominatedRepository.AntWrapper ant : this.getNondominatedRepository().getList()) {
+
+                                if (ant.getScAnt().path[i][j] == 1) {
+                                    first = ((MultiObjectiveAcoTSP) this.getProblem()).evaluatePerArg(new double[]{1,0}, ant.getScAnt().getSolution());
+                                    second = ((MultiObjectiveAcoTSP) this.getProblem()).evaluatePerArg(new double[]{0,1}, ant.getScAnt().getSolution());
+                                    newValue +=  0.2 / (first * second);
+
+                                }
+
+                            }
+
+                            graph.setTau(antType, i, j, 0.8 * oldValue + newValue);
+                        }
+
+
+                    }
+                }
+
+
+
+            }
+
+        } else {
+            int x = 0;
+            for (int i = 0; i < numberOfNodes; i++) {
+                for (int j = i; j < numberOfNodes; j++) {
+                    if (i != j) {
 //                    CountDownLatch latch = new CountDownLatch(AntType.values().length);
 //                    for (AntType antType : AntType.values()) {
                         final int ii = i;
                         final int jj = j;
-                        AntType antType = AntType.GCDAge;
 //                        new Thread(() -> {
-                            graph.setTau(antType, ii, jj, evaporation.getTheNewValue(antType, ii, jj));
-                            graph.setTau(antType, jj, ii, graph.getTau(antType,ii , jj));
-                            // Do AntType Based Deposit
-                            graph.setTau(antType, ii, jj, deposit.getTheNewValue(antType, ii, jj));
-                            graph.setTau(antType, jj, ii, graph.getTau(antType,ii, jj));
+                        graph.setTau(antType, ii, jj, evaporation.getTheNewValue(antType, ii, jj));
+                        graph.setTau(antType, jj, ii, graph.getTau(antType, ii, jj));
+                        // Do AntType Based Deposit
+                        graph.setTau(antType, ii, jj, deposit.getTheNewValue(antType, ii, jj));
+                        graph.setTau(antType, jj, ii, graph.getTau(antType, ii, jj));
 //                            latch.countDown();
 //                            System.out.println(Thread.currentThread().getId());
-                        }
-//                        ).start();
                     }
+//                        ).start();
+                }
 //                    try {
 //                        latch.await();
 //                    } catch (InterruptedException e) {
@@ -51,7 +105,7 @@ public class ScAntSystem extends ACO {
 
             }
         }
-
+    }
 
     @Override
     protected void initializeAnts() {

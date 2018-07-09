@@ -94,21 +94,14 @@ public class TypeBasedPartialDeposit extends TypeBasedAbstractDeposit {
 
         if (Configuration.useParetoSetUpdate) {
 
-            double first = 0.0;
-            double second = 0.0;
-
             for (NondominatedRepository.AntWrapper ant : aco.getNondominatedRepository().getList()) {
                 if (ant.getScAnt().path[i][j] == 1) {
                     count++;
-
-                    first += ((MultiObjectiveAcoTSP) aco.getProblem()).evaluatePerArg(new double[]{1,0}, ant.getScAnt().getSolution());
-                    second += ((MultiObjectiveAcoTSP) aco.getProblem()).evaluatePerArg(new double[]{0,1}, ant.getScAnt().getSolution());
-
-                    //deltaTau += aco.getProblem().getDeltaTau(ant.getScAnt(), ant.getScAnt().getTourLength(), i, j);
+                    deltaTau += aco.getProblem().getDeltaTau(ant.getScAnt(), ant.getScAnt().getTourLength(), i, j);
                 }
             }
 
-            deltaTau = count / (first / count * second/ count );
+//            deltaTau = count / (first / count * second/ count );
 //
 //            for (Ant ant : subSet.getSubSet()) {
 //                if (ant.path[i][j] == 1) {
@@ -117,15 +110,27 @@ public class TypeBasedPartialDeposit extends TypeBasedAbstractDeposit {
 //                }
 //            }
 
-            return deltaTau;
+            return deltaTau * count;
+
         } else {
-            for (Ant ant : subSet.getSubSet()) {
-                if (ant.path[i][j] == 1) {
+
+//            for (Ant ant : subSet.getSubSet()) {
+//                if (ant.path[i][j] == 1) {
+//                    count++;
+//                    deltaTau += aco.getProblem().getDeltaTau((ScAnt) ant, ant.getTourLength(), i, j);
+//                }
+//            }
+//            return deltaTau;
+
+            for (NondominatedRepository.AntWrapper ant : aco.getNondominatedRepository().getList()) {
+                if (ant.getScAnt().path[i][j] == 1) {
                     count++;
-                    deltaTau += aco.getProblem().getDeltaTau((ScAnt) ant, ant.getTourLength(), i, j);
+                    deltaTau += aco.getProblem().getDeltaTau(ant.getScAnt(), ant.getScAnt().getTourLength(), i, j);
                 }
             }
             return deltaTau;
+
+
         }
     }
 

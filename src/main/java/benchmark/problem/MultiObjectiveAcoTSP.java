@@ -7,6 +7,7 @@ import benchmark.visualization.Visualization;
 import thiagodnf.jacof.aco.ACO;
 import thiagodnf.jacof.aco.ant.ScAnt;
 import thiagodnf.jacof.problem.Problem;
+import thiagodnf.jacof.util.NearestNeighbour;
 import tsplib.DistanceFunction;
 import tsplib.TSPInstance;
 
@@ -27,6 +28,10 @@ public class MultiObjectiveAcoTSP extends Problem {
     private DistanceFunction distanceFunction;
     private List<Diversity> diversity;
     private Visualization visualization;
+
+    protected double cnn1;
+    protected double cnn2;
+    protected double r0;
 
     public MultiObjectiveAcoTSP(String... filenames) throws IOException {
         System.out.println("FILE NAME " + filenames[0]);
@@ -234,6 +239,10 @@ public class MultiObjectiveAcoTSP extends Problem {
             return null;
         }).collect(Collectors.toList());
 
+        this.cnn1 = this.acoTspInstances.get(0).getCnn();
+        this.cnn2 = this.acoTspInstances.get(1).getCnn();
+
+        this.r0 = 1 / (this.cnn1 * this.cnn2);
 
         return this;
     }
@@ -262,5 +271,13 @@ public class MultiObjectiveAcoTSP extends Problem {
     public MultiObjectiveAcoTSP withDiversity(List<Diversity> diversity) {
         this.diversity = diversity;
         return this;
+    }
+
+    public double getR0() {
+        return r0;
+    }
+
+    public void setR0(double r0) {
+        this.r0 = r0;
     }
 }

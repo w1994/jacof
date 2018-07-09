@@ -83,9 +83,6 @@ public class MACACOExploration extends PseudoRandomProportionalRule {
 
             checkState(nextNode != -1, "The next node should not be -1");
 
-
-//            aco.getGraph().setTau(AntType.GCDAge, i, nextNode, 0.2 * aco.getGraph().getTau(i,nextNode) + aco.getGraph().getTau(i,nextNode)*1.1 );
-
             return nextNode;
         }
 

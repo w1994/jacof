@@ -28,8 +28,11 @@ public class AntGraph {
      */
     protected double[][] tau;
 
-    protected final Map<AntType, double[][]> antTypeToTau = new HashMap<>();
+    String value = " value ";
 
+
+    protected final Map<AntType, double[][]> antTypeToTau = new HashMap<>();
+     int master = 0;
     /**
      * The addressed problem
      */
@@ -143,6 +146,8 @@ public class AntGraph {
     public void setTau(AntType antType, int i, int j, double value) {
         synchronized (this.antTypeToTau) {
             this.antTypeToTau.get(antType)[i][j] = value;
+            this.antTypeToTau.get(antType)[j][i] = value;
+            System.out.println(master++);
         }
     }
 

@@ -257,6 +257,7 @@ public abstract class ACO implements Observer {
                         graph.setTau(i, j, evaporation.getTheNewValue(i, j));
                         graph.setTau(j, i, graph.getTau(i, j));
                     }
+
                     // Do Deposit
                     for (AbstractDeposit deposit : deposits) {
                         graph.setTau(i, j, deposit.getTheNewValue(i, j));
