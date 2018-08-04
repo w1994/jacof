@@ -1,6 +1,7 @@
 package benchmark.runners;
 
 import benchmark.visualization.chart.ScatterPlotExample;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import thiagodnf.jacof.aco.NondominatedRepository;
@@ -91,10 +92,50 @@ public class Draw {
             ScatterPlotExample example = new ScatterPlotExample(msg + "-2", dataset2);
             example.setSize(800, 400);
             example.setLocationRelativeTo(null);
+
             example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             example.setVisible(true);
         });
 
     }
 
+    public static void draw(NondominatedRepository nondominatedRepository, int sourceId) {
+
+        XYSeriesCollection dataset = new XYSeriesCollection();
+
+        for(int i = 0; i < sourceId; i++) {
+            XYSeries series = nondominatedRepository.getAsSeries(String.valueOf(i), i);
+            dataset.addSeries(series);
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            ScatterPlotExample example = new ScatterPlotExample("-2", dataset);
+            example.setSize(800, 400);
+            example.setLocationRelativeTo(null);
+
+            example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            example.setVisible(true);
+        });
+
+    }
+
+    public static void draw(List<Pair<Double,NondominatedRepository>> repositories, int sourceId) {
+        XYSeriesCollection dataset = new XYSeriesCollection();
+
+        int i = 0;
+        for(Pair<Double,NondominatedRepository> repository : repositories) {
+            XYSeries series = repository.getRight().getAsSeries(String.valueOf(i), 0, repository.getLeft());
+            dataset.addSeries(series);
+            i++;
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            ScatterPlotExample example = new ScatterPlotExample("-2", dataset);
+            example.setSize(800, 400);
+            example.setLocationRelativeTo(null);
+
+            example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            example.setVisible(true);
+        });
+    }
 }

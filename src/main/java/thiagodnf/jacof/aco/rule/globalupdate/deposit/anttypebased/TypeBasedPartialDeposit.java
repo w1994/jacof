@@ -100,6 +100,12 @@ public class TypeBasedPartialDeposit extends TypeBasedAbstractDeposit {
                     deltaTau += aco.getProblem().getDeltaTau(ant.getScAnt(), ant.getScAnt().getTourLength(), i, j);
                 }
             }
+            for (Ant ant : subSet.getSubSet()) {
+                if (ant.path[i][j] == 1) {
+                    count++;
+                    deltaTau += aco.getProblem().getDeltaTau((ScAnt) ant, ant.getTourLength(), i, j);
+                }
+            }
 
 //            deltaTau = count / (first / count * second/ count );
 //
@@ -110,7 +116,7 @@ public class TypeBasedPartialDeposit extends TypeBasedAbstractDeposit {
 //                }
 //            }
 
-            return deltaTau * count;
+            return deltaTau; //* count;
 
         } else {
 

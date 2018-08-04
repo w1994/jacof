@@ -30,6 +30,7 @@ public class ScatterPlotExample extends JFrame {
         XYPlot plot = (XYPlot)chart.getPlot();
         plot.setBackgroundPaint(new Color(255,228,196));
 
+//        plot.setDomainAxes();
 
         // Create Panel
         ChartPanel panel = new ChartPanel(chart);

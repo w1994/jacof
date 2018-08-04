@@ -26,40 +26,40 @@ public class NondominatedRepository {
 
     public void add(MultiObjectiveAcoTSP problem, ScAnt ant, int sourceId) {
 
-            Double[] newValues = distanceEvaluator.getDistances(problem, ant);
+        Double[] newValues = distanceEvaluator.getDistances(problem, ant);
 
-            indexesMarkedToRemove = new ArrayList<>();
+        indexesMarkedToRemove = new ArrayList<>();
 
-            int add = 0;
+        int add = 0;
 
-            if (list.size() == 0) {
-                list.add(new AntWrapper(ant, newValues, sourceId));
-            } else {
-                for (int i = 0; i < list.size(); i++) {
-                    // mniej = lepiej
-                    Double[] currentValues = list.get(i).getValues();
-                    int j = 0;
-                    for (int z = 0; z < currentValues.length; z++) {
-                        if (currentValues[z] > newValues[z]) {
-                            j++;
-                        }
-                    }
-                    if(j==0) return;
-                    if (j == currentValues.length) {
-                        add++;
-                        indexesMarkedToRemove.add(i);
-                    } else if (j < currentValues.length) {
-                        add++;
+        if (list.size() == 0) {
+            list.add(new AntWrapper(ant, newValues, sourceId));
+        } else {
+            for (int i = 0; i < list.size(); i++) {
+                // mniej = lepiej
+                Double[] currentValues = list.get(i).getValues();
+                int j = 0;
+                for (int z = 0; z < currentValues.length; z++) {
+                    if (currentValues[z] > newValues[z]) {
+                        j++;
                     }
                 }
+                if (j == 0) return;
+                if (j == currentValues.length) {
+                    add++;
+                    indexesMarkedToRemove.add(i);
+                } else if (j < currentValues.length) {
+                    add++;
+                }
             }
+        }
 
-            if(add > 0) {
-                list.add(new AntWrapper(ant, newValues, sourceId));
-            }
+        if (add > 0) {
+            list.add(new AntWrapper(ant, newValues, sourceId));
+        }
 
-            for (int index = 0; index < indexesMarkedToRemove.size(); index++) {
-                list.remove(indexesMarkedToRemove.get(index) - index);
+        for (int index = 0; index < indexesMarkedToRemove.size(); index++) {
+            list.remove(indexesMarkedToRemove.get(index) - index);
         }
     }
 
@@ -81,7 +81,7 @@ public class NondominatedRepository {
                         j++;
                     }
                 }
-                if(j==0) return;
+                if (j == 0) return;
                 if (j == currentValues.length) {
                     add++;
                     indexesMarkedToRemove.add(i);
@@ -91,7 +91,7 @@ public class NondominatedRepository {
             }
         }
 
-        if(add > 0) {
+        if (add > 0) {
             list.add(new AntWrapper(ant.getScAnt(), ant.getValues(), sourceId));
         }
 
@@ -135,7 +135,7 @@ public class NondominatedRepository {
 //
 //        return deltaTau;
 
-    public class AntWrapper {
+    public class AntWrapper implements Comparable {
         ScAnt scAnt;
         Double[] values;
         int sourceId = 0;
@@ -163,17 +163,34 @@ public class NondominatedRepository {
 
             AntWrapper target = (AntWrapper) o;
 
-            if(values[0] < target.getValues()[0] && values[1] < target.getValues()[1]) {
+            if (values[0] < target.getValues()[0] && values[1] < target.getValues()[1]) {
                 return -1;
-            } if(values[0] < target.getValues()[0] || values[1] < target.getValues()[1]){
+            }
+            if (values[0] < target.getValues()[0] || values[1] < target.getValues()[1]) {
                 return 0;
             }
             return 1;
-            }
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            AntWrapper target = (AntWrapper) o;
+            return this.values[0].compareTo(target.getValues()[0]);
+        }
     }
 
     public XYSeries getAsSeries(String name, int sourceId) {
-        XYSeries xySeries = new XYSeries(name);
+        XYSeries xySeries = new XYSeries(name + " " + list.stream()
+                .filter(antWrapper -> antWrapper.getSourceId() == sourceId).count());
+        list.stream()
+                .filter(antWrapper -> antWrapper.getSourceId() == sourceId)
+                .forEach(antWrapper -> xySeries.add(antWrapper.getValues()[0], antWrapper.getValues()[1]));
+        return xySeries;
+    }
+
+    public XYSeries getAsSeries(String name, int sourceId, Double v) {
+        XYSeries xySeries = new XYSeries(name + " " + list.stream()
+                .filter(antWrapper -> antWrapper.getSourceId() == sourceId).count() + " " + v);
         list.stream()
                 .filter(antWrapper -> antWrapper.getSourceId() == sourceId)
                 .forEach(antWrapper -> xySeries.add(antWrapper.getValues()[0], antWrapper.getValues()[1]));
@@ -182,9 +199,9 @@ public class NondominatedRepository {
 
     public String asString() {
         StringBuilder stringBuilder = new StringBuilder();
-        for(NondominatedRepository.AntWrapper antWrapper : list) {
+        for (NondominatedRepository.AntWrapper antWrapper : list) {
             stringBuilder.append(antWrapper.getValues()[0]).append(" ").append(antWrapper.getValues()[1]).append(" ");
-            for(int node : antWrapper.getScAnt().getSolution()) {
+            for (int node : antWrapper.getScAnt().getSolution()) {
                 stringBuilder.append(node);
                 stringBuilder.append(" ");
             }
@@ -205,7 +222,7 @@ public class NondominatedRepository {
                 .count();
 
         System.out.println("this " + i + " " + this.getList().size());
-        System.out.println("target " + ii+ " " + target.getList().size());
+        System.out.println("target " + ii + " " + target.getList().size());
 
         //
         // this.value ma 10 rozwaizan lepszych niz target ( w sumie na 80 rozwiazna)

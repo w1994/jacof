@@ -297,7 +297,7 @@ public abstract class ACO implements Observer {
      * Perform the daemon actions
      */
     public void daemonActions() {
-        System.out.println("HR111");
+//        System.out.println("HR111");
         if (daemonActions.isEmpty()) {
             LOGGER.debug("There are no daemon actions for this algorithm");
         } else {

@@ -209,9 +209,9 @@ public class MultiObjectiveAcoTSP extends Problem {
     }
 //
     public MultiObjectiveAcoTSP withDistanceFunction(DistanceFunction distanceFunction) {
-        this.distanceFunction = distanceFunction;
-        return this;
-    }
+                    this.distanceFunction = distanceFunction;
+                    return this;
+                }
 //
 //    public MultiObjectiveAcoTSP withDiversity(Diversity diversity) {
 //        this.diversity = diversity;
@@ -223,17 +223,17 @@ public class MultiObjectiveAcoTSP extends Problem {
 //        return this;
 //    }
 
-    public MultiObjectiveAcoTSP build() throws IOException {
+            public MultiObjectiveAcoTSP build() throws IOException {
 
-        this.acoTspInstances = Arrays.stream(filenames).map(filename -> {
-            try {
-                AcoTSP acoTSP = new AcoTSP(filename);
-                acoTSP.withDistanceFunction(distanceFunction);
-                acoTSP.withDiversity(diversity);
-                acoTSP.build();
+                this.acoTspInstances = Arrays.stream(filenames).map(filename -> {
+                    try {
+                        AcoTSP acoTSP = new AcoTSP(filename);
+                    acoTSP.withDistanceFunction(distanceFunction);
+                    acoTSP.withDiversity(diversity);
+                    acoTSP.build();
 
-                return acoTSP;
-            } catch (IOException e) {
+                    return acoTSP;
+                } catch (IOException e) {
                 e.printStackTrace();
             }
             return null;

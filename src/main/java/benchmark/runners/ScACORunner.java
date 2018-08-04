@@ -9,6 +9,7 @@ import benchmark.visualization.Performance;
 import benchmark.visualization.Visualization;
 import benchmark.visualization.chart.ScatterPlotExample;
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+import jmetal.qualityIndicator.Hypervolume;
 import jmetal.util.Distance;
 import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -35,11 +36,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static thiagodnf.jacof.aco.graph.AntType.AC;
+import static thiagodnf.jacof.aco.graph.AntType.EC;
+import static thiagodnf.jacof.aco.graph.AntType.GCDAge;
+
 public class ScACORunner implements Runner {
+
 
     private ACO aco;
     private String instance;
@@ -122,167 +129,178 @@ public class ScACORunner implements Runner {
         }
     }
 
+    private static List<List<AntType>> antTypes = Arrays.asList(
+//            Arrays.asList(AC, EC, GCDAge, GCDAge, GCDAge),
+            Arrays.asList(AC, EC, EC, GCDAge, GCDAge)
+//            Arrays.asList(AC, EC, EC, EC, GCDAge),
+//            Arrays.asList(AC, AC, EC, GCDAge, GCDAge),
+//            Arrays.asList(AC, AC, EC, EC, GCDAge),
+//            Arrays.asList(AC, AC, AC, EC, GCDAge),
+//            Arrays.asList(AC),
+//            Arrays.asList(EC),
+//            Arrays.asList(GCDAge)
+    );
+
+    private static int[][] values = {
+            // AC: GCAge, EC
+//            {2,2,1,4,12,6}, AC; GCAge: GCAge, EC, AC
+            {1, 1, 1, 1, 10, 10}
+//            {1,1,1,1,1,10},
+//            {1,1,1,4,12,6},
+//            {1,1,1,4,12,6},
+//            {1,1,1,4,16,6},
+//            {1,1,1,3,14,2},
+//            {1,2,1,4,12,2},
+//            {1,1,1,4,16,4},
+//            {1,1,1,1,1,1}, // + dla 1
+//            {1,1,1,1,10,1},
+//            {1,1,1,10,1,1},
+//            {1,1,1,1,10,10}, // ++
+//            {1,1,1,1,1,1},
+//            {1,1,1,1,1,1},
+//            {1,1,1,1,1,1},
+//            {1,1,1,1,1,1}
+    };
+
+
     public static void main(String[] args) throws IOException {
+
+        List<Pair<Double, NondominatedRepository>> repositories = new ArrayList<>();
 
         String instance = "src/main/resources/problems/tsp/kroA100.tsp";
         String instance2 = "src/main/resources/problems/tsp/kroB100.tsp";
+        NondominatedRepository global = new NondominatedRepository();
+        int sourceId = 0;
+        int valueId = 0;
+        List<Pair<Double, int[]>> hyperValues = new ArrayList<>();
+        for (List<AntType> t : antTypes) {
+
+            for (int xx = 1; xx < 2; xx++) {
+                for (int yy = 1; yy < 2; yy++) {
+                    for (int zz = 10; zz < 11; zz++) {
 
 
-        NondominatedRepository nondominatedRepository = new NondominatedRepository();
-        NondominatedRepository nondominatedRepository2 = new NondominatedRepository();
-        NondominatedRepository nondominatedRepository3 = new NondominatedRepository();
+//            for(int[] value : values) {
+                        NondominatedRepository nondominatedRepository = new NondominatedRepository();
+                        NondominatedRepository nondominatedRepository2 = new NondominatedRepository();
+                        NondominatedRepository nondominatedRepository3 = new NondominatedRepository();
+                        for (int i = 0; i < 10; i++) {
+                            MultiObjectiveAcoTSP problem = new MultiObjectiveAcoTSP(instance, instance2)
+                                    .withDistanceFunction(null)
+                                    .withDiversity(new ArrayList<>())
+                                    .withPerformance(new Performance(false))
+                                    .withVisualization(new Visualization(false))
+                                    .build();
 
-        for(int i = 0; i < 5; i++) {
-            MultiObjectiveAcoTSP problem = new MultiObjectiveAcoTSP(instance, instance2)
-                    .withDistanceFunction(null)
-                    .withDiversity(new ArrayList<>())
-                    .withPerformance(new Performance(false))
-                    .withVisualization(new Visualization(false))
-                    .build();
+//                MultiObjectiveAcoTSP problem2 = new MultiObjectiveAcoTSP(instance, instance2)
+//                        .withDistanceFunction(null)
+//                        .withDiversity(new ArrayList<>())
+//                        .withPerformance(new Performance(false))
+//                        .withVisualization(new Visualization(false))
+//                        .build();
 
-            MultiObjectiveAcoTSP problem2 = new MultiObjectiveAcoTSP(instance, instance2)
-                    .withDistanceFunction(null)
-                    .withDiversity(new ArrayList<>())
-                    .withPerformance(new Performance(false))
-                    .withVisualization(new Visualization(false))
-                    .build();
+                            int iteration = 50;
+                            int ants = 100;
+                            double evaporation = 0.2;
+                            double deposit = 1;
 
-//        Pair<Double, Double> deposit = ConfigurationGenerator.generateDeposit(0);
+                            List<AgingType> types = Arrays.asList(AgingType.STATIC);
+                            List<AgingType> types2 = Arrays.asList(AgingType.STATIC);
 
-//        for (int d = 0; d < 10; d++) {
-//
-//            int left = 0;
-//            int right = 0;
+                            ScAntSystem scAntSystem = new ScAntSystem();
+                            scAntSystem.setNumberOfAnts(ants);
+                            scAntSystem.setRho(1);
+                            scAntSystem.withAntColonyGenerator(new AntColonyGenerator(t, types,new int[]{1,1,1,xx,yy,zz}));
+                            scAntSystem.setEvaporationRate(evaporation);
+                            scAntSystem.setDepositRate(deposit);
 
-//            for (int i = 0; i < 10; i++) {
+//                ScAntSystem scAntSystem2 = new ScAntSystem();
+//                scAntSystem2.setNumberOfAnts(ants);
+//                scAntSystem2.setRho(1);
+//                scAntSystem2.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.EC, AC, AntType.GCDAge), types));
+//                scAntSystem2.setEvaporationRate(evaporation);
+//                scAntSystem2.setDepositRate(deposit);
 
-            int iteration = 50;
-            int ants = 100;
-            double evaporation = 0.2;
-            double deposit = 1;
+                            System.out.println(types);
 
+                            Configuration.isNonDominatedUsed = true;
+                            Configuration.useParetoSetUpdate = false;
+                            Configuration.useGaussian = false;
+                            Configuration.useAlpha = false;
+                            Configuration.useMulti = true;
+                            Configuration.original = false;
 
-            List<AgingType> types = Arrays.asList(AgingType.STATIC);
-//            List<AgingType> types2 = Arrays.asList(AgingType.SLOW_A, AgingType.FAST_A, AgingType.MEDIUM_A);
-            List<AgingType> types2 = Arrays.asList(AgingType.STATIC);
+                            long currentTime = System.currentTimeMillis();
 
-            ScAntSystem scAntSystem = new ScAntSystem();
-            scAntSystem.setNumberOfAnts(ants);
-            scAntSystem.setRho(1);
-            scAntSystem.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCDAge), types));
-            scAntSystem.setEvaporationRate(evaporation);
-            scAntSystem.setDepositRate(deposit);
+                            new ScACORunner()
+                                    .withProblem(problem)
+                                    .withACO(scAntSystem)
+                                    .withAcoName("ScAntSystem")
+                                    .withIteration(iteration)
+                                    .withVisualization(false)
+                                    .start();
+                            long firstTime = System.currentTimeMillis() - currentTime;
 
-            ScAntSystem scAntSystem2 = new ScAntSystem();
-            scAntSystem2.setNumberOfAnts(ants);
-            scAntSystem2.setRho(1);
-            scAntSystem2.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCDAge), types));
-//            scAntSystem2.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.EC, AntType.AC, AntType.GCDAge, AntType.GCDAge), types2));
-//            scAntSystem2.withAntColonyGenerator(new AntColonyGenerator(Arrays.asList(AntType.GCDAge), types));
-            scAntSystem2.setEvaporationRate(evaporation);
-            scAntSystem2.setDepositRate(deposit);
+                            Configuration.isNonDominatedUsed = true;
+                            Configuration.useParetoSetUpdate = false;
+                            Configuration.useGaussian = false;
+                            Configuration.useAlpha = false;
+                            Configuration.useMulti = true;
+                            Configuration.original = false;
 
-            System.out.println(types);
+                            currentTime = System.currentTimeMillis();
+//                new ScACORunner()
+//                        .withProblem(problem2)
+//                        .withACO(scAntSystem2)
+//                        .withAcoName("ScAntSystem2")
+//                        .withIteration(iteration)
+//                        .withVisualization(false)
+//                        .start();
 
-//            Configuration.isNonDominatedUsed = true;
-            Configuration.useParetoSetUpdate = false;
-            Configuration.useGaussian = false;
-            Configuration.useAlpha = true;
-            Configuration.original = true;
+                            long secondTime = System.currentTimeMillis() - currentTime;
 
-            long currentTime = System.currentTimeMillis();
+                            ResultEvaluator resultEvaluator = new ResultEvaluator();
 
-            new ScACORunner()
-                    .withProblem(problem)
-                    .withACO(scAntSystem)
-                    .withAcoName("ScAntSystem")
-                    .withIteration(iteration)
-                    .withVisualization(false)
-                    .start();
-            long firstTime = System.currentTimeMillis() - currentTime;
+                            resultEvaluator.evaluate(global, scAntSystem, sourceId);
 
-//
-            Configuration.isNonDominatedUsed = true;
-            Configuration.useParetoSetUpdate = true;
-            Configuration.useGaussian = false;
-            Configuration.useAlpha = true;
-            Configuration.useMulti = true;
-            Configuration.original = false;
+//                resultEvaluator.evaluate(nondominatedRepository, scAntSystem, scAntSystem2, problem);
+                            resultEvaluator.evaluate(nondominatedRepository, scAntSystem);
+//                resultEvaluator.evaluate(nondominatedRepository3, scAntSystem2);
 
-            currentTime = System.currentTimeMillis();
-            new ScACORunner()
-                    .withProblem(problem2)
-                    .withACO(scAntSystem2)
-                    .withAcoName("ScAntSystem2")
-                    .withIteration(iteration)
-                    .withVisualization(false)
-                    .start();
+                            System.out.println(firstTime + " " + secondTime);
 
-            long secondTime = System.currentTimeMillis() - currentTime;
+                        }
+                        double v = AcoHypervolume.getIndicator(nondominatedRepository);
+                        hyperValues.add((Pair.of(v, new int[]{xx,yy,zz})));
+                        repositories.add(Pair.of(v, nondominatedRepository));
+                        sourceId++;
 
-            ResultEvaluator resultEvaluator = new ResultEvaluator();
+                    }
+                }
+            }
 
-            resultEvaluator.evaluate(nondominatedRepository, scAntSystem, scAntSystem2, problem);
-            resultEvaluator.evaluate(nondominatedRepository2, scAntSystem);
-            resultEvaluator.evaluate(nondominatedRepository3, scAntSystem2);
+            valueId++;
 
-
-//        DistanceEvaluator distanceEvaluator = new DistanceEvaluator();
-//        ScAnt scAnt = new ScAnt(AntType.GCD, scAntSystem, 0);
-//        scAnt.setTour(Stream.of("48 89 0 97 31 90 10 58 98 96 7 27 92 66 69 52 9 20 37 71 83 73 59 86 50 47 40 13 82 54 42 51 95 77 12 32 81 63 1 43 49 53 57 60 34 26 11 19 85 61 68 39 72 84 67 38 4 99 29 36 94 75 28 2 70 45 33 6 56 8 24 80 46 22 76 44 16 35 23 17 15 18 91 88 41 30 62 14 5 3 65 93 87 21 78 64 25 55 79 74 48")
-//                .flatMap(line -> Arrays.stream(line.split(" ")))
-//                .map(Integer::valueOf)
-//                .collect(Collectors.toList()));
-//        Arrays.stream(distanceEvaluator.getDistances(problem, scAnt)).forEach(System.out::println);
-
-//                int all = nondominatedRepository.getList().size();
-//
-//                Long leftCount = nondominatedRepository.getList().stream()
-//                        .filter(ant -> ant.getSourceId() == 0)
-//                        .count();
-////
-//                if(leftCount > (all - leftCount)) {
-//                    left++;
-//                } else {
-//                    right++;
-//                }
-
-            System.out.println(firstTime +" "+secondTime);
-//            Draw.draw(scAntSystem, scAntSystem2, nondominatedRepository, "");
         }
 
-
-        long a = nondominatedRepository.getList().stream().filter(val -> val.getSourceId() == 0).count();
-        long b = nondominatedRepository.getList().stream().filter(val -> val.getSourceId() == 1).count();
-
-        System.out.println(a + " vs " + b);
-        String msg = a + " vs " + b;
-
-        Draw.draw(nondominatedRepository, msg);
-        Draw.draw(nondominatedRepository2, nondominatedRepository2.getList().size() + " 1 ");
-        Draw.draw(nondominatedRepository3, nondominatedRepository3.getList().size() + " 2 ");
-
-//        Saver.save(scAntSystem, scAntSystem2, iteration);
-
-//        List<TopRepository.AntWrapper> asc = scAntSystem2.getTopRepository().getTopAnts(10);
-
-        System.out.println();
-//                Draw.draw(scAntSystem, scAntSystem2, nondominatedRepository);
-//                scAntSystem.getNondominatedRepository().compare(scAntSystem2.getNondominatedRepository());
-//            }
-
-//            if(left > right) {
-//                deposit = ConfigurationGenerator.generateDeposit(deposit.getLeft());
-//            } else {
-//                deposit = ConfigurationGenerator.generateDeposit(deposit.getRight());
-//            }
+//        long a = nondominatedRepository.getList().stream().filter(val -> val.getSourceId() == 0).count();
+//        long b = nondominatedRepository.getList().stream().filter(val -> val.getSourceId() == 1).count();
 //
-//            System.out.println("CURRENT DEPOSIT: " + deposit);
-//        }
+//        System.out.println(a + " vs " + b);
+//        String msg = a + " vs " + b;
+//
+        Draw.draw(global, sourceId);
+        Draw.draw(repositories, sourceId);
+//        Draw.draw(nondominatedRepository2, nondominatedRepository2.getList().size() + " 1 ");
+//        Draw.draw(nondominatedRepository3, nondominatedRepository3.getList().size() + " 2 ");
 //
 
-//        System.out.println("BEST RESULT: " + deposit);
-
+        hyperValues.forEach(pair -> {
+            System.out.print(pair.getLeft());
+            System.out.print(" ");
+            for(int i : pair.getRight()) System.out.print(i +" ");
+            System.out.println();
+        });
 
         ConfigurationGenerator.print();
     }

@@ -29,6 +29,8 @@ public class AntColonyGenerator {
     public List<AntType> types;
     public List<AgingType> agingTypes;
     public static CombinationRules combinationRules;
+    public int[] values;
+
     Random random = new Random(System.nanoTime());
     int distanceIndex = 0;
 
@@ -39,9 +41,10 @@ public class AntColonyGenerator {
         this.types = types;
     }
 
-    public AntColonyGenerator(List<AntType> types, List<AgingType> agingTypes) {
+    public AntColonyGenerator(List<AntType> types, List<AgingType> agingTypes, int[] values) {
         this.types = types;
         this.agingTypes = agingTypes;
+        this.values = values;
     }
 
     public ScAnt[] generate(int numberOfAnts, ACO aco) {
@@ -71,71 +74,62 @@ public class AntColonyGenerator {
             scAnt.setAntExploration(new AntTypeBasedExploration(aco)
                     .addRule(AntType.EC, new MEACOExploration(aco, new RouletteWheel()))
                     .addRule(AntType.AC, new MACACOExploration(aco, new RouletteWheel()))
-                    .addRule(AntType.GC, new GCExploration(aco, new RouletteWheel()))
-                    .addRule(AntType.GCDAge, new MACOExploration(aco, new RouletteWheel()))
-                    .addRule(AntType.GCD, new GCDExploration(aco, new RouletteWheel())));
+//                    .addRule(AntType.GC, new GCExploration(aco, new RouletteWheel()))
+                    .addRule(AntType.GCDAge, new MACOExploration(aco, new RouletteWheel())));
+//                    .addRule(AntType.GCD, new GCDExploration(aco, new RouletteWheel())));
 
             System.out.println(types.size());
-            if (useAlpha && types.size() != 1) {
+            if (types.size() != 1) {
                 combinationRules = new CombinationRules()
-                        .forType(AntType.EC)
-                        .affecting(AntType.GCD).weight(1)
-                        .affecting(AntType.GCDAge).weight(0)
-                        .affecting(AntType.GC).weight(0)
-                        .affecting(AntType.EC).weight(0)
-                        .affecting(AntType.AC).weight(0)
-                        .forType(AntType.AC)
-                        .affecting(AntType.GCD).weight(0)
-                        .affecting(AntType.GCDAge).weight(1)
-                        .affecting(AntType.GC).weight(0)
-                        .affecting(AntType.EC).weight(1)
-                        .affecting(AntType.AC).weight(1)
-                        .forType(AntType.GC)
-                        .affecting(AntType.GCD).weight(0.5)
-                        .affecting(AntType.GC).weight(0.1)
-                        .affecting(AntType.EC).weight(0.3)
-                        .affecting(AntType.AC).weight(0.1)
-                        .forType(AntType.GCD)
-                        .affecting(AntType.GCD).weight(1)
-                        .affecting(AntType.GCDAge).weight(1)
-                        .affecting(AntType.GC).weight(1)
-                        .affecting(AntType.EC).weight(1)
-                        .affecting(AntType.AC).weight(1)
+//                        .forType(AntType.EC)
+//                        .affecting(AntType.GCDAge).weight(0)
+//                        .affecting(AntType.EC).weight(0)
+//                        .affecting(AntType.AC).weight(0)
+//                        .forType(AntType.AC)
+//                        .affecting(AntType.GCDAge).weight(2)
+//                        .affecting(AntType.EC).weight(2)
+//                        .affecting(AntType.AC).weight(1)
+//                        .forType(AntType.GCDAge)
+//                        .affecting(AntType.GCDAge).weight(4)
+//                        .affecting(AntType.EC).weight(16)
+//                        .affecting(AntType.AC).weight(8);
+                .forType(AntType.AC)
+                        .affecting(AntType.GCDAge).weight(values[0])
+                        .affecting(AntType.EC).weight(values[1])
+                        .affecting(AntType.AC).weight(values[2])
                         .forType(AntType.GCDAge)
-                        .affecting(AntType.GCDAge).weight(4)
-                        .affecting(AntType.GCD).weight(0)
-                        .affecting(AntType.GC).weight(0)
-                        .affecting(AntType.EC).weight(12)
-                        .affecting(AntType.AC).weight(6);
+                        .affecting(AntType.GCDAge).weight(values[3])
+                        .affecting(AntType.EC).weight(values[4])
+                        .affecting(AntType.AC).weight(values[5]);
             } else {
                 combinationRules = new CombinationRules()
                         .forType(AntType.EC)
-                        .affecting(AntType.GCD).weight(1)
+//                        .affecting(AntType.GCD).weight(1)
                         .affecting(AntType.GCDAge).weight(0)
-                        .affecting(AntType.GC).weight(0)
+//                        .affecting(AntType.GC).weight(0)
                         .affecting(AntType.EC).weight(0)
                         .affecting(AntType.AC).weight(0)
                         .forType(AntType.AC)
-                        .affecting(AntType.GCD).weight(0)
+//                        .affecting(AntType.GCD).weight(0)
                         .affecting(AntType.GCDAge).weight(1)
-                        .affecting(AntType.GC).weight(0)
+//                        .affecting(AntType.GC).weight(0)
                         .affecting(AntType.EC).weight(0)
                         .affecting(AntType.AC).weight(1)
-                        .forType(AntType.GC)
-                        .affecting(AntType.GCD).weight(0.5)
-                        .affecting(AntType.GC).weight(0.1)
-                        .affecting(AntType.EC).weight(0.3)
-                        .affecting(AntType.AC).weight(0.1)
-                        .forType(AntType.GCD)
-                        .affecting(AntType.GCD).weight(1)
-                        .affecting(AntType.GCDAge).weight(1)
-                        .affecting(AntType.GC).weight(1)
-                        .affecting(AntType.EC).weight(1)
-                        .affecting(AntType.AC).weight(1)
+//                        .forType(AntType.GC)
+//                        .affecting(AntType.GCD).weight(0.5)
+//                        .affecting(AntType.GC).weight(0.1)
+//                        .affecting(AntType.EC).weight(0.3)
+//                        .affecting(AntType.AC).weight(0.1)
+//                        .forType(AntType.GCD)
+//                        .affecting(AntType.GCD).weight(1)
+//                        .affecting(AntType.GCDAge).weight(1)
+//                        .affecting(AntType.GC).weight(1)
+//                        .affecting(AntType.EC).weight(1)
+//                        .affecting(AntType.AC).weight(1)
                         .forType(AntType.GCDAge)
                         .affecting(AntType.GCDAge).weight(1)
-                        .affecting(AntType.GCD).weight(0)
-                        .affecting(AntType.GC).weight(0)
+//                        .affecting(AntType.GCD).weight(0)
+//                        .affecting(AntType.GC).weight(0)
                         .affecting(AntType.EC).weight(0)
                         .affecting(AntType.AC).weight(0);
             }

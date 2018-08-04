@@ -147,7 +147,7 @@ public class AntGraph {
         synchronized (this.antTypeToTau) {
             this.antTypeToTau.get(antType)[i][j] = value;
             this.antTypeToTau.get(antType)[j][i] = value;
-            System.out.println(master++);
+//            System.out.println(master++);
         }
     }
 

@@ -43,7 +43,7 @@ public class ScAntSystem extends ACO {
                     for (int j = i; j < numberOfNodes; j++) {
                         if (i != j) {
                             graph.setTau(antType, i, j, newRij);
-                            graph.setTau(antType, j, i, newRij);
+//                            graph.setTau(antType, j, i, newRij);
                         }
                     }
                 }
@@ -62,11 +62,14 @@ public class ScAntSystem extends ACO {
                                     second = ((MultiObjectiveAcoTSP) this.getProblem()).evaluatePerArg(new double[]{0,1}, ant.getScAnt().getSolution());
                                     newValue +=  0.2 / (first * second);
 
-                                }
-
                             }
 
-                            graph.setTau(antType, i, j, 0.8 * oldValue + newValue);
+                            }
+                            if(newValue != 0) {
+                                graph.setTau(antType, i, j, newValue);
+                            } else {
+                                graph.setTau(antType, i, j, oldValue * 0.8);
+                            }
                         }
 
 
@@ -83,26 +86,26 @@ public class ScAntSystem extends ACO {
                 for (int j = i; j < numberOfNodes; j++) {
                     if (i != j) {
 //                    CountDownLatch latch = new CountDownLatch(AntType.values().length);
-//                    for (AntType antType : AntType.values()) {
-                        final int ii = i;
-                        final int jj = j;
+                        for (AntType antType2 : AntType.values()) {
+                            final int ii = i;
+                            final int jj = j;
 //                        new Thread(() -> {
-                        graph.setTau(antType, ii, jj, evaporation.getTheNewValue(antType, ii, jj));
-                        graph.setTau(antType, jj, ii, graph.getTau(antType, ii, jj));
-                        // Do AntType Based Deposit
-                        graph.setTau(antType, ii, jj, deposit.getTheNewValue(antType, ii, jj));
-                        graph.setTau(antType, jj, ii, graph.getTau(antType, ii, jj));
+                            graph.setTau(antType2, ii, jj, evaporation.getTheNewValue(antType2, ii, jj));
+                            graph.setTau(antType2, jj, ii, graph.getTau(antType2, ii, jj));
+                            // Do AntType Based Deposit
+                            graph.setTau(antType2, ii, jj, deposit.getTheNewValue(antType2, ii, jj));
+                            graph.setTau(antType2, jj, ii, graph.getTau(antType2, ii, jj));
 //                            latch.countDown();
 //                            System.out.println(Thread.currentThread().getId());
-                    }
+                        }
 //                        ).start();
-                }
+                    }
 //                    try {
 //                        latch.await();
 //                    } catch (InterruptedException e) {
 //                        e.printStackTrace();
 //                    }
-
+                }
             }
         }
     }

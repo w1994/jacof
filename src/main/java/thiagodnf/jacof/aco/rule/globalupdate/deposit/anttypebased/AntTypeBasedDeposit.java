@@ -13,9 +13,9 @@ public class AntTypeBasedDeposit {
     public AntTypeBasedDeposit(ACO aco, double rate) {
         depositBasedOnAntType.put(AntType.EC, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
         depositBasedOnAntType.put(AntType.AC, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
-        depositBasedOnAntType.put(AntType.GC, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
-        depositBasedOnAntType.put(AntType.BC, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
-        depositBasedOnAntType.put(AntType.GCD, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
+//        depositBasedOnAntType.put(AntType.GC, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
+//        depositBasedOnAntType.put(AntType.BC, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
+//        depositBasedOnAntType.put(AntType.GCD, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
         depositBasedOnAntType.put(AntType.GCDAge, new TypeBasedPartialDeposit(aco, rate, new AllAnts(aco)));
     }
 

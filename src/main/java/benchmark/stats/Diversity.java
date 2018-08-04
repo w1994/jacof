@@ -37,9 +37,9 @@ public class Diversity {
         this.antTypeBasedExploration =
         new AntTypeBasedExploration(aco)
                 .addRule(AntType.EC, new ECExploration(aco, new RouletteWheel()))
-                .addRule(AntType.AC, new ACExploration(aco, new RouletteWheel()))
-                .addRule(AntType.GC, new GCExploration(aco, new RouletteWheel()))
-                .addRule(AntType.GCD,new GCDExploration(aco, new RouletteWheel()));
+                .addRule(AntType.AC, new ACExploration(aco, new RouletteWheel()));
+//                .addRule(AntType.GC, new GCExploration(aco, new RouletteWheel()))
+//                .addRule(AntType.GCD,new GCDExploration(aco, new RouletteWheel()));
     }
 
     public void prepareVisualization(AcoTSP acoTSP){
