@@ -144,7 +144,38 @@ public class ScACORunner implements Runner {
     private static int[][] values = {
             // AC: GCAge, EC
 //            {2,2,1,4,12,6}, AC; GCAge: GCAge, EC, AC
-            {1, 1, 1, 1, 10, 10}
+            {1,1,1,1,5,7},
+            {1,1,1,2,1,10},
+            {1,1,1,7,6,4},
+            {1,1,1,2,8,3},
+            {1,1,1,10,1,3},
+            {1,1,1,6,6,9},
+            {1,1,1,5,2,8},
+            {1,1,1,10,6,9},
+            {1,1,1,5,2,9},
+            {1,1,1,9,2,5},
+            {1,1,1,2,7,2}
+//            {1,1,1,5,4,3},
+//            {1,1,1,10,2,10},
+//            {1,1,1,5,6,8},
+//            {1,1,1,4,4,5},
+//            {1,1,1,6,1,10},
+//            {1,1,1,4,8,2},
+//            {1,1,1,9,10,4},
+//            {1,1,1,10,9,8},
+//            {1,1,1,6,3,6},
+//            {1,1,1,1,2,6},
+//            {1,1,1,2,10,6},
+//            {1,1,1,10,10,3},
+//            {1,1,1,5,6,5},
+//            {1,1,1,5,9,4},
+//            {1,1,1,9,5,10},
+//            {1,1,1,8,5,7},
+//            {1,1,1,1,8,9},
+//            {1,1,1,1,10,2},
+//            {1,1,1,4,7,4}
+
+//            {1, 1, 1, 1, 10, 10},
 //            {1,1,1,1,1,10},
 //            {1,1,1,4,12,6},
 //            {1,1,1,4,12,6},
@@ -174,17 +205,17 @@ public class ScACORunner implements Runner {
         int valueId = 0;
         List<Pair<Double, int[]>> hyperValues = new ArrayList<>();
         for (List<AntType> t : antTypes) {
+//
+//            for (int xx = 9; xx < 10; xx++) {
+//                for (int yy = 7; yy < 11; yy++) {
+//                    for (int zz = 1; zz < 11; zz++) {
 
-            for (int xx = 1; xx < 2; xx++) {
-                for (int yy = 1; yy < 2; yy++) {
-                    for (int zz = 10; zz < 11; zz++) {
 
-
-//            for(int[] value : values) {
+            for(int[] value : values) {
                         NondominatedRepository nondominatedRepository = new NondominatedRepository();
                         NondominatedRepository nondominatedRepository2 = new NondominatedRepository();
                         NondominatedRepository nondominatedRepository3 = new NondominatedRepository();
-                        for (int i = 0; i < 10; i++) {
+                        for (int i = 0; i < 30; i++) {
                             MultiObjectiveAcoTSP problem = new MultiObjectiveAcoTSP(instance, instance2)
                                     .withDistanceFunction(null)
                                     .withDiversity(new ArrayList<>())
@@ -210,7 +241,8 @@ public class ScACORunner implements Runner {
                             ScAntSystem scAntSystem = new ScAntSystem();
                             scAntSystem.setNumberOfAnts(ants);
                             scAntSystem.setRho(1);
-                            scAntSystem.withAntColonyGenerator(new AntColonyGenerator(t, types,new int[]{1,1,1,xx,yy,zz}));
+//                            scAntSystem.withAntColonyGenerator(new AntColonyGenerator(t, types,new int[]{1,1,1,xx,yy,zz}));
+                            scAntSystem.withAntColonyGenerator(new AntColonyGenerator(t, types,value));
                             scAntSystem.setEvaporationRate(evaporation);
                             scAntSystem.setDepositRate(deposit);
 
@@ -271,12 +303,12 @@ public class ScACORunner implements Runner {
 
                         }
                         double v = AcoHypervolume.getIndicator(nondominatedRepository);
-                        hyperValues.add((Pair.of(v, new int[]{xx,yy,zz})));
+                        hyperValues.add((Pair.of(v,value)));
                         repositories.add(Pair.of(v, nondominatedRepository));
                         sourceId++;
 
-                    }
-                }
+//                    }
+//                }
             }
 
             valueId++;
